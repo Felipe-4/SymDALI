@@ -65,7 +65,7 @@ SymbolicVector[x___] := Throw[$Failed, failTag[SymbolicVector]]
 
 (*Multiply the LI components by their multiplicity and the c[i,j] from Taylor expansion*)
 
-PreprocessDALItensors[DALIlist_List, dimension_Integer]/; MatrixQ[DALIlist, NumericQ] := Module[
+PreprocessDALItensors[DALIlist_List, dimension_Integer] := Module[
 	{n = Length@DALIlist, LIComponents, factorialmultiplicity, factorialmultiplicityTensor},
 	
 	(LIComponents[#] = SymmetrizedIndependentComponents[ConstantArray[dimension, #], Symmetric[All]])&/@Range[n];
@@ -89,7 +89,7 @@ PreprocessDALItensors[x___] := Throw[$Failed, failTag[PreprocessDALItensors]]
 (*fiducial point = {{x1,value}, {x2,value},...}
 output is the polynomial*)
 
-TaylorForm[DALIlist_List, fiducialPoint_?MatrixQ]/;MatrixQ[DALIlist, NumericQ] := Module[
+TaylorForm[DALIlist_List, fiducialPoint_?MatrixQ] := Module[
 
 	{n = Length@DALIlist, dimension = Length@fiducialPoint, p, LIComponents, \[CapitalDelta]p, dummyvar, symtensor, dalilist, rules},
 	
@@ -124,8 +124,10 @@ TaylorForm[DALIlist_List, fiducialPoint_?MatrixQ]/;MatrixQ[DALIlist, NumericQ] :
 			Rule,
 			{\[CapitalDelta]p/@Range[dimension], Subtract@@@fiducialPoint}
 		];
+	(*Put in the HornerForm:*)
 		
-	dummyvar//.rules
+		
+	HornerForm[dummyvar]//.rules
 	
 ]
 
@@ -135,7 +137,7 @@ TaylorForm[x___] := Throw[$Failed, failTag[TaylorForm]]
 CompiledPolynomial::fail = "The function failed. The failure occured in function `1`"
 
 
-CompiledPolynomial[GetDALIOutput_?MatrixQ, fiducialPoint_?MatrixQ] := Module[
+CompiledPolynomial[GetDALIOutput_, fiducialPoint_?MatrixQ] := Module[
     {TaylorPolynomial, vars},
     
     
@@ -144,7 +146,7 @@ CompiledPolynomial[GetDALIOutput_?MatrixQ, fiducialPoint_?MatrixQ] := Module[
         vars = fiducialPoint[[All,1]];
         Compile[
             Evaluate@vars,
-            Evaluate@(HornerForm[TaylorPolynomial]//N),
+            Evaluate@(TaylorPolynomial),
             CompilationTarget->"C",
             RuntimeOptions->{"CatchMachineOverflow"->False, "CatchMachineIntegerOverflow"->False, "EvaluateSymbolically" ->False},
             RuntimeAttributes->{Listable}, Parallelization->True
