@@ -1,11 +1,10 @@
 (* ::Package:: *)
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Dark Mode and some other settings*)
 
 
-(*
-SetOptions[EvaluationNotebook[], DefaultNewCellStyle->"Code"]
+(*SetOptions[EvaluationNotebook[], DefaultNewCellStyle->"Code"]
 Needs["maTHEMEatica`"]
 colors=<|
 	"background"->RGBColor["#000000"],
@@ -23,27 +22,13 @@ ApplyStyleSheet[]*)
 
 
 (* ::Section::Closed:: *)
-(*BeginPackage and Summary*)
+(*Package Header*)
 
 
 BeginPackage["FelipeBarbosa`SymDALI`DALICoefficients`"];
 
 
-DALICoefficients::usage="
-Assuming
-              ln(\[ScriptCapitalL]) = - \!\(\*FractionBox[\(1\), \(2\)]\) (\!\(\*SuperscriptBox[\(m\), \(i\)]\) - \!\(\*SuperscriptBox[\(\[Mu]\), \(i\)]\)) (\!\(\*SuperscriptBox[\(C\), \(\:207b1\)]\)\!\(\*SubscriptBox[\()\), \(ij\)]\) (\!\(\*SuperscriptBox[\(m\), \(j\)]\) - \!\(\*SuperscriptBox[\(\[Mu]\), \(j\)]\))    and    \!\(\*SuperscriptBox[\(\[Mu]\), \(i\)]\) \[Congruent] \[Mu](\!\(\*SubscriptBox[\(p\), \(\[Alpha]\)]\), \!\(\*SubscriptBox[OverscriptBox[\(x\), \(\[RightVector]\)], \(i\)]\)),
-the call                                                                  
-            DALICoefficients[\[Mu], {{\!\(\*SubscriptBox[\(p\), \(1\)]\),\!\(\*SubscriptBox[\(p\), \(2\)]\),...}, {\!\(\*SubscriptBox[\(p0\), \(1\)]\), \!\(\*SubscriptBox[\(p0\), \(2\)]\),...}, n}, {\!\(\*SuperscriptBox[\(C\), \(-1\)]\), False}, ObservationPoints]
-generates the list of coefficients for the DALI expansion with respect to {\!\(\*SubscriptBox[\(p\), \(1\)]\),\!\(\*SubscriptBox[\(p\), \(2\)]\),...}, around {\!\(\*SubscriptBox[\(p0\), \(1\)]\),\!\(\*SubscriptBox[\(p0\), \(2\)]\),..}
-to order n in derivatives, where \!\(\*SuperscriptBox[\(C\), \(-1\)]\) is a non-diagonal matrix and ObservationPoints = {\!\(\*SubscriptBox[OverscriptBox[\(x\), \(\[RightVector]\)], \(1\)]\), \!\(\*SubscriptBox[OverscriptBox[\(x\), \(\[RightVector]\)], \(2\)]\), ...}.
-
-For a diagonal matrix, such that:
-                            ln(\[ScriptCapitalL]) = - \!\(\*FractionBox[\(1\), \(2\)]\) \!\(\*FractionBox[SuperscriptBox[\((\*SuperscriptBox[\(m\), \(i\)] - \*SuperscriptBox[\(\[Mu]\), \(i\)])\), \(2\)], SuperscriptBox[\((\*SubscriptBox[\(\[Sigma]\), \(i\)])\), \(2\)]]\)    and     \!\(\*SuperscriptBox[\(\[Mu]\), \(i\)]\) \[Congruent] \[Mu](\!\(\*SubscriptBox[\(p\), \(\[Alpha]\)]\), \!\(\*SubscriptBox[OverscriptBox[\(x\), \(\[RightVector]\)], \(i\)]\)),
-the call
-             DALICoefficients[\[Mu], {{\!\(\*SubscriptBox[\(p\), \(1\)]\),\!\(\*SubscriptBox[\(p\), \(2\)]\),...}, {\!\(\*SubscriptBox[\(p0\), \(1\)]\), \!\(\*SubscriptBox[\(p0\), \(2\)]\),...}, n}, {\[Sigma], True}, ObservationPoints],
-generates the list of coefficients for the DALI expansion with respect to {\!\(\*SubscriptBox[\(p\), \(1\)]\),\!\(\*SubscriptBox[\(p\), \(2\)]\),...}, around {\!\(\*SubscriptBox[\(p0\), \(1\)]\),\!\(\*SubscriptBox[\(p0\), \(2\)]\),..}
-to order n in derivatives, where \[Sigma] = {\!\(\*SubscriptBox[\(\[Sigma]\), \(1\)]\), \!\(\*SubscriptBox[\(\[Sigma]\), \(2\)]\), ...} and ObservationPoints = {\!\(\*SubscriptBox[OverscriptBox[\(x\), \(\[RightVector]\)], \(1\)]\), \!\(\*SubscriptBox[OverscriptBox[\(x\), \(\[RightVector]\)], \(2\)]\), ...}.
-";
+DALICoefficients::usage="DALICoefficients[h_, {vars_List, fp_List, n_Integer}, {Cov_, Diag_?BooleanQ}, SymRules_:<||>, NRules_:<||>]";
 
 
 GWDALICoefficients::usage="
@@ -56,127 +41,884 @@ generates the list of coefficients for the DALI expansion with respect to {\!\(\
 to order n in derivatives, where Sn = {\!\(\*SubscriptBox[\(S\), \(n\)]\)(\!\(\*SubscriptBox[\(f\), \(1\)]\)), \!\(\*SubscriptBox[\(S\), \(n\)]\)(\!\(\*SubscriptBox[\(f\), \(2\)]\)), ...} and \!\(\*OverscriptBox[\(h\), \(~\)]\) = \!\(\*OverscriptBox[\(h\), \(~\)]\)(\!\(\*SubscriptBox[\(p\), \(\[Alpha]\)]\),f).
 ";
 
+iGWDALICoefficients::usage="iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, f1_, \[CapitalDelta]f_}, PSD_, SymRules_, NRules_]";
 
-NDALICoefficients::usage = "Generate the list of DALI tensors to a given derivative order, for likelihoods defined numerically"
+
+NDALICoefficients::usage = "Generate the list of DALI tensors to a given derivative order, for likelihoods defined numerically";
+
+CalculateGrads::usage="iCalculateGrads[head_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List,tensorRank_Integer, dim]
+
+head: function head, such that head[p1,...,pn, X1,...,Xm] gives the array.
+Orighs: heads that appear in the explicit expression head[p1,...,pn, X1,...,Xm].
+uniquehs: uniqueHeads for which UpValues were defined from NRules. 
+OpsPoints: set of values to pass to the function in the form of {pf1,pf2,..., XV1, XV2, ...}
+tensorRank: tensorRank of head[p1,...,pn, X1,...,Xm].
+dim: dimension of the square array
+
+Output: LI components of the gradient. 
+
+* \"tensorRank===0\" evaluates the scalar at ObsPoints {...}.
+*\"iCalculateGrads\" assumes that Attributes[h] = {Listable}, i.e., if any of the XVi happen to be a vector the \"head[..., XVi,...]\"automatically
+distributes over the values of XVi, implying that the result is a matrix where each row represents 1 LI component
+evaluated at several different points.
+
+
+Example1:
+>>>Block[
+	{h, obs = {2,3,4,Range[1,5]}},
+	h[x_,y_,z_,w_] = {{(x+y+z) w, (x+y+z) Power[w,2]}, {0, (x+y+z) Sqrt[w]}};
+	Print[2+3+4];
+	CalculateGrads[h, {},{}, obs, 2, 2]
+]
+>>>9
+>>>\[LeftAssociation]{1,1}\[Rule]{9,18,27,36,45},{1,2}\[Rule]{9,36,81,144,225},{2,2}\[Rule]{9,9 \!\(\*SqrtBox[\(2\)]\),9 \!\(\*SqrtBox[\(3\)]\),18,9 \!\(\*SqrtBox[\(5\)]\)}\[RightAssociation]
+
+Example2:
+>>>Block[
+	{h, obs = {2,3,4, Range[0,5]}},
+	h[x_,y_,z_,w_] = (x+y+z) w;
+	Print[2+3+4];
+	CalculateGrads[h, {},{}, obs,0, 3]
+]
+>>>9
+>>>\[LeftAssociation]{0}\[Rule]{0,9,18,27,36,45}\[RightAssociation]";
 
 
 Begin["`Private`"];
 
 
-(* ::Section:: *)
-(*Shared Functions*)
+(* ::Section::Closed:: *)
+(*Definitions*)
 
 
-Needs["Developer`"]
+<<Developer`
 ToSymbol[a_String,i_Integer] := ToExpression[ a <> ToString[i]]
 ToSymbol[a_String] := ToExpression[a]
 SymbolConcatenate[sym_Symbol, i_Integer] := ToExpression[ToString[sym] <>  ToString[i]]
+FunctionVariables[head_] := Module[
+	{s},
+	s = (DownValues[head][[1,1]]);
+	(Hold@@s)/. Hold[h_[x__]] :> {x}[[All,1]]
+]
+Attributes[GenMessage] = {HoldRest};
+GenMessage[True, mess_] := True;
+GenMessage[False, mess_] := With[{}, Message[mess]; False]
 
 
 (* ::Subsection::Closed:: *)
-(*Utilities to implement SymRules and NRules*)
+(*Make Gradients*)
 
 
-(*
-	SymRulesValues: list of values from SymRules, without the lfhs of the rules, i.e. Flatten[Values@SymRules][[All,2]]
-	Output: list with distinct numbers and a head for each number, i.e. {{0,1.2,3., ...}, {h1,h2, h3,...}}
-*)
+(* ::Subsubsection::Closed:: *)
+(*Function Set-Up*)
 
-CreateHeads[SymRulesValues_]/; (VectorQ[SymRulesValues, NumberQ]) := Module[
-	{list, heads},
+
+CreateHeads::usage="CreateHeads[{SymRules___Rule}] 
+
+{SymRules}: Flat SymRules List, i.e. Flatten[Values@SymRules]
+Output: list with distinct numbers and a unique head for each number
+Example: 
+>>> With[{d = <|
+	\"f1 \" -> {$D[{2,0}, f1][x_, y_] -> 2., $D[{2,1}, f1][x_, y_] -> 0.}, 
+	\"f2 \" -> {$D[{3}, f2][x_] -> 3., $D[{4}, f2][x_] -> 0.}
+|>},
+	CreateHeads[Flatten[Values@d]]
+]
+>>>{{h11,h12,h13},{2.`,0.`,3.`}}";
+
+
+CreateHeads[{SymRules___Rule}] := Module[
+	{list, heads, SymRulesValues},
+	SymRulesValues = {SymRules}[[All,2]];
 	list = DeleteDuplicates[SymRulesValues];
 	
-	heads = Unique@(("h" <> ToString[#])&/@Range[Length@list]);
+	heads = Unique@ConstantArray["h", Length[list]];
 	
 	(*Return heads and their corresponding values*)
-	{list, heads}
+	{heads, list}
 ]
 
 CreateHeads[x___] := Throw[$Failed, failTag[CreateHeads]]
 
 
-(*
-	heads: flat list of all heads in SymRules, i.e. Flatten[Values@SymRules][[All, 1, 0, -1]]
-	lefthandsides: all lefthandsides in SymRules without pattern vars, i.e. Flatten[Values@SymRules][[All, 1, 0]]
-	righthandsides: list of heads, replacing corresponding numbers, i.e AuxFunc/@(Flatten[Values@SymRules][[All, 2]]),
-	where AuxFunc[xi] := headi, where headi is defined in "CreateHeads" and headi[x__] := xi.
-	
-	Output: None. It defines the following kind of UpValues  f/: $D[{1,0,0}, f] = hi, for all expressions in SymRules.
-*)
+SymUpValues::usage="SymUpValues[{SymRules___Rule}, AuxHead_]
+{SymRules}: Flat SymRules List, i.e. Flatten[Values@SymRules]
+AuxHead: head such that AuxHead[xi] = headi, where xi and headi are corresponding head-number pairs from \"CreateHeads\".
+Output: None. It defines the following kind of UpValues  f/: $D[n__, f] = hi, for all expressions in SymRules.
 
-SymUpValues[heads_List, lefthandsides_List, righthandsides_List]/;(
-	DeleteDuplicates[heads[[All,0]]] === {Symbol} && DeleteDuplicates[righthandsides[[All,0]]] === {Symbol} &&
-	DeleteDuplicates[lefthandsides[[All, 0]]] === {$D}
-) := MapThread[
-	TagSet,
-	{heads, lefthandsides, righthandsides}
+Example:
+>>>Block[{d = <|
+	\"f1\" -> {$D[{2,0}, f1][x_, y_] -> 2., $D[{2,1}, f1][x_, y_] -> 0.}, 
+	\"f2\" -> {$D[{3}, f2][x_] -> 3., $D[{4}, f2][x_] -> 0.}
+|>, heads, aux},
+	
+	heads = Echo[CreateHeads[Flatten[Values@d]]];
+	MapThread[
+		(aux[#2] = #1)&,
+		heads
+	];
+	SymUpValues[Flatten[Values@d], aux];
+	UpValues/@{f1,f2}
+]
+
+>>>{{h17,h18,h19},{2.`,0.`,3.`}}
+{
+	{HoldPattern[$D[{2,0},f1]]\[RuleDelayed]h17, HoldPattern[$D[{2,1},f1]]\[RuleDelayed]h18},
+	{HoldPattern[$D[{3},f2]]\[RuleDelayed]h19,HoldPattern[$D[{4},f2]]\[RuleDelayed]h18}
+}";
+
+SymUpValues[{SymRules___Rule}, AuxHead_Symbol] := Module[
+	{heads, lefthandsides, righthandsides},
+	(*Assuming all the rules in SymRules are like "$D[{x__}, symbol][y__] -> number" collect symbol*)
+	heads = {SymRules}[[All, 1, 0, -1]];
+	(*collect $D[{x__}, symbol]*)
+	lefthandsides = {SymRules}[[All, 1, 0]];
+	(*Collect the corresponding heads hi that should have definitions of the type hi[x__] := numberi*)
+	righthandsides = AuxHead/@({SymRules}[[All, 2]]);
+	
+	MapThread[
+		TagSet,
+		{heads, lefthandsides, righthandsides}
+	]
 ]
 
 SymUpValues[x___] := Throw[$Failed, failTag[SymUpValues]]
 
 
-(*
-	lhside: normal expression of the form head[x1_, x2_,...]
-	rhside: CompiledFunction object CompiledFunction[...]
-	Output: None. It defines the assignement head[x1_,x2_,...] := CompiledFunction[...][x1,x2,...]
-	* The CompiledFunction must have the RuntimeOption "EvaluateSymbolically" ->False
-*)
+GCSymRules[heads_List] := Module[
+	{uniquehs}, 
+	
+	uniquehs = (UpValues/@heads)//Flatten;
+	uniquehs = uniquehs[[All,2]]//DeleteDuplicates;
+	
+	(UpValues[#] = {})&/@heads; Remove[Evaluate[uniquehs]];
+]
 
-NDownValue[lhside_, rhside_CompiledFunction] := With[
-	{lhs = lhside, rhs = rhside},
-	Quiet[Inactive[SetDelayed][lhs, rhs@@(lhs[[All,1]])]//Activate]
+
+NDownValue::usage="NDownValue[{NRules___Rule}]
+{NRules}: flat list of all NRules, i.e. Flatten[Values@NRules]
+Output: None. It defines the assignement head[x1_, x2_, ...] := CompiledFunction[...][x1,x2,...]
+* CompiledFunction must have the RuntimeOption \"EvaluateSymbolically\" ->False
+
+Example:
+>>>With[{d = <|
+	\"f1\" -> {$D[{2,0}, f1][x_, y_] -> CompiledFunction[], $D[{2,1}, f1][x_, y_] -> CompiledFunction[]}, 
+	\"f2\" -> {f2[x_] -> CompiledFunction[], $D[{4}, f2][x_] -> CompiledFunction[]}
+|>}, 
+	Echo[NDownValue[Flatten[Values@d]]];
+	DownValues/@{f1,f2}
+]//Quiet
+
+>>>Null
+>>>{
+	{},
+	{HoldPattern[f2[x_]]\[RuleDelayed]CompiledFunction[][x]}
+}";
+
+
+NDownValue[{NRules___Rule}] := Module[
+	{simpleFunctions, positions, lhs, rhs},
+	
+	(*Find the position of all Simple Functions, {1,0, 0} in  {NRules}[[All, 1, 0, 0]] returns either Symbol or $D*)
+	positions = Position[{NRules}[[All, 1, 0, 0]], Symbol];
+	(*Collect the corresponding rules*)
+	simpleFunctions = Extract[{NRules}, positions];
+	
+	(*get the left hand sides and right hand sides*)
+	lhs = simpleFunctions[[All,1]];
+	rhs = simpleFunctions[[All,2]];
+	
+	MapThread[
+		Inactive[SetDelayed][#1, #2@@#3]&,
+		{lhs, rhs, lhs[[All, All, 1]]} (*lhs[[All, All, 1]] elliminates patterns from {s1[x1_,x2_,...], s2[x1_,x2_,...],...}.*)
+	
+	]//Quiet//Activate;
+	
 ]
 
 NDownValue[x___] := Throw[$Failed, failTag[NDownValue]]
 
 
-(*
-	lhsides: all left hand sides of NRules with unique heads, i.e. Flatten[Values@NRules][[All, 1]]/.heads -> uniqueheads
-	rhsides: all rhsides of NRules, i.e. Flatten[Values@NRules][[All,2]] 
-	tags: all unique heads in the lhside of NRules, i. e., Last[#,#]&/@(Flatten[Values@NRules][[All, 1, 0]])/. heads -> uniqueheads
-	* Last[#,#]& is to return tag in "$D[{1,1,1}, tag]" and tag also in  "tag" 
-	
-	Output: None. It performs the following kind of assignements 
-	uniquehead[x__] := CompiledFunction[...][x] 
-	uniquehead/: $D[{1,0,0}, uniquehead] = CompiledFunction[...]
-*)
+NUpValue::usage="NUpValue[{NRules___Rule}]
+{NRules} : Flat NRules list, i.e., Flatten[Values@NRules]
+Output: None. It performs the following kind of assignements 
+uniquehead/: $D[{1,0,0}, uniquehead] = CompiledFunction[...]
 
-NUpValues[tags_List, lhsides_List, rhsides_List]/;(
-	DeleteDuplicates[tags[[All,0]]] === {Symbol} && DeleteDuplicates[rhsides[[All,0]]] === {CompiledFunction}
-) :=Module[
-	{atomsPos, itags, ilhsides, irhsides},
+Example:
+>>>With[{d = <|
+	\"f1\" -> {$D[{2,0}, f1][x_, y_] -> CompiledFunction[], $D[{2,1}, f1][x_, y_] -> CompiledFunction[]}, 
+	\"f2\" -> {f2[x_] -> CompiledFunction[], $D[{4}, f2][x_] -> CompiledFunction[]}
+|>}, 
+	Echo[NUpValues[Flatten[Values@d]]];
+	UpValues/@{f1,f2}
+]//Quiet
+
+Null
+{
+	{HoldPattern[$D[{2,0},f1]]\[RuleDelayed]CompiledFunction[],HoldPattern[$D[{2,1},f1]]\[RuleDelayed]CompiledFunction[]},
+	{HoldPattern[$D[{4},f2]]\[RuleDelayed]CompiledFunction[]}
+}";
+
+NUpValue[{NRules___Rule}] := Module[
+	{positions, iList, compiledFunctions, tags, positions2},
 	
-	atomsPos = Position[AtomQ/@(lhsides[[All,0]]), True];
+	(*position of all functions hi[y__]*)
+	positions  = Position[{NRules}[[All, 1, 0, 0]], Symbol];
+	(*positions2 to account for evaluation of DownValues in the list.*)
+	positions2 = Position[{NRules}[[All, 1, 0, 0]], CompiledFunction];
 	
-	MapThread[
-		NDownValue,
-		{Extract[lhsides, atomsPos], Extract[rhsides, atomsPos]}
-	];
+	iList = Delete[{NRules}, Join[positions, positions2]]; 
+	(*take all tags from the list of $D[{n__}, tagi][y__]*)
+	tags = iList[[All, 1, 0, -1]];
 	
-	itags = Delete[tags, atomsPos];
-	ilhsides = Delete[lhsides, atomsPos][[All,0]];
-	irhsides = Delete[rhsides, atomsPos];
-	
+	(*Make the assignements:*)
 	MapThread[
 		TagSet,
-		{itags, ilhsides, irhsides}
+		{tags, iList[[All, 1, 0]], iList[[All, 2]] }
 	];
+
 ]
 
-NUpValues[x___] := Throw[$Failed, failTag[NUpValues]]
+NUpValue[x___] := Throw[$Failed, failTag[NUpValue]]
 
 
-(* ::Subsection:: *)
-(*Step2*)
+MakeDefs::usage="MakeDefs[SymRules_Association, NRules_Association]
+SymRules: SymRules association
+NRules: NRules association
+Output: None. It defines DownValues and UpValues for the heads in SymRules and NRules.
+
+Example:
+>>>Block[
+	{SymRules, NRules, f1, f2},
+	
+	SymRules = <|
+		\"f1\" -> {$D[{1,1}, f1][x_, y_] -> 2., $D[{2, 1}, f1][x_, y_] -> 0.}, 
+		\"f2\" -> {$D[{3}, f2][x_] -> 3., $D[{4}, f2][x_] -> 0.}
+	|>;
+	
+	NRules = <|
+		\"f1\" -> {
+			f1[x_,y_] -> CompiledFunction[\"1\"], 
+			$D[{1,0}, f1][x_,y_] -> CompiledFunction[\"2\"], 
+			$D[{0,1}, f1][x_,y_] -> CompiledFunction[\"3\"]
+		},
+		\"f2\" -> {
+			f2[x_] ->CompiledFunction[\"4\"], 
+			$D[{1}, f2][x_] -> CompiledFunction[\"5\"],
+			$D[{2}, f2][x_]-> CompiledFunction[\"6\"] 
+		}
+	|>;
+	
+	MakeDefs[SymRules, NRules];
+	{
+		Comap[{UpValues, DownValues},f1],
+		Comap[{UpValues, DownValues},f2]
+	}
+]//Quiet
+
+{
+	{
+		{HoldPattern[$D[{1,0},f1]]\[RuleDelayed]CompiledFunction[\"2\"],HoldPattern[$D[{1,1},f1]]\[RuleDelayed]h56,HoldPattern[$D[{2,1},f1]]\[RuleDelayed]h57},
+		{HoldPattern[f1[x_,y_]]\[RuleDelayed]CompiledFunction[\"1\"][x,y]}
+	},
+	{
+		{HoldPattern[$D[{1},f2]]\[RuleDelayed]CompiledFunction[\"5\"],HoldPattern[$D[{3},f2]]\[RuleDelayed]h58,HoldPattern[$D[{4},f2]]\[RuleDelayed]h57},
+		{HoldPattern[f2[x_]]\[RuleDelayed]CompiledFunction[\"4\"][x]}
+	}
+}";
+
+MakeDefs[SymRules_Association, NRules_Association] := Module[
+	{Aux, HeadNumberPair, flatSymRules, flatNRules},
+	
+	flatNRules = Flatten[Values@NRules];
+	flatSymRules = Flatten[Values@SymRules];
+	
+	(*get the list {heads, number}*)
+	HeadNumberPair = CreateHeads[flatSymRules];
+	
+	(*Make Aux[ni] = hi*)
+	MapThread[
+		(Aux[#2] = #1)&,
+		HeadNumberPair
+	];
+	(*Make hi[x__] = ni*)
+	MapThread[
+		(#1[x__] = #2)&,
+		HeadNumberPair
+	];
+	
+	SymUpValues[flatSymRules, Aux];
+	
+	(*Make defs for NRules:*)
+	NDownValue[flatNRules];
+	NUpValue[flatNRules];
+
+]
+
+MakeDefs[x___] := Throw[$Failed, failTag[MakeDefs]]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Calculate symbolic gradient*)
+
+
+TakeGrad::usage="TakeGrad[functionhead_Symbol,  dummyvariables_List, tensorRank_Integer]
+functionhead: Head. Assuming \"functionhead[p1,...,pn,X1,...,XM]\" \[And] gradients with respect to pi
+dummyvariables: Matrix of variables of the form
+{
+	{p1, ..., pn}, 
+	{s1, p2, ..., pn}, 
+	{s1,s2, p3, ...,pn}, 
+	...,
+	{s1,...,sn-1,pn}, 
+	{p1,...,pn, X1, ..., XM}
+},
+tensorRank: tensor rank of \"functionhead[p1,...,pn,X1,...,XM]\".
+Output: gradient of \"functionhead[p1,...,pn, X1,...,XM]\"  (array of rank \"1 + tensorRank\").
+* \"si\" ensures 0's in LD components of arrays
+* \"tensorRank===-1\" returns \"functionhead[p1,...,pn, X1,...,XM]\"
+
+Example:
+>>>Block[
+	{h, dummy = {{x,y}, {s1,x}, {x,y,z}}}, 
+	h[x_,y_, z_] = {Exp[x+y] z, Sin[z +x/y]};
+	{
+		TakeGrad[h, dummy, -1],
+		TakeGrad[h, dummy, 1]
+	}
+]
+
+{
+	{\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(x + y\)]\) z,Sin[\!\(\*FractionBox[\(x\), \(y\)]\)+z]},
+	{{\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(x + y\)]\) z,\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(x + y\)]\) z},{0,\!\(\*FractionBox[\(Cos[\*FractionBox[\(x\), \(y\)] + z]\), \(y\)]\)}}
+}";
+
+TakeGrad[functionhead_Symbol,  dummyvariables_List, tensorRank_Integer]/;(
+	functionhead[[0]] === Symbol && Positive[tensorRank] && DeleteDuplicates[Flatten[dummyvariables][[All,0]]] === {Symbol}
+) := MapIndexed[
+		D[#1, {dummyvariables[[#2//Last]]}]&,
+		functionhead@@(dummyvariables//Last),
+		{tensorRank}
+]
+
+(*Same thing as before, for an scalar*)
+TakeGrad[functionhead_Symbol, dummyvariables_List, 0]/;(
+	DeleteDuplicates[Flatten[dummyvariables][[All, 0]]] === {Symbol}
+) := D[
+	functionhead@@(dummyvariables//Last), 
+	{dummyvariables[[1]]}
+]
+
+(*Overload -1 here should take no derivative, necessary for gradients in GW's. *)
+TakeGrad[functionhead_Symbol, dummyvariables_List, -1]/;(
+	DeleteDuplicates[Flatten[dummyvariables][[All, 0]]] === {Symbol}
+) := functionhead@@(dummyvariables//Last)
+
+
+TakeGrad[x___] := Throw[$Failed, failTag[TakeGrad]]
+
+
+(* ::Subsubsection::Closed:: *)
+(*Calculate numerical gradients*)
+
+
+iCalculateGrads::usage="iCalculateGrads[head_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List,tensorRank_Integer, dim]
+
+head: function head, such that head[p1,...,pn, X1,...,Xm] gives the array.
+Orighs: heads that appear in the explicit expression head[p1,...,pn, X1,...,Xm].
+uniquehs: uniqueHeads for which UpValues were defined from NRules. 
+OpsPoints: set of values to pass to the function in the form of {pf1,pf2,..., XV1, XV2, ...}
+tensorRank: tensorRank of head[p1,...,pn, X1,...,Xm].
+dim: dimension of the square array
+
+Output: LI components of the gradient. 
+
+* \"tensorRank===0\" evaluates the scalar at ObsPoints {...}.
+*\"iCalculateGrads\" assumes that Attributes[h] = {Listable}, i.e., if any of the XVi happen to be a vector the \"head[..., XVi,...]\"automatically
+distributes over the values of XVi, implying that the result is a matrix where each row represents 1 LI component
+evaluated at several different points.
+
+
+Example1:
+>>>Block[
+	{h, obs = {2,3,4,Range[1,5]}},
+	h[x_,y_,z_,w_] = {{(x+y+z) w, (x+y+z) Power[w,2]}, {0, (x+y+z) Sqrt[w]}};
+	Print[2+3+4];
+	iCalculateGrads[h, {},{}, obs, 2, 2]
+]
+>>>9
+>>>{{9,18,27,36,45},{9,36,81,144,225},{9,9 \!\(\*SqrtBox[\(2\)]\),9 \!\(\*SqrtBox[\(3\)]\),18,9 \!\(\*SqrtBox[\(5\)]\)}}
+
+Example2:
+>>>Block[
+	{h, obs = {2,3,4, Range[0,5]}},
+	h[x_,y_,z_,w_] = (x+y+z) w;
+	Print[2+3+4];
+	iCalculateGrads[h, {},{}, obs,0, 3]
+]
+>>>9
+>>>{0,9,18,27,36,45}";
+
+
+iCalculateGrads[head_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List,tensorRank_Integer, dim_, rule_]/;(
+	Length[{Orighs}] === Length[{uniquehs}] && Positive@tensorRank && 
+	Length[ObsPoints] === Length@FunctionVariables[head]
+) := Module[
+    {dummyhead, LIComponents, x, dummyvariables, result},
+    
+    (*Construct pattern variables*)
+    dummyvariables = Unique@ConstantArray[x, Length[ObsPoints]];
+    
+    LIComponents = SymmetrizedIndependentComponents[ConstantArray[dim, tensorRank], Symmetric[All]];
+    
+    Inactive[Set][(*make dummyhead[x1_, x2_,..., head1_, head2_,...]*)
+		dummyhead@@(Pattern[#,_]&/@Join[dummyvariables, {Orighs}]),
+		Extract[head@@dummyvariables, LIComponents]//. rule
+	]//Activate;
+    
+    
+    result = dummyhead@@Join[ObsPoints, {uniquehs}];
+    
+    
+    (*Clean the dummy variables and return result:*)
+    Remove[Evaluate[dummyvariables]];
+    
+    Association@MapThread[
+		Rule,
+		{LIComponents, result}
+    ]
+    
+]//Check[#, Throw["TakeGradFail at order" <> ToString[tensorRank]]]&
+
+iCalculateGrads[h_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List, 0, dim_, rule_]/;(
+	Length[{Orighs}] === Length[{uniquehs}]
+) := Module[
+	{dummyhead, dummyvariables, result,x},
+    
+    (*Construct pattern variables including {Orighs}*)
+    dummyvariables = Unique@ConstantArray[x, Length[ObsPoints]];
+    
+    Inactive[Set][(*make dummyhead[x1_, x2_,..., head1_, head2_,...]*)
+		dummyhead@@(Pattern[#,_]&/@Join[dummyvariables, {Orighs}]),
+		h@@dummyvariables//. rule
+	]//Activate;
+    
+   result = dummyhead@@Join[ObsPoints, {uniquehs}];
+   
+   (*Clean the dummy variables and return result:*)
+    Remove[Evaluate[dummyvariables]];
+   
+   <|{0} -> result|>
+]//Check[#, Throw["TakeGradFail at order" <> ToString[tensorRank]]]&
+
+iCalculateGrads[x___] := Throw[$Failed, failTag[iCalculateGrads]]
+
+
+iGenGrads::usage="iGenGrads[head, dim, obspoints, {Orighs___}, {uniquehs___}, n_, ni_]
+head: head of the function to take gradients
+** Assuming that the function is head[p1,...pdim, X1, ...,Xm]
+dim: gradient dimension
+obspoints: values to pass to the function in the form of {pf1,pf2,..., XV1,XV2, ...}
+n: DALI order
+ni: \"ni===0\" -> gradients from order 0 to n;   \"ni===1\" -> gradients from order 1 to n
+Output: List of gradients, with gradients beeing represented by matrices where each row is  LI component calculated at several points.
+
+Example:
+>>>Block[
+	{h,obs = {2,3,4, SeedRandom[1234];RandomReal[{0,1}, {2,2}], Range[5]}},
+	
+	h[x_, y_, z_, m_, f_] := Exp[x-y+z] Total[m, 2] f;
+	
+	iGenGrads[h, 2, obs, {}, {}, 2, 1]
+]
+
+>>>{
+	{
+		{37.413512887965325`,74.82702577593065`,112.24053866389598`},
+		{-37.413512887965325`,-74.82702577593065`,-112.24053866389598`}
+	},
+	{
+		{37.413512887965325`,74.82702577593065`,112.24053866389598`},
+		{-37.413512887965325`,-74.82702577593065`,-112.24053866389598`},
+		{37.413512887965325`,74.82702577593065`,112.24053866389598`}}
+}";
+
+iGenGrads::negativeOrder="Requested derivative order is not positive";
+iGenGrads::UniqueHeads="Length[{Orighs}] does not match Length[{Uniquehs}]";
+iGenGrads::obsPoints = "Length of obsPoints is not bigger than parameter space dimension";
+	
+iGenGrads[head_Symbol, dim_Integer, obspoints_List, {Orighs___Symbol}, {uniquehs___Symbol}, order_Integer, ni_, rule_]/;(
+	GenMessage[Positive[order],iGenGrads::negativeOrder ] &&
+	GenMessage[Length[{Orighs}] === Length[{uniquehs}], iGenGrads::UniqueHeads ]&& 
+	GenMessage[Length[obspoints] > dim, iGenGrads::obsPoints]
+ ) := Module[
+	{dummyvariables, h1, h2, Auxh, ivars, iiresult},
+    
+    (*Create dummyvariables for TakeGrad:*)
+    ivars = ConstantArray["x", Length@obspoints]//Unique;
+    
+     dummyvariables = Module[
+        {result}, (*Maybe there is a functional way for this*)
+        Reap[
+            result = Sow@ivars[[1;;dim]];
+            Do[
+                result = Sow@ReplacePart[result, i -> Unique["s"]], 
+                {i, 1, dim -1}
+            ];
+        Sow[ivars];
+        
+        ]//Last//Last
+    ];
+        
+    (*Create auxiliar heads for TakeGrad*)
+    Auxh[x_?OddQ] := h1;
+    Auxh[x_?EvenQ] := h2;
+    
+    (*Define a function of the form f[p1,...,pn,X1, ...,Xm] to act on:*)
+    Inactive[Set][
+        Auxh[ni]@@(Pattern[#, _]&/@ivars),
+        head@@ivars
+    ]//Activate;
+    
+    (*Implementing the loop:*)
+    iiresult = Table[
+    (*implelent rule for Derivative:*)
+    Derivative[x__][y_Symbol][k__] := $D[{x},y][k]; Derivative[x__][$D[y_List, s_Symbol]][k__] := $D[{x} + y, s][k];
+    
+        Inactive[Set][
+			Auxh[i+1]@@(Pattern[#,_]&/@ivars),
+			TakeGrad[Auxh[i], dummyvariables, i-1]
+		]//Activate;
+       
+       Clear[Evaluate[Auxh[i]]]; SubValues[Derivative] = (SubValues[Derivative])[[1]];
+       
+       iCalculateGrads[Auxh[i+1], {Orighs}, {uniquehs}, obspoints, i, dim, rule],
+       {i, ni, order} 
+    ];
+    
+    (*Clean vars and return result*)
+    Remove[Evaluate[Flatten[dummyvariables]//DeleteDuplicates]];
+    
+    iiresult
+]
+
+iGenGrads[x___] := Throw[$Failed, failTag[iGenGrads]]
+
+
+GenGrads::usage="GenGrads[head, dim, obspoints, {Orighs___}, {uniquehs___}, n_]
+Output: iGenGrads[head, dim, obspoints, {Orighs___}, {uniquehs___}, n_, 1]
+
+
+GenGrads[{heads__}, {dims__}, {obspoints__}, {Orighs___}, {uniquehs___}, n_]
+Evaluates iGenGrads for the sequence of heads, dimensions and obspoints provided, including the \"0\" order derivative.
+Output: List of \"Length[{heads__}]\" associations where each one contains all the gradients of \"{head}[[i]]\".
+
+Example:
+>>>Block[
+	{h1, h2, l1 = {1,2, Range[5]}, l2 = {1,2,3,Range[5]}},
+	
+	h1[x_, y_, z_] = Cosh[x]+Sin[y] - \!\(\*SuperscriptBox[\(\[ExponentialE]\), \(z\)]\);
+	h2[x_,y_,z_, w_] = \!\(\*SuperscriptBox[\(\[ExponentialE]\), \(w + x\)]\) - Tan[y + z];
+	
+	GenGrads[{h1,h2}, {2,3}, {l1,l2}, {}, {}, 2]
+]
+
+>>>{
+	\[LeftAssociation]
+		{0}\[Rule]-1+Cosh[1]+Sin[2],
+		{1}\[Rule]Sinh[1],
+		{2}\[Rule]Cos[2],
+		{1,1}\[Rule]Cosh[1],
+		{1,2}\[Rule]0,
+		{2,2}\[Rule]-Sin[2]
+	\[RightAssociation],
+	\[LeftAssociation]
+		{0}\[Rule]1-Tan[5],
+		{1}\[Rule]{\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(2\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(3\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(4\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(5\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(6\)]\)},
+		{2}\[Rule]-Sec[5\!\(\*SuperscriptBox[\(]\), \(2\)]\),
+		{3}\[Rule]-Sec[5\!\(\*SuperscriptBox[\(]\), \(2\)]\),
+		{1,1}\[Rule]{\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(2\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(3\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(4\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(5\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(6\)]\)},
+		{1,2}\[Rule]0,
+		{1,3}\[Rule]0,
+		{2,2}\[Rule]-2 Sec[5\!\(\*SuperscriptBox[\(]\), \(2\)]\) Tan[5],
+		{2,3}\[Rule]-2 Sec[5\!\(\*SuperscriptBox[\(]\), \(2\)]\) Tan[5],
+		{3,3}\[Rule]-2 Sec[5\!\(\*SuperscriptBox[\(]\), \(2\)]\) Tan[5]
+	\[RightAssociation]
+}";
+
+
+GenGrads[head_Symbol, dim_Integer, obspoints_List, {Orighs___Symbol}, {uniquehs___Symbol}, order_Integer, rule_] := Module[
+	{result, labels},
+	
+	result = iGenGrads[head, dim, obspoints, {Orighs}, {uniquehs}, order, 1, rule];
+	
+	(*Transform the list of associations { <|{1} -> ...,{2} -> ...,  ...|>, <|{1,1} -> ..., {1,2} -> ..., ... |>},
+	into 1 association of matrices with dimensions {number of obs points, number of LIComponents}*)
+	
+	result = Transpose[Values[#]]&/@result;
+	labels = ("or" <> ToString[#])&/@Range[order];
+	
+	Association@MapThread[
+		Rule,
+		{labels, result}
+	]
+		
+]
+
+GenGrads[{heads__Symbol}, {dims__Integer}, {obspoints__List}, {Orighs___Symbol}, {uniquehs___Symbol}, order_Integer, rule_]/;(
+	Length[{heads}] === Length[{dims}] === Length[{obspoints}] && Length[{heads}]> 1
+) := With[
+	{},
+	
+	Table[
+		Association@@iGenGrads[{heads}[[i]], {dims}[[i]], {obspoints}[[i]], {Orighs}, {uniquehs}, order, 0, rule],
+		{i, 1, Length@{heads}}
+	]
+]
+
+GenGrads[x___] := Throw[$Failed, failTag[GenGrads]]
+
+
+FillEmpty[{}] := {0}; FillEmpty[x_List]/; (Length@x >= 1) := x;
+FillEmpty[x___] := Throw[$Failed, failTag[FillEmpty]]
+
+
+PartitionLIComponents::usage="PartitionLIComponents[LIcomponents_List, {varnumbers__}]
+LIComponents: list of LIComponents to subdivide
+varnumbers: numbers of variables of each function in sequence
+Output: List of lists of corresponding derivatives in each coordinate for each LIcomponent.
+
+Example:
+>>>With[
+	{
+		li = {{1,1},{1,2},{1,3},{1,4},{2,2},{2,3},{2,4},{3,3},{3,4},{4,4}}
+	},
+	PartitionLIComponents[li, {2,2}]
+]
+	
+>>>{
+	{{1,1},{1,2},{1},{1},{2,2},{2},{2},{0},{0},{0}},
+	{{0},{0},{3},{4},{0},{3},{4},{3,3},{3,4},{4,4}}
+}";
+	
+
+PartitionLIComponents[LIcomponents_List, {varnumbers__}]/;(MatrixQ[LIcomponents, NumberQ]):= Module[
+	{iList, set, cases},
+	
+	(*create a list of ranges of vars { {1,..., n1}, {1,...,n2}, ... }*)
+	iList = Range/@{varnumbers};
+	(*displace the variables  {0, n1, n1+n2, ...} + { {1,..., n1}, {1,...,n2}, ... } *)
+	iList = (FoldList[Plus, 0, {varnumbers}])[[1;;-2]] + iList;
+	
+	(*split the sets of variables into set[1], set[2], ...*)
+	(set[#] = iList[[#]])&/@Range[Length@iList];
+	
+	(*apply cases to isolate different sets:*)	
+	(cases[#] = Cases[Alternatives@@set[#]]/@LIcomponents)&/@Range[Length@iList];
+	
+	(*Replace {} -> {0}: *)
+	(FillEmpty/@cases[#])&/@Range[Length@iList]
+]
+
+PartitionLIComponents[x___] := Throw[$Failed]
+
+
+MakeGradient::usage="MakeGradient[{gradients__Association}, {varnumbers__Integer}, LIComponents_]
+
+{gradients}: List of associations with all components of all gradients of a function (the Values of the 
+association are either numbers or Lists if the function depends on the frequecy)
+{varnumbers}: corresponding list of how many vars each function has
+LIComponents: LIComponents of the target gradient
+	
+Output: list with the values of LIComponents, tipically a matrix where each row is the values of the LIComponent
+for all frequency points fi";
+
+
+MakeGradient[{gradients__Association}, {varnumbers__Integer}, LIComponents_] := Module[
+	{partitionedList, result},
+	
+	
+	partitionedList = PartitionLIComponents[LIComponents, {varnumbers}];
+	
+	result = MapThread[
+		#1/@#2&,
+		{{gradients}, partitionedList}
+	]; (*{
+			{Ass1comps__}, {Ass2comps__}, ...
+		} if Assi came from hi that depend on freq. {Assicomps__} is a matrix. Changing the overall head by Times,
+			we can do {Ass1comps__}*{Ass2comps__}*... which will return the list of LI components of the full gradient
+			evaluated at all frequency points for each component.
+		*)
+	
+	Times@@result	
+]
+
+MakeGradient[x___] := Throw[$Failed, failTag[MakeGradient]]
+
+
+FillEmpty[{}] := {0}; FillEmpty[x_List]/; (Length@x >= 1) := x;
+FillEmpty[x___] := Throw[$Failed, failTag[FillEmpty]]
+
+
+PartitionLIComponents::usage="
+PartitionLIComponents[LIcomponents_List, {varnumbers__}]
+
+LIComponents: list of LIComponents to subdivide
+varnumbers: numbers of variables of each function in sequence
+	
+Output: List of lists of corresponding derivatives in each coordinate for each LIcomponent.
+
+Example:
+With[
+	{
+		li = {{1,1},{1,2},{1,3},{1,4},{2,2},{2,3},{2,4},{3,3},{3,4},{4,4}}
+	},
+	PartitionLIComponents[li, {2,2}]
+]
+Returns:	
+	{
+		{{1,1},{1,2},{1},{1},{2,2},{2},{2},{0},{0},{0}},
+		{{0},{0},{3},{4},{0},{3},{4},{3,3},{3,4},{4,4}}
+	}";
+
+
+PartitionLIComponents[LIcomponents_List, {varnumbers__}]/;(MatrixQ[LIcomponents, NumberQ]):= Module[
+	{iList, set, cases},
+	
+	(*create a list of ranges of vars { {1,..., n1}, {1,...,n2}, ... }*)
+	iList = Range/@{varnumbers};
+	(*displace the variables  {0, n1, n1+n2, ...} + { {1,..., n1}, {1,...,n2}, ... } *)
+	iList = (FoldList[Plus, 0, {varnumbers}])[[1;;-2]] + iList;
+	
+	(*split the sets of variables into set[1], set[2], ...*)
+	(set[#] = iList[[#]])&/@Range[Length@iList];
+	
+	(*apply cases to isolate different sets:*)	
+	(cases[#] = Cases[Alternatives@@set[#]]/@LIcomponents)&/@Range[Length@iList];
+	
+	(*Replace {} -> {0}: *)
+	(FillEmpty/@cases[#])&/@Range[Length@iList]
+]
+
+
+MakeGradient::usage="MakeGradient[{gradients__Association}, {varnumbers__Integer}, LIComponents_]
+{gradients}: List of associations with all components of all gradients of a function (the Values of the 
+association are either numbers or vectors)
+{varnumbers}: corresponding list of how many vars each function has
+LIComponents: LIComponents of the target gradient
+Output: list with the values of LIComponents.
+
+Example:
+>>>Block[
+	{h1, h2, LI},
+	Head[h1] ^= Association; Head[h2] ^= Association; 
+	LI = Echo[SymmetrizedIndependentComponents[{4,4}, Symmetric[All]]];
+	MakeGradient[{h1,h2}, {2,2}, LI]
+]
+>>>{{1,1},{1,2},{1,3},{1,4},{2,2},{2,3},{2,4},{3,3},{3,4},{4,4}}
+>>>{
+	h1[{1,1}] h2[{0}],
+	h1[{1,2}] h2[{0}],
+	h1[{1}] h2[{3}],
+	h1[{1}] h2[{4}],
+	h1[{2,2}] h2[{0}],
+	h1[{2}] h2[{3}],
+	h1[{2}] h2[{4}],
+	h1[{0}] h2[{3,3}],
+	h1[{0}] h2[{3,4}],
+	h1[{0}] h2[{4,4}]
+}";
+
+MakeGradient[{gradients__}, {varnumbers__Integer}, LIComponents_]/;(
+	DeleteDuplicates@(Head/@{gradients}) === {Association}
+):= Module[
+	{partitionedList, result},
+	
+	
+	partitionedList = PartitionLIComponents[LIComponents, {varnumbers}];
+	
+	result = MapThread[
+		#1/@#2&,
+		{{gradients}, partitionedList}
+	]; (*{
+			{Ass1comps__}, {Ass2comps__}, ...
+		} if Assi came from hi that depend on freq. {Assicomps__} is a matrix. Changing the overall head by Times,
+			we can do {Ass1comps__}*{Ass2comps__}*... which will return the list of LI components of the full gradient
+			evaluated at all frequency points for each component.
+		*)
+	
+	Times@@result	
+]
+
+MakeGradient[x___] := Throw[$Failed, failTag[MakeGradient]]
+
+
+GradientsList::usage="GradientsList[{gradients__}, {varnumbers__Integer}, n_Integer]
+{gradients}: associations with all gradient components
+{varnumbers}: number of variables of each function in the list
+n: max gradient order
+Output: List of all Full gradients from order 1 to n.
+
+Example:
+>>>Block[
+	{f, g},
+	Head[f] ^= Association; Head[g] ^= Association; 
+	GradientsList[{f,g}, {2,2},  2]
+]
+>>>{
+	{
+		f[{1}] g[{0}],
+		f[{2}] g[{0}],
+		f[{0}] g[{3}],
+		f[{0}] g[{4}]
+	},
+	{
+		f[{1,1}] g[{0}],
+		f[{1,2}] g[{0}],
+		f[{1}] g[{3}],
+		f[{1}] g[{4}],
+		f[{2,2}] g[{0}],
+		f[{2}] g[{3}],
+		f[{2}] g[{4}],
+		f[{0}] g[{3,3}],
+		f[{0}] g[{3,4}],
+		f[{0}] g[{4,4}]
+	}
+}";
+
+GradientsList[{gradients__}, {varnumbers__Integer}, n_Integer]/;(
+	DeleteDuplicates[Head/@{gradients}] === {Association}
+) :=Module[
+	{dim = Plus@@{varnumbers}, LIComponents, result},
+	
+	(LIComponents[#] = SymmetrizedIndependentComponents[
+		ConstantArray[dim, #], Symmetric[All]
+	])&/@Range[n];
+	
+	result = MakeGradient[{gradients}, {varnumbers}, LIComponents[#]]&/@Range[n];
+	
+	(*Transpose the matrices representing gradients and make an association:*)
+	result = Transpose/@result;
+	
+	Association@MapThread[
+		Rule,
+		{("or" <> ToString[#])&/@Range[n], result}
+	]	
+	
+]
+
+GradientsList[x___] := Throw[$Failed, failTag[GradientsList]]
+
+
+(* ::Subsection::Closed:: *)
+(*Make DALI Tensors*)
 
 
 (* ::Subsubsection::Closed:: *)
 (*GenDaliTerm*)
 
 
-(*These are now lists of vectors carrying LI components only*)
-
-GenDaliTerm[grads1_List, grads2_List,matrix_List, True]/;(
+GenDaliTerm[grads1_List, grads2_List, matrix_List, True]/;(
 	MatrixQ[grads1, NumberQ] &&MatrixQ[grads2, NumberQ]
 ) := Flatten[Transpose[grads1] . grads2]
 
@@ -185,12 +927,19 @@ GenDaliTerm[grads1_, grads2_, matrix_, False]/;(
 	MatrixQ[grads1, NumberQ] &&MatrixQ[grads2, NumberQ]
 ) := Flatten[Transpose[grads1] . matrix . grads2]
 
+
+GenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_,  \[CapitalDelta]f_, "GWs"] := Module[
+    {complexSum},
+    (*Likelihood def. eq. 42 of https://arxiv.org/pdf/1809.02293*)
+    complexSum = Flatten[gradlist1\[ConjugateTranspose] . (gradlist2/SensitivityVector)];
+    (*Flatten@Total@MapThread[
+         KroneckerProduct, 
+         {Conjugate[gradlist1],  Divide[gradlist2, SensitivityVector]}
+     ];*)
+    4 \[CapitalDelta]f Re[complexSum]  (*I think this 4 \[CapitalDelta]f can be just absorbed in the normalization...*)
+]
+
 GenDaliTerm[x___] := Throw[$Failed, failTag[GenDaliTerm]];
-
-
-(*TEST:*)
-
-(*Create lists of symmetrized arrays*)
 
 
 (*list1 = Table[
@@ -240,118 +989,18 @@ Clear[list1, list2, a, aValues, values1, values2, values3, matrix,  termValues]*
 
 
 (* ::Subsubsection::Closed:: *)
-(*RecoverSymmetric*)
-
-
-(*Note that for the Fisher Matrix and any product of the same tensors you include the components for perms between
-pairs of indices, so it is best to leave it that way:*)
-
-IndComponents[dim_Integer, i_,j_] := Module[
-    {list1, list2}, 
-    
-    list1 = SymmetrizedIndependentComponents[ConstantArray[dim, i], Symmetric[All]];
-    list2 = SymmetrizedIndependentComponents[ConstantArray[dim, j],Symmetric[All]];
-    
-    Outer[{#1,#2}&, list1, list2, 1]//Flatten[#,1]&
-]
-
-
-(*TEST: JUST format*)
-
-(*IndComponents[3, 2, 1]
-IndComponents[3,1,1]*)
-
-
-RecoverSymmetric[vectorOfLIcomponents_?VectorQ, dim_?IntegerQ,  {i_,  j_} ] := Module[
-    {listOfRules,  listIndcomp, \[Alpha], \[Beta], \[Alpha]list, \[Beta]list, joinedList},
-    listIndcomp = IndComponents[dim,i,j];
-    
-    listOfRules = Association[
-        Rule@@@(Riffle[listIndcomp, vectorOfLIcomponents]//Partition[#,2]&)
-    ];
-    
-    \[Alpha]list = SymbolConcatenate[\[Alpha],#]&/@Range[i]; 
-    \[Beta]list = SymbolConcatenate[\[Beta], #]&/@Range[j];
-    joinedList = Join[\[Alpha]list, \[Beta]list];
-    
-    
-    Table[
-        listOfRules[{Sort[\[Alpha]list], Sort[\[Beta]list]}], 
-        
-        Evaluate[
-            Sequence@@(Riffle[joinedList, ConstantArray[dim, i+j]]//Partition[#,2]&)
-        ]
-    ]
-]
-
-
-(*TEST: Just the Format for now*)
-
-(*DEFINE YOUR TENSORS FOR THE DaliList*)
-
-
-(*fm = SymmetrizedArray[
-    Rule@@@(Riffle[
-         SymmetrizedIndependentComponents[{4,4}, Symmetric[All]],
-         RandomReal[{0,10}, {10}]
-    ]//Partition[#,2]&), 
-    {4,4},
-    Symmetric[All]
-];
-
-tensor1 = SymmetrizedArray[
-    Rule@@@(Riffle[
-         SymmetrizedIndependentComponents[{4,4,4}, {{Symmetric[{1,2}]},  {Symmetric[{3}] } } ],
-         RandomReal[{0,10}, {40}]
-    ]//Partition[#,2]&), 
-    {4,4, 4},
-    {{Symmetric[{1,2}]},  {Symmetric[{3}]}}
-];
-
-tensor2 = SymmetrizedArray[
-    Rule@@@(Riffle[
-         SymmetrizedIndependentComponents[{4,4,4,4}, {{Symmetric[{1,2}]},  {Symmetric[{3,4}] } } ],
-         RandomReal[{0,10}, {100}]
-    ]//Partition[#,2]&), 
-    {4,4, 4,4},
-    {{Symmetric[{1,2}]},  {Symmetric[{3,4}]}}
-];
-
-(*Create the DALI list:*)
-daliList = Map[Normal, {{fm}, {tensor1, tensor2}}, {2}];
-
-(*Now create the values and the corresponding DALIlist of LI components*)
-fmValues = Values[fm["ArrayRules"]];
-tensor1Values = Values[tensor1["ArrayRules"]];
-tensor2Values = Values[tensor2["ArrayRules"]];
-
-daliListValues = {{(Normal@fm)//Flatten},{tensor1Values, tensor2Values}};
-
-(*Compare RecoverSymmetric against Normal:*)
-MapIndexed[RecoverSymmetric[#1, 4, #2]&, daliListValues, {2}] == daliList
-
-Clear[fm, tensor1, tensor2, daliList, fmValues, tensor1Values, tensor2Values, daliListValues]*)
-
-
-
-(* ::Subsubsection:: *)
 (*GenDaliList*)
 
 
-GenDaliList[list_Symbol, order_Integer, diag_?TrueQ, matrix_List, dim_] := Module[
-    {dummy, clearList, DaliList},
-    
-    clearList[i_, order] := ReleaseHold@ToExpression[ToString[list] <> ToString[i] <> "=.", InputForm, Hold];
+GenDaliList[list_Association, order_Integer, diag_?TrueQ, matrix_List, dim_] := Module[
+    {dummy, DaliList},
     
     DaliList = Do[
-        dummy = Divide[SymbolConcatenate[list,i], matrix^2]; 
-        
+        dummy = Divide[list["or" <> ToString[i]], matrix^2]; 
         Do[
-            Sow[#,k]&@GenDaliTerm[SymbolConcatenate[list,k], dummy, matrix, diag]; 
-            clearList[i, k],
-            {k, i, order}  (*Not a fan of nested Do, but I want to generate dummy just once for each i *)
+            Sow[#,k]&@GenDaliTerm[list["or"<>ToString[k]], dummy,  matrix,  diag],
+            {k, i, order}
          ],
-       
        {i, 1, order}
     ]//Reap//Last;
     
@@ -359,15 +1008,25 @@ GenDaliList[list_Symbol, order_Integer, diag_?TrueQ, matrix_List, dim_] := Modul
 ]
 
 
-GenDaliList[list_Symbol, order_Integer, diag_/;(diag==False), matrix_List, dim_] := Module[
-    {clearList, DaliList},
-    
-    clearList[i_, order] := ReleaseHold@ToExpression[ToString[list] <> ToString[i] <> "=.", InputForm, Hold];
+GenDaliList[list_Association, order_Integer, diag_/;(diag==False), matrix_List, dim_] := Module[
+    {DaliList},
     
     DaliList = Do[
-        Sow[#,k]&@GenDaliTerm[SymbolConcatenate[list,k], SymbolConcatenate[list,i], matrix, diag]; 
-        clearList[i,k],
-        {i, 1, order},{k, i, order}
+        Sow[#,k]&@GenDaliTerm[list["or" <>ToString[k]], list["or" <> ToString[i]], matrix, diag],
+        {i, 1, order}, {k, i, order}
+    ]//Reap//Last;
+    
+    DaliList
+    
+]
+
+
+GenDaliList[list_Association, order_Integer, Sn_List, \[CapitalDelta]f_, "GW"] := Module[
+    {DaliList},
+    
+    DaliList = Do[
+        Sow[#,k]&@GenDaliTerm[list["or" <>ToString[k]], list["or" <> ToString[i]],Sn, \[CapitalDelta]f, "GWs"],
+        {i, 1, order}, {k, i, order}
     ]//Reap//Last;
     
     DaliList
@@ -443,215 +1102,53 @@ automaticDAliLIst = GenDaliList["Values", 3, False, testmatrix, 4];
 manualDALIlist == automaticDAliLIst*)
 
 
+(* ::Subsubsection:: *)
+(**)
+
+
 (* ::Section::Closed:: *)
 (*DALICoefficients*)
 
 
-(* ::Subsection::Closed:: *)
-(*step1*)
-
-
-(*
-I could also replace the full symbolic array by an association, with this I would probably not need an full array
-	functionhead: head of function that you want to take the gradient
-	dummyvariables: Matrix of variables of the form
-	 {
-		{p1, ..., pn}, {Subscript[s, 1], p2, ..., pn}, {Subscript[s, 1],Subscript[s, 2], p3, ...,pn}, ...,{Subscript[s, 1],...,Subscript[s, n-1],pn}, {p1,...,pn, X1, ..., XM}
-	},
-	* Assuming your function depends on (p1,...,pn,X1,...,XM) and your gradients are with respect to pi. 
-	(Subscript[s, i] just ensure 0's in LD components of the arrays)
-	tensorRank: tensor rank of the function ```functionhead```.
-	Output: the gradient of functionhead[p1,...,pn, X1,...,XM], i.e. an array of rank (tensorRank+1), 
-	with zeros in the LD components of the array. 
-*)
-
-TakeGrad[functionhead_Symbol,  dummyvariables_List, tensorRank_Integer]/;(
-	functionhead[[0]] === Symbol && Positive[tensorRank] && DeleteDuplicates[Flatten[dummyvariables][[All,0]]] === {Symbol}
-) := MapIndexed[
-		D[#1, {dummyvariables[[#2//Last]]}]&,
-		functionhead@@(dummyvariables//Last),
-		{tensorRank}
-]
-
-
-(*Same thing as before, for an scalar*)
-TakeGrad[functionhead_Symbol, dummyvariables_List, tensorRank_Integer]/;(
-	 tensorRank==0 && DeleteDuplicates[Flatten[dummyvariables][[All, 0]]] === {Symbol}
-) := D[
-	functionhead@@(dummyvariables//Last), 
-	{dummyvariables[[1]]}
-]
-
-TakeGrad[x___] := Throw[$Failed, failTag[TakeGrad]]
-
-
-(*
-	head: head such that head[p1,...,pn, X1,...,Xm] gives your array.
-	Orighs: heads that appear in the explicit expression head[p1,...,pn, X1,...,Xm].
-	uniquehs: uniqueHeads for which UpValues were defined from NRules. 
-	OpsPoints: set of values to pass to the function in the form of {pf1,pf2,..., Overscript[X, ->]1, Overscript[X, ->]2, ...},
-	pfi are numbers and Overscript[X, ->]i are lists of numbers.
-	
-	Output: List of gradients (only the LI components of head[p1,...,pn, X1,...,Xm]) evaluated at 
-	{
-		{pf1,pf2,...,Subscript[( Overscript[X, ->]1), 1], Subscript[(Overscript[X, ->]2), 1], ...},
-		{pf1,pf2,...,Subscript[( Overscript[X, ->]1), 2], Subscript[(Overscript[X, ->]2), 2], ...},
-		{pf1,pf2,...,Subscript[( Overscript[X, ->]1), 3], Subscript[(Overscript[X, ->]2), 3], ...},
-		...
-	}
-*)
-
-CalculateGrads[head_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List,tensorRank_Integer]/;(
-	Length[{Orighs}] === Length[{uniquehs}] && Positive@tensorRank && 
-	Length[ObsPoints] === Length@FunctionVariables[head]
+DALICoefficients[h_, {vars_List, fp_List, n_Integer}, {Cov_, Diag_?BooleanQ}, SymRules_:<||>, NRules_:<||>]/;(
+	(MatrixQ[Cov, NumericQ] && Diag===False) || (VectorQ[Cov, NumericQ] && Diag===True) &&
+	VectorQ[vars] && Positive[n]
 ) := Module[
-    {dummyhead, LIComponents, x, dummyvariables, result, dim = Count[ObsPoints, _?NumberQ]},
-    
-    (*Construct pattern variables*)
-    dummyvariables = Unique@ConstantArray[x, Length[ObsPoints]];
-    
-    LIComponents = SymmetrizedIndependentComponents[ConstantArray[dim, tensorRank], Symmetric[All]];
-    
-    Inactive[Set][(*make dummyhead[x1_, x2_,..., head1_, head2_,...]*)
-		dummyhead@@(Pattern[#,_]&/@Join[dummyvariables, {Orighs}]),
-		Extract[head@@dummyvariables, LIComponents];
-	]//Activate;
-    
-    result = dummyhead@@Join[ObsPoints, {uniquehs}];
-    
-    (*
-    assuming the components of the function are listable, this is a list of lists, where each list is a 
-    LI component evaluated at several points.
-    Transpose to return a list of lists where each sublist is all LI components evaluated at a single point
-    *)
-    
-    Transpose@result
+	{SymRulehs, Orighs, Uniquehs, iNRules, gradients, dim = vars[[-1]]},
+	
+	(*Make iNRules with Unique heads and set up defs from SymRules and NRules:*)
+	SymRulehs = Last[#,#]&/@(Flatten[Values@SymRules][[All, 1, 0]]);
+	SymRulehs = DeleteDuplicates[SymRulehs];
+	Orighs = Last[#,#]&/@(Flatten[Values@NRules][[All, 1, 0]]);
+	Orighs = DeleteDuplicates[Orighs];
+	
+	Uniquehs = Unique[Orighs];
+	iNRules = Replace[NRules, Thread@Rule[Orighs, Uniquehs], {4,5}, Heads->True];
+	MakeDefs[SymRules, iNRules];  Clear[iNRules];
+	
+	
+	Unprotect[Derivative]; (*Overload of derivative happening in iGenGrads*)
+	
+	gradients = GenGrads[h, dim, fp, Orighs, Uniquehs, n, {}];
+	
+	(*Clean definitions:*)
+	Remove[Evaluate[Uniquehs]]; GCSymRules[SymRulehs];  Protect[Derivative];
+	
+	(*This will give you a list of DALIlists:*)
+	
+	GenDaliList[gradients, n, Diag, Cov, dim] 
 ]
 
 
-CalculateGrads[x___] := Throw[$Failed, failTag[CalculateGrads]]
-
-
-(*TEST:*)
-
-(*SetAttributes[sym2, Listable];
-sym2[x_, y_, z_, w_] =  { {2 Sin[x y z] \[ExponentialE]^(w+y), Cos[x+y] }, {0, Sin[x z] } };
-testlist = Transpose[RandomReal[{0.,1.},{10,4}]];
-CalculateGrads[sym2, testlist, test, $MachinePrecision, 2, 2]
-
-test == (   Delete[#, 3]&/@(Flatten/@(sym2@@testlist) ))
-
-ClearAll[sym2, testlist, test]*)
-
-
-FunctionVariables[head_] := Module[
-	{s},
-	s = (DownValues[head][[1,1]]);
-	(Hold@@s)/. Hold[h_[x__]] :> {x}[[All,1]]
-]
-
-
-(*
-	head: head of the function to take gradients
-	vars: {p1, ..., pn, X1, ..., Xm}; 
-	obspoints: set of values to pass to the function in the form of {pf1,pf2,..., Overscript[X, ->]1, Overscript[X, ->]2, ...}
-	order: desired derivative order
-	Output: {list1, list2,...}, where 
-	Subscript[list, i] = {\[Del]^ihead[pf1, pf2...,( Overscript[X, ->]1) ] }
-*)
-GenGrads[head_Symbol, vars_List, obspoints_List, {Orighs___Symbol}, {uniquehs___Symbol}, order_Integer]/;(
-	Positive[order] && Length[{Orighs}] === Length[{uniquehs}] && 
-	Length[obspoints] === Length@FunctionVariables[head] === Length[vars]
- ) := Module[
-	{dummyvariables, dim = Count[obspoints, ?NumberQ], h1, h2, Auxh},
-    
-    (*Create dummyvariables for TakeGrad:*)
-     dummyvariables = Module[
-        {result}, (*Maybe there is a functional way for this*)
-        Reap[
-            result = Sow@vars[[1;;dim]];
-            Do[
-                result = Sow@ReplacePart[result, i -> Unique["s"]], 
-                {i, 1, dim -1}
-            ];
-        Sow[vars];
-        
-        ]//Last//Last
-    ];
-        
-    (*Create auxiliar heads for TakeGrad*)
-    Auxh[x_?OddQ] := h1;
-    Auxh[x_?EvenQ] := h2;
-    
-    (*Define a function of the form f[p1,...,pn,X1, ...,Xm] to act on:*)
-    Inactive[Set][
-        h1@@(Pattern[#, _]&/@vars),
-        head@@FunctionVariables[head]
-    ]//Activate;
-    
-    (*Implementing the loop:*)
-    Table[
-        Inactive[Set][
-			Auxh[i+1]@@(Pattern[#,_]&/@vars),
-			TakeGrad[Auxh[i], dummyvariables, i-1]
-		]//Activate;
-       
-       Clear[Evaluate[Auxh[i]]];
-    
-       CalculateGrads[Auxh[i+1], {Orighs}, {uniquehs}, obspoints, i],
-       {i, 1, order} 
-    ]
-]
-
-
-GenGrads[x___] := Throw[$Failed, failTag[GenGrads]]
-
-
-(*TEST, Just output format, not its correctness, for now: *)
-
-(*sym2[x_, y_, z_, w_] =  Sin[x y z] \[ExponentialE]^(w+y);
-points = Transpose@RandomReal[{0.,1.}, {10, 4}];
-
-GenGrads[sym2[x,y,z,w], {x,y,z}, 3, points, 3, list, $MachinePrecision, {}, {}]
-
-Table[TensorRank/@ToSymbol["list",i], {i,1,3}]
-Table[Length/@ToSymbol["list",i], {i,1,3}]
-ClearAll[list1,list2,list3,points, sym2 ]*)
-
-
-(* ::Subsection::Closed:: *)
-(*GetDALITensors*)
-
-
-SetAttributes[DALICoefficients, HoldFirst];
-
-DALICoefficients[FTheory_, parameters_List, {\[Sigma]_List, diagonal_?BooleanQ}, ObservationPoints_List,wp_:$MachinePrecision, symbolicRules_:{}, numericalRules_:{}]/;And[(*Conditions on the Input:*)
-        Head/@(List@@Unevaluated[FTheory]) == ConstantArray[Symbol,  Length@(List@@Unevaluated[FTheory]) ],
-        Length@parameters==3,
-        Head/@parameters == {List, List, Integer},
-        parameters[[-1]] > 0, 
-        Length[ parameters[[1]] ] ==  Length[ parameters[[2]] ],
-        Length[\[Sigma]] == Length[ObservationPoints]
-    ]:= Module[
-
-{\[Sigma]list, obspoints, DaliList, list, dim, DOrder},
-
-(*##############################################  DECLARING BASIC VARIABLES ################################################################*)
-
-dim = parameters[[1]]//Length;
-DOrder = parameters//Last;
-\[Sigma]list =\[Sigma];
-
-obspoints = Transpose[ (*REDUNDANT BECAUSE LISTABILITY ALLOWS FOR f[x1,x2, list1, list2]*)
-         ({parameters[[2]], #}//Flatten)&/@ObservationPoints
-     ];
-
-(*############################################EXECUTING FUNCTIONS ##########################################################################*)
-
-GenGrads[FTheory, parameters[[1]], dim, obspoints, DOrder, list, wp, symbolicRules,  numericalRules];
-
-GenDaliList[list, Max@DOrder, diagonal, \[Sigma]list,  dim]
-]
+(*Block[
+	{h1,h2,l1 = {1,2,Range[5]}, l2 = {1,2,3,Range[5]}},
+	
+	h1[x_,y_,z_] = Cosh[x] Sin[y] \[ExponentialE]^z;
+	h2[x_,y_,z_, w_] = \[ExponentialE]^(w+x) - Tan[y+z];
+	
+	GenGrads[h1,2, l1, {}, {}, 3, {}]["or3"]//MatrixForm
+	
+]*)
 
 
 (*HEADTEST[x_, y_, z_, w_] =  Sin[x y z]*E^(w+y);
@@ -664,95 +1161,70 @@ Map[TensorRank, test, {2}]
 Clear[HEADTEST, points, \[Sigma], test]*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*GWDALICoefficients*)
 
 
-(*Likelihood def. eq. 42 of https://arxiv.org/pdf/1809.02293*)
-GWGenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_, \[CapitalDelta]f_] := Module[
-    {complexSum },
-    
-    complexSum = Flatten@Total@MapThread[ 
-         KroneckerProduct, 
-         {Conjugate[gradlist1],  Divide[gradlist2, SensitivityVector]}
-     ];
-    4 \[CapitalDelta]f Re[complexSum]  (*I think this 4 \[CapitalDelta]f can be just absorbed in the normalization...*)
+iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, f1_, \[CapitalDelta]f_}, {PSD__}, SymRules_, NRules_]/;(
+	Length[{h}] === Length[{vars}] === (Length[{fp}] - (detecs - 1 )) &&
+	f1>f0 && MatrixQ[{PSD}, NumericQ] && {SymRules, NRules}[[All,0]] === {Association,Association} && Length[{PSD}] === detecs
+) := Module[
+	{SymRulehs, Orighs, Uniquehs, iNRules, idetecHs, dims = {vars}[[All, -1]], detectorGradients, fvec, ObsPoints, remainingGradients, result},
+	
+	(*Make iNRules with Unique heads and set up defs from SymRules and NRules:*)
+	SymRulehs = Last[#,#]&/@(Flatten[Values@SymRules][[All, 1, 0]]);
+	SymRulehs = DeleteDuplicates[SymRulehs];
+	Orighs = Last[#,#]&/@(Flatten[Values@NRules][[All, 1, 0]]);
+	Orighs = DeleteDuplicates[Orighs];
+	
+	Uniquehs = Unique[Orighs];
+	iNRules = Replace[NRules, Thread@Rule[Orighs, Uniquehs], {4,5}, Heads->True];
+	EchoTiming[MakeDefs[SymRules, iNRules], "MakeDefs"]; Clear[iNRules];
+	
+	
+	(*Define some basic quantities:*)
+	idetecHs = ConstantArray[{h}[[1]], detecs];
+	fvec = Range[f0,f1, \[CapitalDelta]f];
+	ObsPoints = Table[Join[{fp}[[i]], {fvec}], {i, Length@{fp}}];   (*Join[{#}, {fvec}]&/@{fp};*)
+	
+
+	Unprotect[Derivative]; (*Overloading of Derivative happening in iGenGrads*)
+	(*Calculate the detector and remaining gradients:*)
+	
+	detectorGradients = EchoTiming[GenGrads[idetecHs, dims[[1]]&/@Range[detecs], ObsPoints[[1;;detecs]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}], "detectors"];
+
+	remainingGradients = EchoTiming[GenGrads[{h}[[2;;-1]], dims[[2;;-1]], ObsPoints[[detecs+1;;-1]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}], "Core WF"];
+	
+	
+	(*Clean definitions:*)
+	
+	Remove[Evaluate[Uniquehs]]; GCSymRules[SymRulehs]; Protect[Derivative];
+	
+	(*redefine remaining gradients indices {1,2} -> {3,4} and so on*)
+	
+	remainingGradients = EchoTiming[MapThread[
+		KeyMap[Function[{x}, If[x[[1]] >0, x + #1, x]], #2]&, 
+		{FoldList[Plus, 0, dims][[2;;-2]], remainingGradients}
+	], "Redefine labels"];
+	
+	(*Calculate full gradients for each detector, you have  a list of associations here*)
+	detectorGradients = EchoTiming[GradientsList[Join[{#}, remainingGradients], dims, n]&/@detectorGradients, "Gradient Recombination"];
+	Clear[remainingGradients];
+	
+	(*Put the matrices in  the form for DALIList*)
+	
+	(*This will give you a list of DALIlists:*)
+	result = EchoTiming[MapThread[
+		GenDaliList[#1, n, #2, \[CapitalDelta]f, "GW"]&,
+		{detectorGradients, {PSD}}
+	], "DALIList"];
+	
+	(*Combine all of them and return:*)
+	EchoTiming[Plus@@result, "Combine Detector DALIS"]
 ]
 
 
-(*list1 =  Flatten/@RandomComplex[{0, 1+I}, {10,3,3}];
-list2 = Flatten/@RandomComplex[{0,1+I}, {10, 3,3,3}];
-sensitivity = RandomReal[{0.1 ,2.}, 10];
-
-test = GWGenDaliTerm[list1, list2, sensitivity, 0.2];
-(*TensorRank@test
-ArrayDepth@test*)
-test
-
-Clear[list1,list2,sensitivity, frequency, test]*)
-
-
-GWGenDaliList[varsPrefix_Symbol, DOrder_Integer, Sensitivity_List, dim_, \[CapitalDelta]f_ ] := Module[
-    {dummy, clearList},
-    
-    clearList[i_, DOrder] := ReleaseHold@ToExpression[ToString[varsPrefix] <> ToString[i] <> "=.", InputForm, Hold];
-    
-    dummy = Do[
-    
-        Sow[#,k]&@GWGenDaliTerm[SymbolConcatenate[varsPrefix,k], SymbolConcatenate[varsPrefix, i], Sensitivity, \[CapitalDelta]f]; 
-        clearList[i, k],
-        {i, 1, DOrder}, {k, i, DOrder}
-    
-    ]//Reap//Last;
-    
- dummy
-]
-
-
-SetAttributes[GWDALICoefficients, HoldFirst]
-
-GWDALICoefficients[
-    h_, 
-    parameters_List,
-    SensitivityVector_, 
-    ObsPoints_, 
-    wp_,
-    symbolicRules_, 
-    numericalRules_
-    
-    ]/;(
-        Head/@(List@@Unevaluated[h]) == ConstantArray[Symbol, Length[parameters[[1]]] + 1 ]&&
-        Length[parameters]==3 &&
-        Head/@parameters== {List, List, Integer} &&
-        parameters[[-1]] > 0 && 
-        Length[parameters[[1]]] == Length[ parameters[[2]] ] &&
-        Length[ObsPoints] == 3 &&
-        Length[SensitivityVector] == Round[(ObsPoints[[2]] - ObsPoints[[1]])/ObsPoints[[3]] + 1]
-    ):= Module[
-    {\[Sigma]list, obspoints, DaliList, dim,  list, Dorder},
-    
-    dim = parameters[[1]]//Length;
-    Dorder = parameters//Last;
-    
-    \[Sigma]list = SensitivityVector;
-    
-    obspoints = Transpose[
-        ({parameters[[2]], #}//Flatten)&/@(Range@@ObsPoints)
-    ];
-    
-    
-    EchoTiming[GenGrads[h, parameters[[1]], dim, obspoints, Max@Dorder, list, wp, symbolicRules, numericalRules], "GenGrads"];
-    
-    
-       
-    DaliList = EchoTiming[GWGenDaliList[list, Dorder, SensitivityVector, dim, ObsPoints[[3]] ], "GWGenDaliList"]; 
-    
-    DaliList
-    
-]
-
-
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*NDALICoefficients*)
 
 
@@ -1159,7 +1631,7 @@ matr2 = {{ {1,2}, RandomReal[{0,1},{2,2}]},  { {1,2}, RandomReal[{0,1},{2,2}]}};
 ConvertToGradIterate[matr1, matr2, "test", 2]*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*NGetDALITensors*)
 
 
@@ -1363,7 +1835,7 @@ Clear[analytic, head2, obspoints, \[Sigma]list, dummyLog, ANalytic, numerical, g
 
 
 (* ::Section::Closed:: *)
-(*EndPackage*)
+(*Package Footer*)
 
 
 End[];

@@ -3,18 +3,14 @@
 BeginPackage["FelipeBarbosa`SymDALI`Detectors`"]
 
 
-FpFc::usage =
-"
-FpFc[H1, \[Alpha], \[Delta], \[Psi], GMST] gives the antena pattern functions {F+, Fx}, for:
-- right ascencion: \[Alpha]
-- declination: \[Delta]
-- polarization angle: \[Psi] (geocentric frame)
-- Greenwich mean sidereal time: GMST
-(angles must be given in radians)
-Obs.: H1 is a string,
-H1: Ligo Hanford
-L1: Ligo Livingston
-V1: Virgo
+epec::usage = "epec[\[Alpha], sin\[Delta], \[Psi], GMST] returns the {\!\(\*SubscriptBox[\(e\), \(+\)]\), \!\(\*SubscriptBox[\(e\), \(x\)]\)} polarization tensors in the geocentric frame, assuming
+a GW coming from a sky direction with right ascencion \[Alpha], declination with Sin sin\[Delta] a polarization angle \[Psi] at 
+the GMST time GMST.";
+
+\[CapitalDelta]t::usage = "\[CapitalDelta]t[pos, \[Alpha], sin\[Delta], GMST] returns the time interval that it takes a GW (with propagation speed c)
+to go from the detector to the Earth's center, assuming the wave is coming from the direction \[Alpha], sin\[Delta] at GMST time
+GMST and the detector is in the position pos. The position should be given in metters following the convention of 
+https://www.ligo.org/scientists/GW100916/detectors.txt 
 ";
 
 
@@ -53,28 +49,44 @@ DetectorTensor["V1"] = With[
 (*Antenna Pattern Functions*)
 
 
-FpFc[detector_String, \[Alpha]_, \[Delta]_, \[Psi]_, GMST_] := Module[
-    {\[Theta] = \[Pi]/2 - \[Delta], \[Phi] = \[Alpha] - GMST, eplus, ecross, R1, R2, T, D, eplusGeoFrame, ecrossGeoFrame},
+epec[\[Alpha]_, sin\[Delta]_, \[Psi]_, GMST_] := Module[
+    {\[Theta] = \[Pi]/2 - \[Delta], \[Phi] = \[Alpha] - GMST, eplus, ecross, R1, R2, T, D, eplusGeoFrame, ecrossGeoFrame, sinvar},
 	(*Polarization frame tensors*)
     eplus = {{1,0,0}, {0,-1,0}, {0,0,0}};
     ecross = {{0,1,0}, {1,0,0}, {0,0,0}};
     
     (*R1: Geocentric frame -> Wave-Frame (apart of a parity transf.)
 	  R2: Wave-frame -> polarization frame*)
-    R1 = List[
+    R1 = List[ (*Writing it already as a function of sin\[Delta]: *)
         {-Sin[\[Phi]], Cos[\[Phi]], 0}, (*\hat{\[Phi]} decomposed in \hat{e}_i*)
-        {Cos[\[Theta]] Cos[\[Phi]], Cos[\[Theta]] Sin[\[Phi]], -Sin[\[Theta]]}, (*\hat{\[Theta]} decomposed in \hat{e}_i*)
-        {Sin[\[Theta]] Cos[\[Phi]], Sin[\[Theta]] Sin[\[Phi]], Cos[\[Theta]]} (*\hat{r}decomposed in \hat{e}_i*)
+        {sin\[Delta] Cos[\[Phi]],  sin\[Delta] Sin[\[Phi]],  -Sqrt[1- sin\[Delta]^2]}, (*\hat{\[Theta]} decomposed in \hat{e}_i*)
+        {Sqrt[1- sin\[Delta]^2] Cos[\[Phi]], Sqrt[1- sin\[Delta]^2] Sin[\[Phi]], sin\[Delta]} (*\hat{r}decomposed in \hat{e}_i*)
     ];
+    
     R2 = RotationMatrix[-\[Psi], {0,0,1}];
     T = R2 . R1//Simplify;
-    eplusGeoFrame = (T\[Transpose] . eplus . T//Simplify);
-    ecrossGeoFrame = (T\[Transpose] . ecross . T//Simplify);
+    eplusGeoFrame = (T\[Transpose] . eplus . T);
+    ecrossGeoFrame = (T\[Transpose] . ecross . T);
     
-    D = DetectorTensor[detector];
-    (* D_{ij} e_{ij} = Tr[D.e\[Transpose]]  *)
+    {eplusGeoFrame,ecrossGeoFrame}//FullSimplify
+    
+    
+   (* D = 0.5 (nx\[TensorProduct]nx - ny\[TensorProduct]ny);
+    (*D_{ij} e_{ij} = Tr[D.e\[Transpose]]*)
     Tr/@{D . eplusGeoFrame\[Transpose], D . ecrossGeoFrame\[Transpose]}//Simplify
+   *)
 ]
+
+
+\[CapitalDelta]t[pos_, \[Alpha]_, sin\[Delta]_, GMST_] := Module[
+	{\[Phi] = \[Alpha]-GMST, r, c = UnitConvert["SpeedOfLight"][[1]]},
+	
+	(*radial unit vector: {Cos[\[Phi]] Sin[\[Theta]],Sin[\[Theta]] Sin[\[Phi]],Cos[\[Theta]]}, with \[Theta] = \[Pi]/2 - \[Delta] *)
+	r = {Sqrt[1- sin\[Delta]^2] Cos[\[Phi]], Sqrt[1- sin\[Delta]^2] Sin[\[Phi]], sin\[Delta]};
+	
+	-(pos . r/c)
+	
+]//Simplify;
 
 
 End[];

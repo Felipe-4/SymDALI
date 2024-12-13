@@ -16,7 +16,7 @@ CreateStyleSheet[]
 ApplyStyleSheet[]*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Package Header*)
 
 
@@ -25,6 +25,23 @@ BeginPackage["FelipeBarbosa`SymDALI`DALIPolynomial`"];
 
 CompiledPolynomial::usage="CompiledPolynomial[daliList, fiducialPoint ] gives the DALI polynomial associated to the coefficients in daliList expanded around fiducialPoint";
 PermutationsNumber::usage = "PermutationsNumber[list] gives the number of all possible permutations of the elements in list.";
+StanPolynomial::usage="StanPolynomial[DALITensors, fiducialPoint_]
+DALITensors_List: list of DALI tensors as outputed by GWDALICoefficients or DALICoefficients;
+fiducialPoint_List: list of vars and their expansion point, for instance {{x1,0}, {x2,1}, ...};
+Output: Stan code to be compilled for this model.
+Example:
+
+>>Block[{v1,v2,l, list},
+	l = Length@SymmetrizedIndependentComponents[{3,3}, Symmetric[All]];
+	v1 = RandomReal[{1,2}, 3];
+	v2 = RandomReal[{1,2}, l];
+	list = {{Flatten[v1\[TensorProduct]v1]}, {Flatten[v2\[TensorProduct]v1], Flatten[v2\[TensorProduct]v2]}};
+	
+	StanPolynomial[list, {{x,2}, {y,3}, {z,0}}]
+]
+
+>>> \"parameters{real x; real y; real z;} model{ target +=-97.59653871634103 + y*(106.6330469515925 + y*(-41.0198425626578 + y*(6.497242207656599 - 0.36233383566103594*y - 1.4622384260186643*z) + (18.25722660084694 - 2.0303585485253195*z)*z) + z*(-70.14591515184834 + (15.362704701457346 - 1.1200882138725219*z)*z)) + x*(87.0145343531812 + y*(-74.63414678790865 + y*(20.105662735773176 - 1.6511359723966994*y - 4.491156243292682*z) + (32.82130742191058 - 3.6044006532284394*z)*z) + x*(-26.671093619701924 + y*(16.055078079792068 - 2.324374825711876*y - 3.536429842538419*z) + x*(3.24359961426922 - 0.13561424012605597*x - 1.0101387721380386*y - 0.7093544931687271*z) + (11.632000203844619 - 1.2672040196842107*z)*z) + z*(-56.686806403151195 + (12.296688555050064 - 0.888176252628384*z)*z)) + z*(84.47371744496604 + z*(-27.389210417613445 + (3.9426922526206813 - 0.21260670717869937*z)*z));}\"
+";
 (*SymbolicVector::usage="SymbolicVector[listofLIComponents, head] applies head to the list of Linear Independent components of a tensor listOfLIComponents"
 PreprocessDALItensors
 TaylorForm*)
@@ -132,6 +149,48 @@ TaylorForm[DALIlist_List, fiducialPoint_?MatrixQ] := Module[
 ]
 
 TaylorForm[x___] := Throw[$Failed, failTag[TaylorForm]]
+
+
+StanParser[a_] := Module[
+	{res},
+	res = HornerForm[a];
+	res = Block[{Power=pow}, res];
+	CForm[res]//ToString
+]
+
+StanParser[x___] := Throw[$Failed, failTag[StanParser]]
+
+
+MakeStanCode[expression_, vars_List] := Module[
+	{iVars = ToString[("real "<> ToString[#])&/@vars], iExpression},
+	
+	iExpression = StanParser[expression];	
+	
+	iVars = StringReplace[
+		iVars, 
+		{
+			"," -> ";",
+			"}"  ->  ";}"
+		}
+	];
+	
+	StringJoin["parameters", iVars, " model{ target +=" , iExpression , ";}"]
+]
+
+MakeStanCode[x___] := Throw[$Failed, failTag[MakeStanCode]]
+
+
+StanPolynomial[DALIOutput_, fiducialPoint_] := Module[
+	{TaylorPolynomial, vars},
+	
+	Catch[
+        TaylorPolynomial = TaylorForm[DALIOutput, fiducialPoint];
+        vars = fiducialPoint[[All,1]];
+        MakeStanCode[TaylorPolynomial, vars]
+      ]
+]
+
+StanPolynomial[x___] := Throw[$Failed, failTag[StanPolynomial]] 
 
 
 CompiledPolynomial::fail = "The function failed. The failure occured in function `1`"

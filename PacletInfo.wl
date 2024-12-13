@@ -23,7 +23,8 @@ PacletObject[
             {"PNCoefficients`", "PNCoefficients.wl"}, 
             {"FelipeBarbosa`SymDALI`DerivativeTools`", "DerivativeTools.wl"}, 
             {"FelipeBarbosa`SymDALI`DALIPolynomial`", "DALIPolynomial.wl"},
-            {"FelipeBarbosa`SymDALI`PNCoefficients`","PNCoefficients.wl" }
+            {"FelipeBarbosa`SymDALI`PNCoefficients`","PNCoefficients.wl" }, 
+            {"FelipeBarbosa`SymDALI`Likelihood`", "Likelihood.wl"}
         }
       },
       {
