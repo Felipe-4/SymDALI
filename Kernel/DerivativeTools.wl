@@ -686,7 +686,7 @@ Options[DerivativeRules] = {"IncludeZeroDerivative" -> True, Assumptions -> $Ass
 	"Parallel" -> {}, "KeepDefs" -> {}};
 
 (*HOW CAN I CONSTRAIN THIS OPTION TO BE EITHER TRUE OR FALSE?*)
-DerivativeRules[{name_, vars_, n_}, expr_, OptionsPattern[]]/;(
+DerivativeRules[{name_, vars_, n_Integer}, expr_, OptionsPattern[]]/;(
 	genErrorMessage@(
 		Comap[{OwnValues, UpValues, SubValues, FormatValues, NValues, DownValues}, name] === ConstantArray[{}, 6]
 	) &&
@@ -716,6 +716,28 @@ DerivativeRules[{name_, vars_, n_}, expr_, OptionsPattern[]]/;(
 	]
 ]
 
+
+DerivativeRules[{name_, vars_, derivatives_List}, expr_, OptionsPattern[]]/;(
+	genErrorMessage@(Comap[{OwnValues, DownValues, SubValues, UpValues}, name] === {{},{},{},{}})
+) := Module[
+
+	{listOfDerivatives, listOfFunctions, listOfRules, zeroCases, trivialRules},
+	
+	Catch[
+		listOfDerivatives = derivatives;
+		listOfFunctions = AuxiliarFunctions[
+			expr, 
+			listOfDerivatives,
+			OptionValue[DerivativeRules, "Parallel"],
+			OptionValue[DerivativeRules, "KeepDefs"]
+		];
+		
+		listOfRules = iDerivativeRules[name, vars, listOfDerivatives, listOfFunctions, OptionValue[DerivativeRules, "IncludeZeroDerivative"] ];
+		listOfRules,
+		_failTag,
+		(Message[DerivativeRules::fail, Style[First@#2, Red]]; #1) &
+	]
+]
 
 
 Options[CLibraryFunction] = {
