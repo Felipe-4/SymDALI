@@ -21,7 +21,7 @@ CreateStyleSheet[]
 ApplyStyleSheet[]*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Package Header*)
 
 
@@ -105,11 +105,11 @@ GenMessage[True, mess_] := True;
 GenMessage[False, mess_] := With[{}, Message[mess]; False]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Make Gradients*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Function Set-Up*)
 
 
@@ -358,7 +358,7 @@ MakeDefs[SymRules_Association, NRules_Association] := Module[
 MakeDefs[x___] := Throw[$Failed, failTag[MakeDefs]]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Calculate symbolic gradient*)
 
 
@@ -418,7 +418,7 @@ TakeGrad[functionhead_Symbol, dummyvariables_List, -1]/;(
 TakeGrad[x___] := Throw[$Failed, failTag[TakeGrad]]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Calculate numerical gradients*)
 
 
@@ -910,11 +910,11 @@ GradientsList[{gradients__}, {varnumbers__Integer}, n_Integer]/;(
 GradientsList[x___] := Throw[$Failed, failTag[GradientsList]]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Make DALI Tensors*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*GenDaliTerm*)
 
 
@@ -929,14 +929,22 @@ GenDaliTerm[grads1_, grads2_, matrix_, False]/;(
 
 
 GenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_,  \[CapitalDelta]f_, "GWs"] := Module[
-    {complexSum},
+    {complexSum, inv = SensitivityVector^-1},
     (*Likelihood def. eq. 42 of https://arxiv.org/pdf/1809.02293*)
-    complexSum = Flatten[gradlist1\[ConjugateTranspose] . (gradlist2/SensitivityVector)];
-    (*Flatten@Total@MapThread[
-         KroneckerProduct, 
-         {Conjugate[gradlist1],  Divide[gradlist2, SensitivityVector]}
-     ];*)
-    4 \[CapitalDelta]f Re[complexSum]  (*I think this 4 \[CapitalDelta]f can be just absorbed in the normalization...*)
+    (*maybe it would still be faster to do this part with high work precision...*)
+    (*complexSum = Flatten[gradlist1\[ConjugateTranspose].(gradlist2*inv)];*) (*This dot product is more efficient, but makes Fisher assymetric on tc, \[Phi]c and dL because of numerical errors*)
+   
+    
+     complexSum = Flatten@Block[
+		{iiresult},
+		iiresult = MapThread[
+			KroneckerProduct, 
+			{Conjugate[gradlist1], gradlist2}
+		];
+		Total[iiresult/SensitivityVector]
+	];
+   
+     4 \[CapitalDelta]f Re[complexSum]  (*I think this 4 \[CapitalDelta]f can be just absorbed in the normalization...*)
 ]
 
 GenDaliTerm[x___] := Throw[$Failed, failTag[GenDaliTerm]];
@@ -988,7 +996,7 @@ term  = Sum[matrix[[i,j]]*TensorProduct[list1[[i]], list2[[j]]], {i, 10}, {j, 10
 Clear[list1, list2, a, aValues, values1, values2, values3, matrix,  termValues]*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*GenDaliList*)
 
 
