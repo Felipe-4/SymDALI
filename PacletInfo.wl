@@ -6,7 +6,7 @@ PacletObject[
     "Description" -> "Implementation of the DALI algorithm (Derivative Approximation for LIkelihoods)",
 	"Creator" -> "Felipe Barbosa",
     "Version" -> "1.0.0",
-    "WolframVersion" -> "14.1+",
+    "WolframVersion" -> "14.0.0+",
     "PublisherID" -> "FelipeBarbosa",
     "License" -> "MIT",
     "PrimaryContext" -> "FelipeBarbosa`SymDALI`",

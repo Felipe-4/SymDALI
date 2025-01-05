@@ -87,7 +87,7 @@ Example2:
 Begin["`Private`"];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Definitions*)
 
 
@@ -105,11 +105,11 @@ GenMessage[True, mess_] := True;
 GenMessage[False, mess_] := With[{}, Message[mess]; False]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Make Gradients*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Function Set-Up*)
 
 
@@ -265,7 +265,7 @@ NUpValue[{NRules___Rule}] := Module[
 	(*position of all functions hi[y__]*)
 	positions  = Position[{NRules}[[All, 1, 0, 0]], Symbol];
 	(*positions2 to account for evaluation of DownValues in the list.*)
-	positions2 = Position[{NRules}[[All, 1, 0, 0]], CompiledFunction];
+	positions2 = Position[{NRules}[[All, 1, 0, 0]], CompiledFunction|LibraryFunction];
 	
 	iList = Delete[{NRules}, Join[positions, positions2]]; 
 	(*take all tags from the list of $D[{n__}, tagi][y__]*)
@@ -358,7 +358,7 @@ MakeDefs[SymRules_Association, NRules_Association] := Module[
 MakeDefs[x___] := Throw[$Failed, failTag[MakeDefs]]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Calculate symbolic gradient*)
 
 
@@ -418,7 +418,7 @@ TakeGrad[functionhead_Symbol, dummyvariables_List, -1]/;(
 TakeGrad[x___] := Throw[$Failed, failTag[TakeGrad]]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Calculate numerical gradients*)
 
 
@@ -589,7 +589,7 @@ iGenGrads[head_Symbol, dim_Integer, obspoints_List, {Orighs___Symbol}, {uniquehs
 			Auxh[i+1]@@(Pattern[#,_]&/@ivars),
 			TakeGrad[Auxh[i], dummyvariables, i-1]
 		]//Activate;
-       
+      
        Clear[Evaluate[Auxh[i]]]; SubValues[Derivative] = (SubValues[Derivative])[[1]];
        
        iCalculateGrads[Auxh[i+1], {Orighs}, {uniquehs}, obspoints, i, dim, rule],
@@ -1106,7 +1106,7 @@ manualDALIlist == automaticDAliLIst*)
 (**)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*DALICoefficients*)
 
 
@@ -1194,8 +1194,7 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 	detectorGradients = EchoTiming[GenGrads[idetecHs, dims[[1]]&/@Range[detecs], ObsPoints[[1;;detecs]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}], "detectors"];
 
 	remainingGradients = EchoTiming[GenGrads[{h}[[2;;-1]], dims[[2;;-1]], ObsPoints[[detecs+1;;-1]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}], "Core WF"];
-	
-	
+
 	(*Clean definitions:*)
 	
 	Remove[Evaluate[Uniquehs]]; GCSymRules[SymRulehs]; Protect[Derivative];
@@ -1224,7 +1223,7 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*NDALICoefficients*)
 
 
@@ -1631,7 +1630,7 @@ matr2 = {{ {1,2}, RandomReal[{0,1},{2,2}]},  { {1,2}, RandomReal[{0,1},{2,2}]}};
 ConvertToGradIterate[matr1, matr2, "test", 2]*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*NGetDALITensors*)
 
 
@@ -1750,7 +1749,7 @@ obspoints = {0.285, -1.0, 0., z};*)
 ];//AbsoluteTiming*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Checks of NGetDALITensors and GetDALITensors*)
 
 

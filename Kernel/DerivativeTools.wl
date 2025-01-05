@@ -104,15 +104,25 @@ DerivativesExpression[g[x] h[\!\(\*SuperscriptBox[\(x\), \(2\)]\)], {{x}, {x,x}}
 	2 g[x] \!\(\*SuperscriptBox[\(h\), \(\[Prime]\),\nMultilineFunction->None]\)[S]+4 x \!\(\*SuperscriptBox[\(g\), \(\[Prime]\),\nMultilineFunction->None]\)[x] \!\(\*SuperscriptBox[\(h\), \(\[Prime]\),\nMultilineFunction->None]\)[S]+h[S] \!\(\*SuperscriptBox[\(g\), \(\[Prime]\[Prime]\),\nMultilineFunction->None]\)[x]+4 S g[x] \!\(\*SuperscriptBox[\(h\), \(\[Prime]\[Prime]\),\nMultilineFunction->None]\)[S]
 }";
 
-DerivativesExpression[expr_,  derivatives_List, {}, {keepDefs___Rule}] := Module[
-	{result, rules},
-	result = D[expr, Sequence@@#]&/@derivatives;
+DerivativesExpression[parsedexpr_HoldComplete,  derivatives_List, {}, {keepDefs___Rule}] := Module[
+	{result, rules, iparsed},
+	
+	iparsed = Module[
+			{last = parsedexpr[[-1,-1]], iiexpr = parsedexpr, uniquehs = parsedexpr[[1,1]], derivativesOfFunction},
+			derivativesOfFunction = d[last, Sequence@@#]&/@derivatives;
+			iiexpr[[-1,-1]] = Sequence[clear@@uniquehs, derivativesOfFunction];
+			
+			iiexpr//.{clear->iClear, d->D}
+		]; 
+	
+	result = $Block@@iparsed;
+	
 	(*Implement the definitions, if there are any:*)
 	rules = Dispatch@(Reverse/@{keepDefs});
 	result//.rules
 ]
 
-DerivativesExpression[expr_, derivatives_List, {kernels_Integer}, {keepDefs___Rule}]/;Positive[kernels] := Module[
+(*DerivativesExpression[expr_, derivatives_List, {kernels_Integer}, {keepDefs___Rule}]/;Positive[kernels] := Module[
 	{result, rules},
 	LaunchKernels@@{kernels};
 	result = ParallelMap[D[expr, Sequence@@#]&, derivatives, Method->"CoarsestGrained"];
@@ -121,7 +131,7 @@ DerivativesExpression[expr_, derivatives_List, {kernels_Integer}, {keepDefs___Ru
 	(*Implement the definitions, if there are any:*)
 	rules = Dispatch@(Reverse/@{keepDefs});
 	result//.rules
-]
+]*)
 
 DerivativesExpression[x___] := Throw[$Failed, failTag[DerivativeExpression]]
 
@@ -160,7 +170,7 @@ Parser[expr_]/; (Head@Unevaluated[expr]===$Block) := Module[
 		
 	(*Make unique heads:*)
 	uniquehs = Unique@("h"&/@Range[Length@hs]);
-		
+	(*Echo[(Thread[Rule[hs, uniquehs]])];*)
 	(*change {h1, h2,...} in iexpr by {h1$nnn, h2$nnn,...}*)
 	iexpr//.(Thread[Rule[hs, uniquehs]])
 ]
@@ -230,7 +240,7 @@ MaxDepth[expr_, h_] := Module[
 	
 	positions = Position[expr, h, Infinity];
 	
-	depths = Length/@positions;
+	
 	
 	If[
 		Max@depths == - \[Infinity],
@@ -286,7 +296,16 @@ FunctionOccurrences[x___] := Throw[$Failed, failTag[FunctionOccurrences]]
 
 
 Attributes[iClear] = {HoldAll};
-iClear[x__] := (Clear[x]; Nothing)
+Attributes[ifDV] = {HoldAll};
+Attributes[ifOV] = {HoldAll};
+ifDV[x_] := DownValues[x] = {};
+ifOV[x_] := OwnValues[x] = {};
+
+iClear[x__] := With[
+	{}, 
+	List@@(ifDV/@Hold[x]); List@@(ifOV/@Hold[x]);
+	Nothing
+]
 
 
 UniqueVars::usage="UniqueVars[expr, functions, heads, {defs}]
@@ -383,6 +402,7 @@ AbreviatedExpressions[expr_HoldComplete, dexpressions_List, {defs___Rule}] := Mo
 	(*all functions and function derivatives, and an association to indicate how many terms each head has*)
 	{functions, heads} = FunctionOccurrences[Flatten[dexpressions], uniquehs];
 	
+	
 	(*Make the explicit defs of Unique variables and their correspondence to implicit functions*)
 	association = UniqueVars[expr, functions, heads, {defs}];
 	idexpressions = dexpressions//.association["x$Correspondence"];
@@ -396,6 +416,127 @@ AbreviatedExpressions[expr_HoldComplete, dexpressions_List, {defs___Rule}] := Mo
 ]
 
 AbreviatedExpressions[x___] := Throw[$Failed, failTag[AbreviatedExpressions]]
+
+
+(*NEW WAY OF CALCULATING DERIVATIVES OF COMPOSITE FUNCTIONS #############################################################################################################*)
+
+FindFunctionHead[expr_]/; expr[[0,0]] === Symbol := expr[[0]]
+FindFunctionHead[expr_]/; expr[[0,0,0]] === Derivative := expr[[0,1]]
+
+CalculateFunctionDef[exprMain_HoldComplete, {}, uniquehs_List, {defs___Rule}] := {}
+
+CalculateFunctionDef[exprMain_HoldComplete, ioccurrences_List, uniquehs_List, {defs___Rule}]/;ioccurrences =!={} := Module[
+	{relevantHeads, dummy},
+	
+	relevantHeads = FindFunctionHead/@ioccurrences;
+
+	
+	dummy[normalexpr_, function_] := Module[
+		{iexpr = exprMain, clearHeads = DeleteElements[uniquehs, {function}], iclear},
+		iexpr[[-1,-1]] = Sequence[iclear@@Join[clearHeads, {defs}[[All,1]]], normalexpr];
+		iclear=iClear;
+		$Block@@iexpr
+	]; 
+
+	dummy@@@MapThread[List, {ioccurrences, relevantHeads}]
+]
+
+CalculateFunctionDef[x___] := Throw[$Failed, failTag[CalculateFunctionDef]]
+
+uniqueVarFunction[0] := {};
+
+uniqueVarFunction[length_Integer]/;length > 0 := Module[
+	{max$x = StringReplace[Names["Global`$x*"], "$x" -> ""]//ToExpression//Max},
+	
+	If[
+		max$x === -\[Infinity], 
+		"$x"<>#&/@(ToString/@Range[1, length])//ToExpression,
+		"$x"<>#&/@(ToString/@Range[max$x+1,max$x+length])//ToExpression
+	]
+]
+
+uniqueVarFunction[x___] := Throw[$Failed, failTag[uniqueVarFunction]]
+
+PoolUpdate[exprMain_HoldComplete, {}, {pool1_DataStructure, pool2_DataStructure}, uniquehs_List, {defs___Rule}] := Null
+
+PoolUpdate[exprMain_HoldComplete, occurrences_List, {pool1_DataStructure, pool2_DataStructure}, uniquehs_List, {defs___Rule}]/;occurrences =!={} := Module[
+	{existingKeys, ioccurrences, functionDefs, $xList, numberPos, Nexs, Numbers},
+	
+	existingKeys = Position[pool1["KeyExistsQ", #]&/@occurrences, True]; (*Position of all functions already calculated*)
+	
+	ioccurrences = Delete[occurrences, existingKeys]//DeleteDuplicates;
+	
+	functionDefs = CalculateFunctionDef[exprMain, ioccurrences, uniquehs, {defs}];
+	
+	(*Take the function defs and replace h_[x_] by existing $xj*)
+	functionDefs = functionDefs//.pool1["Elements"];
+	
+	(*Make rules for NE -> number when numbers are found:*)
+	numberPos = Position[functionDefs, _?NumberQ, {1}];
+	Nexs = Extract[ioccurrences, numberPos];
+	Numbers = Extract[functionDefs, numberPos];
+	pool1["Insert", #]&/@(MapThread[Rule, {Nexs,Numbers}]);
+	
+	(*Delete these normal expressions and their defs from the lists:*)
+	ioccurrences = Delete[ioccurrences, numberPos];
+	functionDefs = Delete[functionDefs, numberPos];
+	
+	(*Apply the rules from KeepDefs to explicit expressions:*)
+	With[
+		{irules = Reverse/@{defs}}, 
+		functionDefs = Quiet[Simplify[functionDefs//.irules, TimeConstraint->1. 10^-9], Simplify::time];
+		
+	];
+	
+	$xList = uniqueVarFunction[Length[ioccurrences]];
+	
+	pool1["Insert", #]&/@(MapThread[Rule, {ioccurrences, $xList}]);
+	
+	
+	pool2["Insert", #]&/@(MapThread[Rule, {$xList, functionDefs}]);
+]
+
+PoolUpdate[x___] := Throw[$Failed, failTag[PoolUpdate]]
+
+iIncludeFunctionDef[exprMain_HoldComplete, expr_, depth_Integer, uniquehs_List, {pool1_DataStructure, pool2_DataStructure}, {defs___Rule}] := Module[
+	{headsPattern, DPattern, occurrences},
+	
+	headsPattern = #[x__]&/@uniquehs; 
+	DPattern = Derivative[n__][#][y__]&/@uniquehs;
+	
+	occurrences = Cases[expr, Alternatives@@Join[headsPattern, DPattern], {depth}]//DeleteDuplicates;
+	
+	PoolUpdate[exprMain, occurrences, {pool1, pool2}, uniquehs, {defs}];
+]
+
+iIncludeFunctionDef[x___] := Throw[$Failed, faiTag[iIncludeFunctionDef]]
+
+IncludeFunctionDef[exprMain_HoldComplete, expr_, uniquehs_List, {pool1_DataStructure, pool2_DataStructure}, {defs___Rule}] :=Module[
+	{depths = Range[Depth[expr], 0, -1]},
+	
+	iIncludeFunctionDef[exprMain, expr, #, uniquehs, {pool1, pool2}, {defs}]&/@depths;
+]
+
+IncludeFunctionDef[x___] := Throw[$Failed, failTag[IncludeFunctionDef]]
+
+GetAllDefs[exprMain_HoldComplete, implicitDs_List, uniquehs_List, {defs___Rule}] := Module[
+	{pool1 = CreateDataStructure["HashTable"], pool2 = CreateDataStructure["HashTable"], iImplicitDs},
+	Remove["Global`$x*"];
+	
+	IncludeFunctionDef[exprMain, #, uniquehs, {pool1, pool2}, {defs}]&/@implicitDs;
+	
+	
+	
+	iImplicitDs = implicitDs//.pool1["Elements"]; (*Echo[pool2["Elements"]];*)
+	{
+		iImplicitDs,
+		pool2["Elements"]
+	}
+]
+
+GetAllDefs[x___] := Throw[$Failed, failTag[GetAllDefs]]
+
+(*##################################################################################################################################################################3*)
 
 
 (*
@@ -469,7 +610,7 @@ Example:
 ";
 
 iDependencySearch[primaryList_, $xiDefs_List] := Module[
-	{ivars = $xiDefs[[All,1]], result},
+	{ivars = $xiDefs[[All,1]]},
 	
 	Cases[primaryList/.$xiDefs, Alternatives@@ivars, Infinity]//DeleteDuplicates
 ]
@@ -505,14 +646,14 @@ Example:
 DependencySearch[expr_, $xiDefs_List] := Module[
 	{ivars = $xiDefs[[All,1]], firstList, result},
 	
-	firstList = Cases[expr, Alternatives@@ivars, Infinity]//DeleteDuplicates;
+	firstList = Cases[If[AtomQ[expr], {expr}, expr], Alternatives@@ivars, Infinity]//DeleteDuplicates; 
 	
 	result = FixedPointList[
 		iDependencySearch[#, $xiDefs]&, 
 		firstList
 	];
 	
-	(Flatten[result]//DeleteDuplicates)//Sort
+	SortBy[ToExpression[StringReplace[ToString[#], "$x"->""]]&]@(Flatten[result]//DeleteDuplicates)
 ]
 
 DependencySearch[x___] := Throw[$Failed, failTag[DependencySearch]]
@@ -547,31 +688,24 @@ AuxiliarFunctions[expr_, derivativeVars_List, {parallel___Integer}, {defs___Rule
 	{iexpr,explicit, derivatives, dictionary, symbols, functions, numberPos},
 		
 		(*Get the parsed expression:*)
-		iexpr = Parser[expr];
 		
-		(*Explicit expression:*)
-		explicit = Module[
-			{last = iexpr[[-1,-1]], iiexpr = iexpr, uniquehs = iexpr[[1,1]]},
-			
-			iiexpr[[-1,-1]] = Sequence[clear@@uniquehs, last];
-			
-			$Block@@(iiexpr//.clear->Clear)
-		];
+		iexpr = Parser[expr]; 
 		
-		(*Get all derivatives in terms of implicit functions:*)
+		(*Get all derivatives in terms of implicit functions*)
 		derivatives =  EchoTiming[
-			DerivativesExpression[explicit, derivativeVars, {parallel}, {defs}], 
+			DerivativesExpression[iexpr, derivativeVars, {parallel}, {defs}], 
 			"symbolic Derivatives:"
 		];
 		
-		(*all function derivatives with f'[x] -> $xn and a dictionary for $xn -> explicit expression:*)
-		{derivatives, dictionary} = EchoTiming[AbreviatedExpressions[iexpr, derivatives, {defs}], "sym derivatives -> $x and explicit derivatives: "];
+		(*all function derivatives with f'[x] -> $xn and a dictionary for $xn -> explicit expression*)
+		(*{derivatives, dictionary} = EchoTiming[AbreviatedExpressions[iexpr, derivatives, {defs}], "sym derivatives -> $x and explicit derivatives: "];*)
+		{derivatives, dictionary} = GetAllDefs[iexpr, derivatives, iexpr[[1,1]], {defs}];
 		
 		
-		(*Get all symbols in each expression:*)
+		(*(Get all symbols in each expression:)*)
 		symbols = DependencySearch[#, dictionary]&/@derivatives;
-		
-		(*make the functions:*)
+		(*Echo[{derivatives, dictionary}];*)(*Echo[{symbols, derivatives, dictionary}];*)
+		(*(make the functions:)*)
 		functions = EchoTiming[
 			MapThread[
 				DFunction[#1, #2, Association@dictionary, {defs}]&,
@@ -580,7 +714,7 @@ AuxiliarFunctions[expr_, derivativeVars_List, {parallel___Integer}, {defs___Rule
 			"Make Block functions: "
 		];
 		
-		(*Remove the unique heads previously generated*)
+		(*(Remove the unique heads previously generated)*)
 		Remove@@(iexpr[[1,1]]);
 		Clear[iexpr];
 		
@@ -1012,12 +1146,14 @@ libraryFunctionsLoad[RulesList_] := Module[
 
 
 DerivativeRulesLoad[theory_String] := Module[
-	{Pacletdirectory, SymRulesDirec, NRulesDirec, SymRulesDerivatives, NRulesDerivatives, RosettaStone},
-	(*THIS WILL BE A BUG IF YOU HAVE MORE THAN ONE VERSION OF THE PACLET*)
-	Pacletdirectory = (PacletFind["FelipeBarbosa/SymDALI"]//Last)["Location"];
+	{Pacletdirectory, SymRulesDirec, NRulesDirec, SymRulesDerivatives, NRulesDerivatives, RosettaStone, operatingsystem},
 	
-	SymRulesDirec = FileNameJoin[Pacletdirectory,"DerivativeRules" ,theory, "SymRules"];
-	NRulesDirec = FileNameJoin[Pacletdirectory,"DerivativeRules", theory, "NRules"];
+	operatingsystem = SystemInformation["Kernel", "SystemID"];
+	
+	Pacletdirectory = FindFile["FelipeBarbosa`SymDALI`"]//FileNameDrop[#, -2]&;
+	
+	SymRulesDirec = FileNameJoin[{Pacletdirectory, "LibraryResources", operatingsystem, "DerivativeRules" ,theory, "SymRules"}];
+	NRulesDirec = FileNameJoin[{Pacletdirectory,"LibraryResources", operatingsystem, "DerivativeRules", theory, "NRules"}];
 	
 	SymRulesDerivatives = Flatten@(Import[#]&/@FileNames["*.wdx", SymRulesDirec]);
 	SymRulesDerivatives = If[ Length@SymRulesDerivatives===1,  SymRulesDerivatives//Last, SymRulesDerivatives];
