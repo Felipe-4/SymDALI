@@ -1052,11 +1052,15 @@ SaveNRules[rules_Association, directory_?DirectoryQ] := Module[
 ]
 
 
+iiitest[x_]/; x[[0]] === Symbol := {x,0}
+iiitest[x_] :=x
+
+
 ExtractLibraryFunction[x_]/; Head@x === CompiledFunction := x[[-1]]
 ExtractLibraryFunction[x_] := x
 
 MakeCompiledFunction[x_LibraryFunction,  expression_, WVM_] := Module[
-	{vars =  x[[3, All, 1;;2]], compiledfunction, iexpression = expression, Blankvars},
+	{vars =  iiitest/@(x[[3, All]]), compiledfunction, iexpression = expression, Blankvars},
 	
 	(*eliminate patterns from expression and convert it to string:*)
 	iexpression = ToString[iexpression/. dummy_Pattern :> dummy[[1]]];
@@ -1123,14 +1127,15 @@ MakeVars[vars_, LFvars_] := Module[
 
 
 libraryFunctionsLoad[RulesList_] := Module[
-	{compiledFunctions, expressions, wvm, wvmVars},
-	
+	{compiledFunctions, expressions, wvm, wvmVars, iivars},
+
 	compiledFunctions = LibraryFunctionLoad@@@(RulesList[[All,2]]);
 	compiledFunctions = ExtractLibraryFunction/@compiledFunctions;
 	
 	expressions = RulesList[[All,1]];
 	
 	wvmVars = With[{vars =(List@@RulesList[[1,1]])/.q_Pattern :>  q[[1]], LFvars = RulesList[[1, 2, 3]]}, 
+	
 		MakeVars[vars, LFvars]
 	];
 	
