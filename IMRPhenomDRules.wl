@@ -764,52 +764,110 @@ Combinations[vars_List, n_Integer]/;n>0 := Module[
 ]
 
 
-vars = {\[Omega],\[Eta],\[Chi]1,\[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4};
+vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2(*, \[Omega]ref*)(*, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4*)};
 
 
 (*All derivatives up to order 3*)
-derivatives = Combinations[vars, 1];
+derivatives = Combinations[vars, 5];
 
 
-(*We need only 1 \[Delta]p_i at a time, and no more than one derivative because they are linear in the phase*)
+Table[Length@Combinations[vars, i], {i, 1 5}]
+
+
 derivatives//Length
 
 
-filter[x_] := Module[
-	{numberOf\[Delta]s, \[Delta]s = {\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4} },
-	
-	numberOf\[Delta]s = Cases[x, Alternatives@@\[Delta]s]//Length;
-	If[numberOf\[Delta]s > 1, Nothing, x]
-]
+PrependTo[derivatives, {}];
 
 
-filteredDs = filter/@derivatives;
+derivatives//Length
 
 
-filteredDs//Length
+Clear@expr;
 
-
-PrependTo[filteredDs, {}];
-
-
-filteredDs
-
-
-expr =  Hold[
-	{\[CapitalPhi]IMR,  vars, {{\[Omega]ref}}},
+With[{
+	vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}
+	},
+	expr =  Hold[
+	{\[CapitalPhi]IMR,  vars, derivatives[[71;;100]]},
 	Evaluate@$blockexpr,
 	"KeepDefs" -> KeepDefs,
 	"IncludeZeroDerivative"->False
 ]//.HoldForm[X_] :> X;
+]
 
 
-Ds = EchoTiming[DerivativeRules@@expr];
+Clear@Ds1to4
+Ds4to5 = MemoryConstrained[EchoTiming[DerivativeRules@@expr], 6 10^9];
 
 
-Export["Phase_Ds_order_1.wdx", Ds];
+Export["Phase_Ds_order_5_part1.wdx", Ds4to5]
+
+
+Clear@expr;
+
+With[{
+	vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}
+	},
+	expr =  Hold[
+	{\[CapitalPhi]IMR,  vars, derivatives[[101;;126]]},
+	Evaluate@$blockexpr,
+	"KeepDefs" -> KeepDefs,
+	"IncludeZeroDerivative"->False
+]//.HoldForm[X_] :> X;
+]
+
+
+Clear@Ds4to5
+Ds4to5 = MemoryConstrained[EchoTiming[DerivativeRules@@expr], 6 10^9];
 
 
 Ds  = Import["Phase_Ds_order_1.wdx"];
+
+
+$D[{x__}, \[CapitalPhi]IMR][y__]/;Total[{x}[[6;;-1]]] === 1 := Module[
+	{pos = Position[{x}[[6;;-1]], 1], ds, args},
+	ds = Join[
+		{x}[[1;;5]],
+		ConstantArray[0, 16]
+	];
+	args = Join[
+		{y}[[1;;5]],
+		ReplacePart[{y}[[6;;-1]], pos -> 1]
+	];
+	
+	$D[ds, \[CapitalPhi]IMR]@@args
+];
+
+$D[{x__}, \[CapitalPhi]IMR][y__]/; Total[{x}[[6;;-1]]] > 1 := 0
+
+
+(*
+	Consider that \[CapitalPsi] = \[CapitalPhi]IMR[\[Omega]] - \[CapitalPhi][\[Omega]ref] - t0 (\[Omega]-\[Omega]ref) and that \[Omega] variables has to be a vector.
+	The derivative with respect to \[Omega]ref is minus the derivative of \[Omega] evaluated at the value of \[Omega]ref passed as a vector
+*)
+
+$D[{x__}, \[CapitalPhi]IMR][y__]/; {x}[[1]] === 0 && {x}[[5]] > 0 := Module[
+	{ds, args},
+	ds = Join[
+		{x}[[{5}]], 
+		{x}[[2;;4]], 
+		{0}, 
+		{x}[[6;;-1]]
+	];
+	
+	args = Join[
+		{y}[[{5}]], 
+		{y}[[2;;-1]]
+	];
+	
+	-Last[
+		$D[ds, \[CapitalPhi]IMR]@@args
+	]
+]
+
+
+$D[{x__}, \[CapitalPhi]IMR][y__]/; ({x}[[1]] > 0 && {x}[[5]] > 0)  := 0
 
 
 Block[
@@ -1519,7 +1577,7 @@ test\[ScriptCapitalA] := Module[
 test\[ScriptCapitalA]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Calculating derivatives*)
 
 
