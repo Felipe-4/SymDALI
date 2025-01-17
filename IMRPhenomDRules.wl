@@ -40,7 +40,7 @@ SymRules = <||>;
 NRules = <||>;
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Phase*)
 
 
@@ -751,7 +751,7 @@ test := Module[
 test//Quiet
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Derivatives and compilation*)
 
 
@@ -809,8 +809,8 @@ Clear@expr;
 With[{
 	vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}
 	},
-	expr =  Hold[
-	{\[CapitalPhi]IMR,  vars, derivatives[[101;;126]]},
+	expr =  HoldForm[
+	{\[CapitalPhi]IMR,  vars, {i}},
 	Evaluate@$blockexpr,
 	"KeepDefs" -> KeepDefs,
 	"IncludeZeroDerivative"->False
@@ -819,7 +819,15 @@ With[{
 
 
 Clear@Ds4to5
-Ds4to5 = MemoryConstrained[EchoTiming[DerivativeRules@@expr], 6 10^9];
+
+expr2 = Hold[Evaluate@expr, Evaluate@{i, derivatives[[101;;126]]}]//.HoldForm-> DerivativeRules;
+
+D5part2 = MemoryConstrained[ Table@@expr2, 5 10^9];
+
+Export["Phase_Ds_order_5_part2.wdx", D5part2]
+
+
+(*Ds4to5 = MemoryConstrained[EchoTiming[DerivativeRules@@expr], 6 10^9];*)
 
 
 Ds  = Import["Phase_Ds_order_1.wdx"];
@@ -1474,7 +1482,7 @@ Block[
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing Against Ripple*)
 
 
@@ -1577,7 +1585,7 @@ test\[ScriptCapitalA] := Module[
 test\[ScriptCapitalA]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Calculating derivatives*)
 
 
@@ -1594,7 +1602,7 @@ vars = {M, \[Eta], \[Chi]1,\[Chi]2};
 
 
 (*All derivatives up to order 3*)
-derivatives = Combinations[vars, 1];
+derivatives = Combinations[vars, 5];
 
 
 (*We need only 1 \[Delta]p_i at a time, and no more than one derivative because they are linear in the phase*)
@@ -1604,8 +1612,15 @@ derivatives//Length
 PrependTo[derivatives, {}]
 
 
+Combinations[vars, 3]//Length
+Combinations[vars, 4]//Length
+
+
+derivatives[[36;;70]]
+
+
 expr =  Hold[
-	{\[ScriptA]IMR, {f, M, \[Eta], \[Chi]1, \[Chi]2}, derivatives},
+	{\[ScriptA]IMR, {f, M, \[Eta], \[Chi]1, \[Chi]2}, {i}},
 	Evaluate@$blockexpr,
 	"KeepDefs" -> KeepDefs,
 	"IncludeZeroDerivative"->False
@@ -1615,10 +1630,11 @@ expr =  Hold[
 <<FelipeBarbosa`SymDALI`
 
 
-Ds = EchoTiming[DerivativeRules@@expr];
-
-
-Export["Amplitude_Ds_order_1.wdx", Ds];
+Clear@Ds;
+expr2 = HoldForm[MemoryConstrained[x, 6 10^9], Evaluate[{i,derivatives[[36;;70]] }]]/.x-> expr;
+expr2 = expr2/.Hold-> DerivativeRules;
+Ds = Table@@expr2;
+Export["Amplitude_Ds_order_4.wdx", Ds]
 
 
 Ds\[ScriptCapitalA] = Import["Amplitude_Ds_order_1.wdx"];

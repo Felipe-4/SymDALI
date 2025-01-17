@@ -17,7 +17,7 @@ CreateStyleSheet[]
 ApplyStyleSheet[]*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Package Header*)
 
 
@@ -462,17 +462,17 @@ PoolUpdate[exprMain_HoldComplete, {}, {pool1_DataStructure, pool2_DataStructure}
 PoolUpdate[exprMain_HoldComplete, occurrences_List, {pool1_DataStructure, pool2_DataStructure}, uniquehs_List, {defs___Rule}]/;occurrences =!={} := Module[
 	{existingKeys, ioccurrences, functionDefs, $xList, numberPos, Nexs, Numbers},
 	
-	existingKeys = Position[pool1["KeyExistsQ", #]&/@occurrences, True]; (*Position of all functions already calculated*)
+	existingKeys = EchoTiming[Position[pool1["KeyExistsQ", #]&/@occurrences, True], "Position In Pool Update"]; (*Position of all functions already calculated*)
 	
 	ioccurrences = Delete[occurrences, existingKeys]//DeleteDuplicates;
 	
-	functionDefs = CalculateFunctionDef[exprMain, ioccurrences, uniquehs, {defs}];
+	functionDefs = EchoTiming[CalculateFunctionDef[exprMain, ioccurrences, uniquehs, {defs}], "FunctionDef"];
 	
 	(*Take the function defs and replace h_[x_] by existing $xj*)
-	functionDefs = functionDefs//.pool1["Elements"];
+	functionDefs = EchoTiming[functionDefs//.pool1["Elements"], "Rule application"];
 	
 	(*Make rules for NE -> number when numbers are found:*)
-	numberPos = Position[functionDefs, _?NumberQ, {1}];
+	numberPos = EchoTiming[Position[functionDefs, _?NumberQ, {1}],"Finding Numbers"];
 	Nexs = Extract[ioccurrences, numberPos];
 	Numbers = Extract[functionDefs, numberPos];
 	pool1["Insert", #]&/@(MapThread[Rule, {Nexs,Numbers}]);
@@ -484,16 +484,16 @@ PoolUpdate[exprMain_HoldComplete, occurrences_List, {pool1_DataStructure, pool2_
 	(*Apply the rules from KeepDefs to explicit expressions:*)
 	With[
 		{irules = Reverse/@{defs}}, 
-		functionDefs = Quiet[Simplify[functionDefs//.irules, TimeConstraint->1. 10^-9], Simplify::time];
+		functionDefs = EchoTiming[functionDefs//.irules, "Second rule application"];
 		
 	];
 	
 	$xList = uniqueVarFunction[Length[ioccurrences]];
 	
-	pool1["Insert", #]&/@(MapThread[Rule, {ioccurrences, $xList}]);
+	EchoTiming[pool1["Insert", #]&/@(MapThread[Rule, {ioccurrences, $xList}]), "Pool1Update"];
 	
 	
-	pool2["Insert", #]&/@(MapThread[Rule, {$xList, functionDefs}]);
+	EchoTiming[pool2["Insert", #]&/@(MapThread[Rule, {$xList, functionDefs}]), "Pool2Update"];
 ]
 
 PoolUpdate[x___] := Throw[$Failed, failTag[PoolUpdate]]
@@ -504,7 +504,7 @@ iIncludeFunctionDef[exprMain_HoldComplete, expr_, depth_Integer, uniquehs_List, 
 	headsPattern = #[x__]&/@uniquehs; 
 	DPattern = Derivative[n__][#][y__]&/@uniquehs;
 	
-	occurrences = Cases[expr, Alternatives@@Join[headsPattern, DPattern], {depth}]//DeleteDuplicates;
+	occurrences = EchoTiming[Cases[expr, Alternatives@@Join[headsPattern, DPattern], {depth}]//DeleteDuplicates, "FindingFunctionOccurrences"];
 	
 	PoolUpdate[exprMain, occurrences, {pool1, pool2}, uniquehs, {defs}];
 ]
