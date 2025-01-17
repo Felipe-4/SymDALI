@@ -466,10 +466,14 @@ PoolUpdate[exprMain_HoldComplete, occurrences_List, {pool1_DataStructure, pool2_
 	
 	ioccurrences = Delete[occurrences, existingKeys]//DeleteDuplicates;
 	
+	(*Take the normal expressions and replace h_[x_] by existing $xj*)
+	ioccurrences =  EchoTiming[ioccurrences//.pool1["Elements"], "Rule application"];
+	
 	functionDefs = EchoTiming[CalculateFunctionDef[exprMain, ioccurrences, uniquehs, {defs}], "FunctionDef"];
 	
-	(*Take the function defs and replace h_[x_] by existing $xj*)
-	functionDefs = EchoTiming[functionDefs//.pool1["Elements"], "Rule application"];
+	(*YOU SHOULD DO THE REPLACEMENT BELOW BEFORE CALCULATING THE FUNCTION DEFS
+	Take the function defs and replace h_[x_] by existing $xj*)
+	(*functionDefs = EchoTiming[functionDefs//.pool1["Elements"], "Rule application"];*)
 	
 	(*Make rules for NE -> number when numbers are found:*)
 	numberPos = EchoTiming[Position[functionDefs, _?NumberQ, {1}],"Finding Numbers"];
@@ -521,7 +525,8 @@ IncludeFunctionDef[x___] := Throw[$Failed, failTag[IncludeFunctionDef]]
 
 GetAllDefs[exprMain_HoldComplete, implicitDs_List, uniquehs_List, {defs___Rule}] := Module[
 	{pool1 = CreateDataStructure["HashTable"], pool2 = CreateDataStructure["HashTable"], iImplicitDs},
-	Remove["Global`$x*"];
+	
+	Quiet[Remove["Global`$x*"], Remove::rmnsm];
 	
 	IncludeFunctionDef[exprMain, #, uniquehs, {pool1, pool2}, {defs}]&/@implicitDs;
 	
