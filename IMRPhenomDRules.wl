@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-SetOptions[EvaluationNotebook[], DefaultNewCellStyle->"Code"];
+(*SetOptions[EvaluationNotebook[], DefaultNewCellStyle->"Code"];
 SetOptions[EvaluationNotebook[], WindowElements->{"MemoryMonitor","VerticalScrollBar","MenuBar", "HorizontalScrollBar"}]
 SetDirectory[NotebookDirectory[]];
 
@@ -18,7 +18,7 @@ colors=<|
 |>;
 SetColors[colors];
 CreateStyleSheet[];
-ApplyStyleSheet[];
+ApplyStyleSheet[];*)
 
 
 SetOptions[EvaluationNotebook[], NotebookAutoSave->True];
@@ -38,6 +38,9 @@ vectorDefs = Module[
 
 SymRules = <||>;
 NRules = <||>;
+
+
+?ParallelTable
 
 
 (* ::Chapter::Closed:: *)
@@ -1585,7 +1588,7 @@ test\[ScriptCapitalA] := Module[
 test\[ScriptCapitalA]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Calculating derivatives*)
 
 
