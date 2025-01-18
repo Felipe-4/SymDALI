@@ -3,12 +3,12 @@
 
 (*Basic stuff:*)
 $HistoryLength = 1;
-PacletDirectoryLoad[NotebookDirectory[]//ParentDirectory];
+PacletDirectoryLoad["/home/davi/felipe_barbosa/"]
 <<FelipeBarbosa`SymDALI`
 
 vectorDefs = Module[
 	{DALIDir, docDir},
-	DALIDir = FindFile["FelipeBarbosa`SymDALI`"]//FileNameDrop//ParentDirectory;
+	DALIDir = "/home/davi/felipe_barbosa/SymDALI";
 	docDir = FileNameJoin[{DALIDir, "Documentation/English/Tutorials"}];
 	Import@FileNameJoin[{docDir, "IMRPhenomDComponentsDefinition.wdx"}]
 ];
@@ -21,7 +21,7 @@ NRules = <||>;
 (*Amplitude*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*PPN*)
 
 
@@ -49,7 +49,7 @@ A6 = (-177520268561/8583708672 +
 
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Inspiral*)
 
 
