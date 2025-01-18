@@ -526,7 +526,7 @@ IncludeFunctionDef[x___] := Throw[$Failed, failTag[IncludeFunctionDef]]
 GetAllDefs[exprMain_HoldComplete, implicitDs_List, uniquehs_List, {defs___Rule}] := Module[
 	{pool1 = CreateDataStructure["HashTable"], pool2 = CreateDataStructure["HashTable"], iImplicitDs},
 	
-	Quiet[Remove["Global`$x*"], Remove::rmnsm];
+	(*Quiet[Remove["Global`$x*"], Remove::rmnsm];*)
 	
 	IncludeFunctionDef[exprMain, #, uniquehs, {pool1, pool2}, {defs}]&/@implicitDs;
 	

@@ -40,9 +40,6 @@ SymRules = <||>;
 NRules = <||>;
 
 
-?ParallelTable
-
-
 (* ::Chapter::Closed:: *)
 (*Phase*)
 
@@ -1588,11 +1585,8 @@ test\[ScriptCapitalA] := Module[
 test\[ScriptCapitalA]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Calculating derivatives*)
-
-
-?Dispatch
 
 
 Combinations[vars_List, n_Integer]/;n>0 := Module[
@@ -1615,7 +1609,7 @@ derivatives = Combinations[vars, 5];
 derivatives//Length
 
 
-PrependTo[derivatives, {}]
+PrependTo[derivatives, {}];
 
 
 Combinations[vars, 3]//Length
@@ -1636,14 +1630,11 @@ expr =  Hold[
 <<FelipeBarbosa`SymDALI`
 
 
-derivatives[[36]]
-
-
 Clear@Ds;
-expr2 = HoldForm[MemoryConstrained[x, 6 10^9], Evaluate[{i,derivatives[[36;;70]] }]]/.x-> expr;
+expr2 = HoldForm[MemoryConstrained[x, 6 10^9], Evaluate[{i,derivatives[[1;;5]] }]]/.x-> expr;
 expr2 = expr2/.Hold-> DerivativeRules;
-Ds = Table@@expr2;
-Export["Amplitude_Ds_order_4.wdx", Ds]
+Ds = Table@@expr2//QuietEcho;
+(*Export["Amplitude_Ds_order_4.wdx", Ds]*)
 
 
 Ds\[ScriptCapitalA] = Import["Amplitude_Ds_order_1.wdx"];
