@@ -460,23 +460,23 @@ uniqueVarFunction[x___] := Throw[$Failed, failTag[uniqueVarFunction]]
 PoolUpdate[exprMain_HoldComplete, {}, {pool1_DataStructure, pool2_DataStructure}, uniquehs_List, {defs___Rule}] := Null
 
 PoolUpdate[exprMain_HoldComplete, occurrences_List, {pool1_DataStructure, pool2_DataStructure}, uniquehs_List, {defs___Rule}]/;occurrences =!={} := Module[
-	{existingKeys, ioccurrences, functionDefs, $xList, numberPos, Nexs, Numbers},
+	{existingKeys, ioccurrences, functionDefs, $xList, numberPos, Nexs, Numbers, ioccurrencescopy},
 	
-	existingKeys = EchoTiming[Position[pool1["KeyExistsQ", #]&/@occurrences, True], "Position In Pool Update"]; (*Position of all functions already calculated*)
+	existingKeys = Position[pool1["KeyExistsQ", #]&/@occurrences, True]; (*Position of all functions already calculated*)
 	
 	ioccurrences = Delete[occurrences, existingKeys]//DeleteDuplicates;
 	
 	(*Take the normal expressions and replace h_[x_] by existing $xj*)
-	ioccurrences =  EchoTiming[ioccurrences//.pool1["Elements"], "Rule application"];
+	ioccurrencescopy =  EchoTiming[ioccurrences//.pool1["Elements"], "Rule application"];
 	
-	functionDefs = EchoTiming[CalculateFunctionDef[exprMain, ioccurrences, uniquehs, {defs}], "FunctionDef"];
+	functionDefs = EchoTiming[CalculateFunctionDef[exprMain, ioccurrencescopy, uniquehs, {defs}], "FunctionDef"];
 	
 	(*YOU SHOULD DO THE REPLACEMENT BELOW BEFORE CALCULATING THE FUNCTION DEFS
 	Take the function defs and replace h_[x_] by existing $xj*)
 	(*functionDefs = EchoTiming[functionDefs//.pool1["Elements"], "Rule application"];*)
 	
 	(*Make rules for NE -> number when numbers are found:*)
-	numberPos = EchoTiming[Position[functionDefs, _?NumberQ, {1}],"Finding Numbers"];
+	numberPos = Position[functionDefs, _?NumberQ, {1}];
 	Nexs = Extract[ioccurrences, numberPos];
 	Numbers = Extract[functionDefs, numberPos];
 	pool1["Insert", #]&/@(MapThread[Rule, {Nexs,Numbers}]);
@@ -494,10 +494,10 @@ PoolUpdate[exprMain_HoldComplete, occurrences_List, {pool1_DataStructure, pool2_
 	
 	$xList = uniqueVarFunction[Length[ioccurrences]];
 	
-	EchoTiming[pool1["Insert", #]&/@(MapThread[Rule, {ioccurrences, $xList}]), "Pool1Update"];
+	pool1["Insert", #]&/@(MapThread[Rule, {ioccurrences, $xList}]);
 	
 	
-	EchoTiming[pool2["Insert", #]&/@(MapThread[Rule, {$xList, functionDefs}]), "Pool2Update"];
+	pool2["Insert", #]&/@(MapThread[Rule, {$xList, functionDefs}]);
 ]
 
 PoolUpdate[x___] := Throw[$Failed, failTag[PoolUpdate]]

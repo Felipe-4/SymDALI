@@ -1420,7 +1420,7 @@ expr =  Hold[
 <<FelipeBarbosa`SymDALI`
 
 
-res = EchoTiming[DerivativeRules@@expr];
+res = EchoTiming[DerivativeRules@@expr]//QuietEcho;
 
 
 Block[
@@ -1433,7 +1433,7 @@ Block[
 	
 	expr1 = \[ScriptCapitalA]IMRExpr; OwnValues[expr1] = OwnValues[expr1]//.Headrules;
 	
-	expr2;//AbsoluteTiming
+	Short[expr2]//AbsoluteTiming
 
 ]
 
@@ -1476,13 +1476,13 @@ Block[
 	
 	(*{expr1;//AbsoluteTiming, expr2;//AbsoluteTiming}*)
 	
-	expr1;//AbsoluteTiming
+	Short[expr1]//AbsoluteTiming
 	
 
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing Against Ripple*)
 
 
@@ -1589,6 +1589,9 @@ test\[ScriptCapitalA]
 (*Calculating derivatives*)
 
 
+?Dispatch
+
+
 Combinations[vars_List, n_Integer]/;n>0 := Module[
 	{result},
 	result  = Table[
@@ -1628,6 +1631,9 @@ expr =  Hold[
 
 
 <<FelipeBarbosa`SymDALI`
+
+
+derivatives[[36]]
 
 
 Clear@Ds;
