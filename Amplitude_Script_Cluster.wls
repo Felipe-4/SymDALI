@@ -277,7 +277,7 @@ Block[
 ];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Making Block function*)
 
 
@@ -490,7 +490,7 @@ expr =  Hold[
 
 
 Clear@Ds;
-expr2 = HoldForm[MemoryConstrained[x, 6 10^9], Evaluate[{i,derivatives[[36;;70]] }], Method-> "FinestGrained"]/.x-> expr;
+expr2 = HoldForm[EchoTiming[MemoryConstrained[QuietEcho[x], 6 10^9], ToString[i]], Evaluate[{i,derivatives[[36;;70]] }]]/.x-> expr;
 expr2 = expr2/.Hold-> DerivativeRules;
-Ds = ParallelTable@@expr2;
+Ds = Table@@expr2;
 Export["Amplitude_Ds_order_4.wdx", Ds]
