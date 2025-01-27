@@ -40,7 +40,7 @@ SymRules = <||>;
 NRules = <||>;
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Phase*)
 
 
@@ -554,7 +554,7 @@ With[
 
 
 expr =  Hold[
-	{test, {\[Omega], \[Eta], \[Chi]1, \[Chi]2}, {{}}},
+	{test, {\[Omega], \[Eta], \[Chi]1, \[Chi]2}, 1},
 	Evaluate@$blockexpr,
 	"KeepDefs" -> KeepDefs
 ]//.HoldForm[X_] :> X;
@@ -564,6 +564,56 @@ expr =  Hold[
 
 
 res = EchoTiming[DerivativeRules@@expr];
+
+
+res[[All,1]]
+
+
+res[[1,2]]
+
+
+DGrad[f_, vars_] := Module[
+	{h = 1. 10^-6, dummy, Point1, Point2},
+	
+	Point1 = Table[
+		dummy = vars;
+		dummy[[i]] = dummy[[i]]+ h;
+		dummy,
+		{i, Length@vars}
+	];
+
+	
+	Point2 = ConstantArray[vars, Length[vars]];
+	
+	
+	(f@@@Point1 - f@@@Point2)/h
+]
+
+
+Block[
+	{testF, \[Phi]1, \[Phi]2, ND\[Omega],\[Omega], \[Eta], \[Chi]1, \[Chi]2, D\[Omega],
+	\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4,
+	D\[Eta], D\[Chi]1, D\[Chi]2, \[Omega]ref = 0.0001, M, G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]],
+	nd1, nd2, nd3, nd4, grad, ngrad},
+	{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4} = ConstantArray[0, 16];
+	
+	testF[\[Omega]_, \[Eta]_, \[Chi]1_, \[Chi]2_] = res[[1,2]]; DownValues[testF] = DownValues[testF]//. HoldForm[x_]:> x;
+	
+	D\[Omega] = res[[2,2]]; OwnValues[D\[Omega]] = OwnValues[D\[Omega]]//. HoldForm[x_]:> x;
+	D\[Eta] = res[[3,2]]; OwnValues[D\[Eta]] = OwnValues[D\[Eta]]//. HoldForm[x_]:> x;
+	D\[Chi]1 = res[[4,2]]; OwnValues[D\[Chi]1] = OwnValues[D\[Chi]1]//. HoldForm[x_]:> x;
+	D\[Chi]2 = res[[5,2]]; OwnValues[D\[Chi]2] = OwnValues[D\[Chi]2]//. HoldForm[x_]:> x;
+	
+	\[Eta] = RandomReal[{0.1, 0.24}];
+	{\[Chi]1, \[Chi]2} = RandomReal[{-1,1}, 2];
+	M = RandomReal[{20,100}];
+	\[Omega] = 20 M G;
+	(*numerical gradient:*)
+	ngrad = DGrad[testF, {\[Omega], \[Eta], \[Chi]1, \[Chi]2}];
+	grad = {D\[Omega], D\[Eta], D\[Chi]1, D\[Chi]2};
+	
+	{grad, ngrad}
+]//Quiet
 
 
 (*Compiler`$CCompilerOptions = {
@@ -583,7 +633,7 @@ res = EchoTiming[DerivativeRules@@expr];
 
 c = Hold[
 	{{\[Omega], _Real,1},\[Eta],\[Chi]1,\[Chi]2,\[Omega]ref, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4},
-	Evaluate[res[[2,1,2]]//N], 
+	Evaluate[res[[1,2]]//N], 
 	CompilationTarget->"C",
 	RuntimeOptions->"Speed"(*,
 	RuntimeAttributes->{Listable},
@@ -789,12 +839,24 @@ With[{
 	vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}
 	},
 	expr =  Hold[
-	{\[CapitalPhi]IMR,  vars, derivatives[[71;;100]]},
+	{\[CapitalPhi]IMR,  vars, {i}},
 	Evaluate@$blockexpr,
 	"KeepDefs" -> KeepDefs,
 	"IncludeZeroDerivative"->False
 ]//.HoldForm[X_] :> X;
+	expr = Hold[Evaluate@expr];
+	
+	expr = DerivativeRules@@@expr;
+
 ]
+
+
+ParallelTable@@Join[expr, Hold[{i, derivatives[[1;;5]]}, "Method" -> "CoarsestGrained"]]//QuietEcho;
+
+
+DistributeDefinitions@@(KeepDefs[[All,1]])
+DistributeDefinitions[DerivativeRules]
+DistributeDefinitions["FelipeBarbosa`SymDALI`*"]
 
 
 Clear@Ds1to4
@@ -825,12 +887,6 @@ expr2 = Hold[Evaluate@expr, Evaluate@{i, derivatives[[101;;126]]}]//.HoldForm-> 
 D5part2 = MemoryConstrained[ Table@@expr2, 5 10^9];
 
 Export["Phase_Ds_order_5_part2.wdx", D5part2]
-
-
-(*Ds4to5 = MemoryConstrained[EchoTiming[DerivativeRules@@expr], 6 10^9];*)
-
-
-Ds  = Import["Phase_Ds_order_1.wdx"];
 
 
 $D[{x__}, \[CapitalPhi]IMR][y__]/;Total[{x}[[6;;-1]]] === 1 := Module[
@@ -878,29 +934,21 @@ $D[{x__}, \[CapitalPhi]IMR][y__]/; {x}[[1]] === 0 && {x}[[5]] > 0 := Module[
 $D[{x__}, \[CapitalPhi]IMR][y__]/; ({x}[[1]] > 0 && {x}[[5]] > 0)  := 0
 
 
-Block[
-	{\[Omega], M=60, f=100, \[Eta]=0.2, \[Chi]1, \[Chi]2, \[Omega]ref, G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]],
-	\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4, test},
-	{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4} = ConstantArray[0,16];
-	{\[Chi]1, \[Chi]2} = {0,0};
-	\[Omega]ref = 20 G M;
-	\[Omega] = f G M;
-	test = Ds[[2,1,2]]; OwnValues[test] = OwnValues[test]//.HoldForm[y_] :> y;
-	
-		{test,
-		ctest[{\[Omega]}, \[Eta], \[Chi]1, \[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4],
-		ctest2[{\[Omega]}, \[Eta], \[Chi]1, \[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4]
-		
-		}
-	
+(* ::Subsection:: *)
+(*Compiling Phase terms:*)
 
 
-]
+Module[{ds = Import["Phase_Ds_order_1_to_4.wdx"]}, Ds = ds[[2]]];
 
 
+(*Set hold pattern on the lfhs of the rule*)
+Ds = MapAt[HoldPattern, Ds, {All, 1}];
+
+
+(*Function to take HoldForm[Block[...]] and make library functions*)
 compileThis[x_HoldForm] := Module[
 	{dummy, vars},
-	vars = {{\[Omega], _Real, 1},\[Eta],\[Chi]1,\[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4};
+	vars = {{\[Omega],  _Real,  1}, \[Eta], \[Chi]1, \[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4};
 	dummy = Hold[
 		Evaluate[vars], 
 		Evaluate[x],
@@ -917,37 +965,31 @@ compileThis[x_HoldForm] := Module[
 ]
 
 
+<<CompiledFunctionTools`
+
+
 compiledDs = MapAt[
 	compileThis,
-	Ds[[2]], 
+	Ds, 
 	{All, 2}
 ];
 
 
 <<CCompilerDriver`
+<<CCodeGenerator`
 
 
 $CCompilerDefaultDirectory = "/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/";
-
-
-Needs["CCodeGenerator`"]
-
-
-LibraryGenerate[ctest, "phi" <> "6"]
-
-
-ctest2 = LibraryFunctionLoad[
-	"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/phi6.so",
-	"phi6",
-	Join[{{Real,1,"Constant"}}, ConstantArray[{Real, 0, "Constant"},20]],
-	{Real, 0}
-]
 
 
 list = MapIndexed[
 	LibraryGenerate[#1[[2]], "phi" <> ToString[#2//First]]&,
 	compiledDs
 ];
+
+
+(* ::Subsection:: *)
+(*Defining phase terms for RosettaStone*)
 
 
 With[
@@ -1247,7 +1289,7 @@ Block[
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Making Block function*)
 
 
@@ -1411,7 +1453,7 @@ With[
 
 
 expr =  Hold[
-	{test, {M, \[Eta], \[Chi]1, \[Chi]2}, {{}}},
+	{test, {M, \[Eta], \[Chi]1, \[Chi]2}, 1},
 	Evaluate@$blockexpr,
 	"KeepDefs" -> KeepDefs
 ]//.HoldForm[X_] :> X;
@@ -1423,24 +1465,51 @@ expr =  Hold[
 res = EchoTiming[DerivativeRules@@expr]//QuietEcho;
 
 
-Block[
-	{expr1,expr2, f=Range[20,45,0.25], \[Eta]=0.2, \[Chi]1, \[Chi]2, M=60},
+DGrad[f_, vars_] := Module[
+	{h = 1. 10^-6, dummy, Point1, Point2},
 	
-	{\[Chi]1, \[Chi]2} = RandomReal[{-1,1},2];
-	
-	expr2 = res[[2,1,2]]//N; 
-	OwnValues[expr2] = OwnValues[expr2]//.HoldForm[x_]:> x;
-	
-	expr1 = \[ScriptCapitalA]IMRExpr; OwnValues[expr1] = OwnValues[expr1]//.Headrules;
-	
-	Short[expr2]//AbsoluteTiming
+	Point1 = Table[
+		dummy = vars;
+		dummy[[i]] = dummy[[i]]+ h;
+		dummy,
+		{i, Length@vars}
+	];
 
+	
+	Point2 = ConstantArray[vars, Length[vars]];
+	
+	
+	(f@@@Point1 - f@@@Point2)/h
 ]
+
+
+Block[
+	{testF, \[Phi]1, \[Phi]2, ND\[Omega],\[Omega], \[Eta], \[Chi]1, \[Chi]2, DM,
+	D\[Eta], D\[Chi]1, D\[Chi]2, M, G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]],
+    grad, ngrad, f},
+    f = RandomReal[{20, 1024}];
+	
+	testF[M_, \[Eta]_, \[Chi]1_, \[Chi]2_] = res[[1,2]]; DownValues[testF] = DownValues[testF]//. HoldForm[x_]:> x;
+	
+	DM = res[[2,2]]; OwnValues[DM] = OwnValues[DM]//. HoldForm[x_]:> x;
+	D\[Eta] = res[[3,2]]; OwnValues[D\[Eta]] = OwnValues[D\[Eta]]//. HoldForm[x_]:> x;
+	D\[Chi]1 = res[[4,2]]; OwnValues[D\[Chi]1] = OwnValues[D\[Chi]1]//. HoldForm[x_]:> x;
+	D\[Chi]2 = res[[5,2]]; OwnValues[D\[Chi]2] = OwnValues[D\[Chi]2]//. HoldForm[x_]:> x;
+	
+	\[Eta] = RandomReal[{0.1, 0.24}];
+	{\[Chi]1, \[Chi]2} = RandomReal[{-1,1}, 2];
+	M = RandomReal[{20,100}];
+	(*numerical gradient:*)
+	ngrad = DGrad[testF, {M, \[Eta], \[Chi]1, \[Chi]2}];
+	grad = {DM, D\[Eta], D\[Chi]1, D\[Chi]2};
+	
+	{grad, ngrad}
+]//Quiet
 
 
 c = Hold[
 	{{f, _Real, 1}, M, \[Eta], \[Chi]1,\[Chi]2},
-	Evaluate[res[[2,1,2]]//N], 
+	Evaluate[res[[1,2]]//N], 
 	CompilationTarget->"C",
 	RuntimeOptions->"Speed"(*,
 	RuntimeAttributes->{Listable},
@@ -1469,7 +1538,7 @@ Block[
 	
 	{\[Chi]1, \[Chi]2} = RandomReal[{-1,1},2];
 	
-	expr2 = res[[2,1,2]]; 
+	expr2 = res[[1,2]]; 
 	OwnValues[expr2] = OwnValues[expr2]//.HoldForm[x_]:> x;
 	
 	expr1 = c2[f,M, \[Eta], \[Chi]1, \[Chi]2];
@@ -1585,7 +1654,7 @@ test\[ScriptCapitalA] := Module[
 test\[ScriptCapitalA]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Calculating derivatives*)
 
 
@@ -1637,7 +1706,11 @@ Ds = Table@@expr2//QuietEcho;
 (*Export["Amplitude_Ds_order_4.wdx", Ds]*)
 
 
-Ds\[ScriptCapitalA] = Import["Amplitude_Ds_order_1.wdx"];
+(* ::Subsection:: *)
+(*Importing amplitude terms*)
+
+
+Module[{ds = Import["Amplitude_Ds_order_1_to_3.wdx"]}, Ds = ds[[2]]];
 
 
 compileThis[x_HoldForm] := Module[
@@ -1656,6 +1729,13 @@ compileThis[x_HoldForm] := Module[
 	
 	Compile@@dummy
 ]
+
+
+compileThis[Ds[[-1, 2]]]
+
+
+<<CompiledFunctionTools`
+CompilePrint[]
 
 
 compiledDs = MapAt[

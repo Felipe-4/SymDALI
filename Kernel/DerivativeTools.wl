@@ -39,6 +39,10 @@ Begin["`Private`"]
 (*Definitions*)
 
 
+(* ::Subsection:: *)
+(*DerivativeRules Defs*)
+
+
 Attributes[genErrorMessage] = HoldAll;
 
 genErrorMessage[test_] := Module[
@@ -467,9 +471,9 @@ PoolUpdate[exprMain_HoldComplete, occurrences_List, {pool1_DataStructure, pool2_
 	ioccurrences = Delete[occurrences, existingKeys]//DeleteDuplicates;
 	
 	(*Take the normal expressions and replace h_[x_] by existing $xj*)
-	ioccurrencescopy =  EchoTiming[ioccurrences//.pool1["Elements"], "Rule application"];
+	ioccurrencescopy =  ioccurrences//.pool1["Elements"];
 	
-	functionDefs = EchoTiming[CalculateFunctionDef[exprMain, ioccurrencescopy, uniquehs, {defs}], "FunctionDef"];
+	functionDefs = CalculateFunctionDef[exprMain, ioccurrencescopy, uniquehs, {defs}];
 	
 	(*YOU SHOULD DO THE REPLACEMENT BELOW BEFORE CALCULATING THE FUNCTION DEFS
 	Take the function defs and replace h_[x_] by existing $xj*)
@@ -488,7 +492,7 @@ PoolUpdate[exprMain_HoldComplete, occurrences_List, {pool1_DataStructure, pool2_
 	(*Apply the rules from KeepDefs to explicit expressions:*)
 	With[
 		{irules = Reverse/@{defs}}, 
-		functionDefs = EchoTiming[functionDefs//.irules, "Second rule application"];
+		functionDefs = functionDefs//.irules;
 		
 	];
 	
@@ -508,7 +512,7 @@ iIncludeFunctionDef[exprMain_HoldComplete, expr_, depth_Integer, uniquehs_List, 
 	headsPattern = #[x__]&/@uniquehs; 
 	DPattern = Derivative[n__][#][y__]&/@uniquehs;
 	
-	occurrences = EchoTiming[Cases[expr, Alternatives@@Join[headsPattern, DPattern], {depth}]//DeleteDuplicates, "FindingFunctionOccurrences"];
+	occurrences = Cases[expr, Alternatives@@Join[headsPattern, DPattern], {depth}]//DeleteDuplicates;
 	
 	PoolUpdate[exprMain, occurrences, {pool1, pool2}, uniquehs, {defs}];
 ]
@@ -526,7 +530,7 @@ IncludeFunctionDef[x___] := Throw[$Failed, failTag[IncludeFunctionDef]]
 GetAllDefs[exprMain_HoldComplete, implicitDs_List, uniquehs_List, {defs___Rule}] := Module[
 	{pool1 = CreateDataStructure["HashTable"], pool2 = CreateDataStructure["HashTable"], iImplicitDs},
 	
-	(*Quiet[Remove["Global`$x*"], Remove::rmnsm];*)
+	(*Quiet[Remove["Global`$x*"], Remove::rmnsm];*) ClearAll["Global`$x*"];
 	
 	IncludeFunctionDef[exprMain, #, uniquehs, {pool1, pool2}, {defs}]&/@implicitDs;
 	
@@ -802,15 +806,7 @@ iDerivativeRules[name_Symbol, vars_List, derivativeVars_List, functions_List, ze
 		{derivativeHeadList, functions}
 	];
 	
-	(*Reorganize such that the output is {{trivialRules}, {rules}}, trivialRules: FunctionDerivative ->NUMBER*)
-	numberCases = Position[RulesList[[All, 2]], x_/;NumberQ@x, {1}];
-	
-	trivialRules = Extract[RulesList, numberCases];
-	
-	{
-	trivialRules, 
-	Delete[RulesList, numberCases]
-	}
+	RulesList
 ]
 
 iDerivativeRules[args___] := Throw[$Failed, failTag[iDerivativeRules]]
@@ -879,199 +875,55 @@ DerivativeRules[{name_, vars_, derivatives_List}, expr_, OptionsPattern[]]/;(
 ]
 
 
-Options[CLibraryFunction] = {
-	CompilationOptions-> Automatic,
-	Parallelization -> True,
-	RuntimeAttributes -> {Listable},
-	RuntimeOptions -> {
-		"CatchMachineOverflow" -> False, 
-		"CatchMachineIntegerOverflow" -> False, 
-		"EvaluateSymbolically" -> False, 
-		"RuntimeErrorHandler" -> None,
-		"WarningMessages" -> True
-	}
-};
-
-Attributes[CLibraryFunction] = {HoldRest};
+(* ::Subsection::Closed:: *)
+(*DerivativeRulesLoad Defs*)
 
 
-CLibraryFunction[vars_List, expr_, OptionsPattern[]] := Module[
-	{optsValues, opts, iexpr = Hold[expr]},
-	
-	optsValues = OptionValue[CLibraryFunction, #]&/@(Options[CLibraryFunction][[All,1]]);
-	
-	opts = Hold@@MapThread[
-		Rule[#1,#2]&,
-		{Options[CLibraryFunction][[All,1]], optsValues}
+outType[Real] := RandomReal[]
+outType[Complex] := RandomComplex[]
+outType[{Real,1}] := RandomReal[{-1,1}, 2]
+outType[{Complex, 1}] := RandomComplex[{-1-I,1+I},2]
+
+outType[x___] := Throw[$Failed, failTag[outType]]
+
+
+makeWVM::usage="makeWVM[vars_List, OutputType_]
+vars: list of pattern variables in the \"Compile\" syntax ({{x1, _Real}, {x2, _Complex}, ...})
+OutputType: type of output of the function in the Library function convention (Real, Complex, {Real,1}, {Complex,1}, ...)
+Output: WVM code of the corresponding CompiledFunction
+
+Ex:
+makeWVM[{{x, _Real}, {y, _Real, 2}}, {Real,1}]
+>>>{{{3,0,0},{3,2,0},{3,1,1}},{{{-0.43,-0.114},{3,1,1}}},{0,0,1,0,2},{{1}}}";
+
+makeWVM[vars_List, OutputType_] := Module[
+	{list},
+	list  = List@@Compile[Evaluate@vars, Evaluate[ outType[OutputType] ], CompilationTarget->"WVM"
 	];
 	
-	AppendTo[opts, CompilationTarget->"C"];
-	
-	(Compile@@Join[Hold[vars],iexpr, opts])[[-1]]
+	list[[3;;6]]
 ]
 
-
-(*Tests if the file structure is:
-	TheoryName:
-		SymRules
-		NRules
-		Defs.wdx (may or may not exist)
-*)
-
-ParentDirectoryTest[directory_] := Module[
-	{DirecName, PDirecName, isPDirecNameOk, PDirecContent, isPDirecContentOk, MacOSDefaultFile = ".DS_Store"},
-	
-	(*Take the Directory, ParentDirectory names*)
-	DirecName =  FileNameTake[directory, -1];
-	PDirecName = FileNameTake[ParentDirectory[directory], -1];
-	
-	
-	(*test valid PDirecNames:*)
-	isPDirecNameOk = StringCases[PDirecName, {"SymRules", "NRules", "Defs"}] === {};
-	
-	(*Now, test valid content in the PDirec*)
-	PDirecContent = FileNameTake[#,-1]&/@FileNames[All, ParentDirectory[directory]];
-	
-	isPDirecContentOk = (
-		Sort[PDirecContent] === {MacOSDefaultFile, "NRules", "SymRules"} ||
-		Sort[PDirecContent] === {MacOSDefaultFile, "Defs.wdx", "NRules", "SymRules"}
-	  );
-	
-	And[isPDirecContentOk, isPDirecNameOk]
-]
+makeWVM[x___] := Throw[$Failed, failTag[makeWVM]]
 
 
-(*Test for contents in SymRules and NRules:
-	SymRules:
-		.wdx files or empty
-	NRules:
-		empty
-*)
+MakeCompiledFunction::usage="MakeCompiledFunction[x_LF,  expression_, WVM_List]
+x: LibraryFunction quantity with the head \"LibraryFunction\" -> \"LF\"
+expression: left hand side of the rule in the list \"NRules\" (f[x__], $D[{n__}, f][y__],$D[{n__}, f][y__]/;condition, ...)
+WVM: WVM code as generated by \"makeWVM\"
 
-DirectoryFilesTest[directory_] := Module[
-	{
-	PDirec, PDirecContent, isSymFilesOk, isNFilesOk, MacOSDefaultFile = ".DS_Store"
-	},
-	
-	(*Take the Directory, ParentDirectory, prefix and theoryName *)
-	PDirec = ParentDirectory[directory];
-	
-	
-	(*See if the file contents are correct*)
-	isSymFilesOk = StringMatchQ[#, {"*.wdx", ".DS_Store"}]&@FileNames[
-		All,
-		FileNameJoin[PDirec, "SymRules"] 
-	]; (*This outputs either a list of true and False, or an empty list*)
-		
-	(*only True if the list is empty or full with Trues*)	
-	isSymFilesOk = And@@isSymFilesOk;
-	
-	
-	(*NFiles has to be empty, bcs I don't know how to change the name of a C function
-	inside the file and mathematica uses the same names (CompiledFunction0, CompiledFunction1,...) in different
-	kernelSessions, making it impossible to add files to the directory through different kernelSessions.*)
-	isNFilesOk = FileNames[
-		All, FileNameJoin[PDirec, "NRules"]
-		] === {};
-	
-	
-	 And[isSymFilesOk, isNFilesOk]
-]	
+Output: CompiledFunction object with the LibraryFunction corresponding to LF[...]. The object 
+will display \"expression\" to inform you which function that is supposed to calculate.";
 
 
-FullDirectoryTest::fail = "You can only save files in the following directory structure:";
-
-
-FullDirectoryTest[directory_] := Module[
-	{result}, 
-	
-	result = ParentDirectoryTest[directory] && DirectoryFilesTest[directory];
-	
-	If[TrueQ@result, True, Throw[Message[FullDirectoryTest::fail]; directoryTree]]
-	]
-
-
-directoryTree = Tree[
-	"TheoryName (any name but SymRules, NRules \[And] Defs)", 
-	
-		{
-			Tree["SymRules", {"only .wdx files in this directory"}],
-			Tree["NRules",  {"no files in this directory"}], 
-			"Optional: Defs.wdx file here"
-		
-		}
-	,
-	Background->White
-];
-
-
-iSaveSymRules[{rule_, fileName_String}, directory_] := Export[
-	FileNameJoin[directory, FileBaseName[fileName] <> ".wdx"], 
-	rule
-	];
-
-
-iSaveNRules[rules_, directory_] := Module[
-
-	{TranslationTable, fileNames, argsforCopyFile},
-	
-	TranslationTable = Replace[rules, LibraryFunction -> List, {2}, Heads->True];
-	
-	fileNames = FileNameTake[#, -1]&/@rules[[All, 2, 1]];
-	
-	argsforCopyFile = Riffle[
-		rules[[All, 2, 1]], 
-		FileNameJoin[directory, #]&/@fileNames
-	]//Partition[#, 2]&;
-	
-	CopyFile@@@argsforCopyFile;
-	
-	(*Change the names in TranslationTable, making it easier to import LibraryFunctions:*)
-	 Replace[TranslationTable,  Rule@@@argsforCopyFile, {3}]
-]
-
-
-SaveSymRules[{rules_Association, fileName_String}, directory_?DirectoryQ] := Module[
-	{},
-	
-	Catch[
-		FullDirectoryTest[directory];
-		iSaveSymRules[{rules, fileName}, directory]
-	];
-]
-
-
-SaveNRules[rules_Association, directory_?DirectoryQ] := Module[
-	{ruleList},
-	Catch[
-		FullDirectoryTest[directory];
-		
-		
-		ruleList = KeyValueMap[
-			Rule[#1, iSaveNRules[#2, directory]]&,
-			rules
-		];
-		
-		Export[directory <> "/RosettaStone.wdx", Association@ruleList];
-	];
-]
-
-
-iiitest[x_]/; x[[0]] === Symbol := {x,0}
-iiitest[x_] :=x
-
-
-ExtractLibraryFunction[x_]/; Head@x === CompiledFunction := x[[-1]]
-ExtractLibraryFunction[x_] := x
-
-MakeCompiledFunction[x_LibraryFunction,  expression_, WVM_] := Module[
-	{vars =  iiitest/@(x[[3, All]]), compiledfunction, iexpression = expression, Blankvars},
+MakeCompiledFunction[x_LF,  expression_, WVM_List] := Module[
+	{compiledfunction, iexpression = expression, Blankvars},
 	
 	(*eliminate patterns from expression and convert it to string:*)
 	iexpression = ToString[iexpression/. dummy_Pattern :> dummy[[1]]];
 	
 	(*Put the list of variables into the standard form for CompiledFunction:*)
-	Blankvars = MapAt[Blank, vars, {All, 1}];
+	Blankvars = MakeVars[GetVariables[expression], x[[3]]];
 	
 	compiledfunction = { (*These are the settings for the DefaultOptions of CLibraryFunction*)
 		{11, $VersionNumber, 4760},
@@ -1079,40 +931,33 @@ MakeCompiledFunction[x_LibraryFunction,  expression_, WVM_] := Module[
 		Sequence@@WVM, (*WVM for the correct number of variables. Apparently it has to match the declared number*)
 		Function[{}, Evaluate@iexpression, Listable],
 		None,
-		x
+		LibraryFunctionLoad@@x
 	};
 	
 	CompiledFunction@@compiledfunction
 ]
 
 
-outType[Real] := 1.
-outType[Complex] := I
+MakeCompiledFunction[x___] := Throw[$Failed, failTag[MakeCompiledFunction]]
 
 
-makeWVM[vars_, OutputType_] := Module[
-	{list},
-	list  = List@@Compile[Evaluate@vars, Evaluate[ 1. + outType[OutputType] ], CompilationTarget->"WVM"
-	];
-	list[[3;;6]]
-]
-
-
-(*
-vars: variables in  the lhs of the rules in NRules
+MakeVars::usage="MakeVars[vars_List, LFvars_List]
+vars: variables in the lhs of the rules in NRules
 LFvars: Library function vars: LibraryFunction[...][[3]]
+Output: Puts the variables in the correct convention for Compile
 
 Example:
 >>> Block[{l1, l2}, 
-	l1 = {{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,1,"Constant"},{Real,2,"Constant"}};
+	l1 = {{Real,0},{Real, 0},{Real,0},{Real,0},{Real,0},{Real,0},{Real,1},{Real,2}};
 	l2 = {x,y,z,w,k,t, u,v};
 	
 	MakeVars[l2,l1]
 ]
->>>{{x,_Real},{y,_Real},{z,_Real},{w,_Real},{k,_Real},{t,_Real},{u,_Real,1},{v,_Real,2}}
-*)
-MakeVars[vars_, LFvars_] := Module[
+>>>{{x,_Real},{y,_Real},{z,_Real},{w,_Real},{k,_Real},{t,_Real},{u,_Real,1},{v,_Real,2}}";
+
+MakeVars[vars_List, LFvars_List] := Module[
 	{iLFvars, delete0},
+	
 	delete0[0] := Nothing; delete0[x_]/;x>0 := x;
 	
 	iLFvars = LFvars[[All, 1;;2]];
@@ -1127,34 +972,57 @@ MakeVars[vars_, LFvars_] := Module[
 	]
 ]
 
+MakeVars[x___] := Throw[$Failed, failTag[MakeVars]]
 
-(*RulesList: {f[x__] -> \[TensorProduct], $D[n_, f][x__] -> \[TensorProduct]*, ...}*)
+
+GetVariables::usage="GetVariables[x]
+x: lhs of the rule in NRules (one of the following options: f[x__], $D[{n__},f][x__], f[x__]/;condition,$D[{n__},f][x__]/;condition )
+Output: a list with the function variables
+
+Ex: GetVariables[$D[{1, 0, 2, 4}, g][x1_, x2_, x3_, x4_]/;whathever]
+>>> {x1,x2,x3,x4}";
+
+GetVariables[x_Condition] := With[{patternList = List@@(x[[1]])}, patternList[[All,1]]]
+
+GetVariables[x_] := With[{patternList = List@@(x)}, patternList[[All,1]]]
+
+GetVariables[x___] := Throw[$Failed, failTag[GetVariables]]
 
 
-libraryFunctionsLoad[RulesList_] := Module[
-	{compiledFunctions, expressions, wvm, wvmVars, iivars},
+LoadFunctionDef::usage="LoadFunctionDef[Def_Rule]
+Def: Rule of the general type f[x__]/;condition -> something. \"something\" is either a \"LF[...]\"
+where with all the info for replacing LF-> LibraryFunctionLoad; or it is HoldForm[...] where the argument
+of HoldForm is anything that when evaluated will give the value of the function (either a number or a 
+Module[...])
+Output:If the rhs is \"LF[...]\" it returns the rule with the rhs replaced by the corresponding 
+CompiledFunction object. If the rhs is HoldForm[...] it just returns the rule."; 
 
-	compiledFunctions = LibraryFunctionLoad@@@(RulesList[[All,2]]);
-	compiledFunctions = ExtractLibraryFunction/@compiledFunctions;
+(*Def : HoldPattern[a[x__]] -> LF[...] or  HoldPattern[a[x__]] -> HoldForm[...]*)
+LoadFunctionDef[Def_Rule]/; Def[[2,0]] === HoldForm := Def
+
+LoadFunctionDef[Def_Rule]/; Def[[2,0]] === LF := Module[
+	{wvmVars, wvm},
 	
-	expressions = RulesList[[All,1]];
-	
-	wvmVars = With[{vars =(List@@RulesList[[1,1]])/.q_Pattern :>  q[[1]], LFvars = RulesList[[1, 2, 3]]}, 
+	wvmVars = With[{vars = GetVariables[Def[[1]]], LFvars = Def[[2, 3]]}, 
 	
 		MakeVars[vars, LFvars]
 	];
 	
-	wvm = makeWVM[wvmVars, RulesList[[1, 2, -1]]]; (*The WVM code also has to match the OutType of Library Function*)
+	wvm = makeWVM[wvmVars, Def[[2, -1]]]; (*The WVM code also has to match the OutType of Library Function*)
 	
-	compiledFunctions = MapThread[
-		MakeCompiledFunction[#1, #2, wvm]&,
-		{compiledFunctions, expressions}
-	];
-	
-	Rule@@@(Riffle[expressions, compiledFunctions]//Partition[#,2]&)
+	MakeCompiledFunction[Def[[2]],  Def[[1]], wvm]
 ]
 
+LoadFunctionDef[x___] := Throw[$Failed, failTag[LoadFunctionDef]]
 
+
+?LoadFunctionDef
+
+
+(*The convention for the SymRules of a theory is just a <| HoldPattern[] -> number, HoldPattern[]-> other number, ...|>
+and for the NRules it is an analog Association but the rhs of Rule 
+is either LF[...] or HoldForm[...]. "LF" standing for LibraryFunction
+*)
 DerivativeRulesLoad[theory_String] := Module[
 	{Pacletdirectory, SymRulesDirec, NRulesDirec, SymRulesDerivatives, NRulesDerivatives, RosettaStone, operatingsystem},
 	
@@ -1166,14 +1034,10 @@ DerivativeRulesLoad[theory_String] := Module[
 	NRulesDirec = FileNameJoin[{Pacletdirectory,"LibraryResources", operatingsystem, "DerivativeRules", theory, "NRules"}];
 	
 	SymRulesDerivatives = Flatten@(Import[#]&/@FileNames["*.wdx", SymRulesDirec]);
-	SymRulesDerivatives = If[ Length@SymRulesDerivatives===1,  SymRulesDerivatives//Last, SymRulesDerivatives];
-	
 	
 	RosettaStone = Import[NRulesDirec <> "/RosettaStone.wdx"];
-	NRulesDerivatives = KeyValueMap[
-		Rule[#1, libraryFunctionsLoad[#2]]&,
-		RosettaStone
-	];
+	
+	NRulesDerivatives = LoadFunctionDef/@RosettaStone;
 	
 	{
 		SymRulesDerivatives, 

@@ -103,6 +103,12 @@ PreprocessDALItensors[DALIlist_List, dimension_Integer] := Module[
 PreprocessDALItensors[x___] := Throw[$Failed, failTag[PreprocessDALItensors]]
 
 
+(LIComponents[#] = SymmetrizedIndependentComponents[ConstantArray[12, #], Symmetric[All]])&/@Range[10];
+
+
+\[CapitalDelta]p[i_] := ToExpression["p"<>ToString[i]]
+
+
 (*fiducial point = {{x1,value}, {x2,value},...}
 output is the polynomial*)
 

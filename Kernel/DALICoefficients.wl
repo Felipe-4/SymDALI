@@ -21,7 +21,7 @@ CreateStyleSheet[]
 ApplyStyleSheet[]*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Package Header*)
 
 
@@ -105,12 +105,25 @@ GenMessage[True, mess_] := True;
 GenMessage[False, mess_] := With[{}, Message[mess]; False]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Make Gradients*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Function Set-Up*)
+
+
+(*$D[{x__}, \[CapitalPhi]IMR][y__]/;Total[{x}[[6;;-1]]] === 1 -> ...*)
+
+
+(*
+	The desired general form of SymRules is 
+	<|
+		"h1" -> {$D[{n__}, h1]/;condition1 -> number1, $D[{n__}, h1]/;condition2 -> number2,...},
+		...
+	|>
+
+<|"h1" -> {HoldPattern[$D[{n__}, h1]] :> ...}, ...|>*)
 
 
 CreateHeads::usage="CreateHeads[{SymRules___Rule}] 
@@ -119,8 +132,8 @@ CreateHeads::usage="CreateHeads[{SymRules___Rule}]
 Output: list with distinct numbers and a unique head for each number
 Example: 
 >>> With[{d = <|
-	\"f1 \" -> {$D[{2,0}, f1][x_, y_] -> 2., $D[{2,1}, f1][x_, y_] -> 0.}, 
-	\"f2 \" -> {$D[{3}, f2][x_] -> 3., $D[{4}, f2][x_] -> 0.}
+	\"f1 \" -> {$D[{2,0}, f1]-> 2., $D[{2,1}, f1] -> 0.}, 
+	\"f2 \" -> {$D[{3}, f2] -> 3., $D[{4}, f2] -> 0.}
 |>},
 	CreateHeads[Flatten[Values@d]]
 ]
@@ -129,7 +142,9 @@ Example:
 
 CreateHeads[{SymRules___Rule}] := Module[
 	{list, heads, SymRulesValues},
+	
 	SymRulesValues = {SymRules}[[All,2]];
+	
 	list = DeleteDuplicates[SymRulesValues];
 	
 	heads = Unique@ConstantArray["h", Length[list]];
@@ -141,51 +156,85 @@ CreateHeads[{SymRules___Rule}] := Module[
 CreateHeads[x___] := Throw[$Failed, failTag[CreateHeads]]
 
 
+(*Assuming the lhs is either Condition[$D[{n__}, h], cond] -> something or $D[{n__}, h]-> something*)
+GetSymRuleHead[def_Rule]/;def[[1,0]] === Condition := def[[1, 1,-1]]
+GetSymRuleHead[def_Rule]/; def[[1,0]] === $D := def[[1,-1]]
+GetSymRuleHead[x___] :=Throw[$Failed, failTag[GetSymRuleHead]]
+
+
 SymUpValues::usage="SymUpValues[{SymRules___Rule}, AuxHead_]
 {SymRules}: Flat SymRules List, i.e. Flatten[Values@SymRules]
 AuxHead: head such that AuxHead[xi] = headi, where xi and headi are corresponding head-number pairs from \"CreateHeads\".
 Output: None. It defines the following kind of UpValues  f/: $D[n__, f] = hi, for all expressions in SymRules.
 
 Example:
->>>Block[{d = <|
-	\"f1\" -> {$D[{2,0}, f1][x_, y_] -> 2., $D[{2,1}, f1][x_, y_] -> 0.}, 
-	\"f2\" -> {$D[{3}, f2][x_] -> 3., $D[{4}, f2][x_] -> 0.}
-|>, heads, aux},
+>>>Block[{d = {$D[{2,0}, f1] -> 2., $D[{n1_,n2_}, f1]/;n2>n1 -> 0.}, heads, aux},
 	
-	heads = Echo[CreateHeads[Flatten[Values@d]]];
+	heads = Echo[CreateHeads[d]];
+	
 	MapThread[
 		(aux[#2] = #1)&,
 		heads
 	];
-	SymUpValues[Flatten[Values@d], aux];
-	UpValues/@{f1,f2}
+	Print[{aux[2.], aux[0.]}];
+	
+	SymUpValues[d, aux];
+	Print[UpValues/@{f1,f2}];
+	Clear[f1]
 ]
 
->>>{{h17,h18,h19},{2.`,0.`,3.`}}
+>>>{{h72,h73},{2.`,0.`}}
 {
-	{HoldPattern[$D[{2,0},f1]]\[RuleDelayed]h17, HoldPattern[$D[{2,1},f1]]\[RuleDelayed]h18},
-	{HoldPattern[$D[{3},f2]]\[RuleDelayed]h19,HoldPattern[$D[{4},f2]]\[RuleDelayed]h18}
+	{HoldPattern[$D[{2,0},f1]]\[RuleDelayed]h72,HoldPattern[$D[{n1_,n2_},f1]/;n2>n1]\[RuleDelayed]h73},
+	{}
 }";
 
-SymUpValues[{SymRules___Rule}, AuxHead_Symbol] := Module[
-	{heads, lefthandsides, righthandsides},
-	(*Assuming all the rules in SymRules are like "$D[{x__}, symbol][y__] -> number" collect symbol*)
-	heads = {SymRules}[[All, 1, 0, -1]];
-	(*collect $D[{x__}, symbol]*)
-	lefthandsides = {SymRules}[[All, 1, 0]];
-	(*Collect the corresponding heads hi that should have definitions of the type hi[x__] := numberi*)
-	righthandsides = AuxHead/@({SymRules}[[All, 2]]);
+SymUpValues[{}, AuxHead_Symbol] := Null
+
+SymUpValues[{SymRules__Rule}, AuxHead_Symbol] := Module[
+	{iList, dummyFunction,  head = GetSymRuleHead[{SymRules}[[1]]]},
+
+	(*Make a list where the rhs is the head corresponding to the number:*)
+	iList = MapAt[AuxHead, {SymRules}, {All, 2}];
+
+	(*place HoldPattern on the lhs and Rule-> RuleDelayed*)
+	iList = RuleDelayed@@@(MapAt[HoldPattern, iList, {All, 1}]);
 	
-	MapThread[
-		TagSet,
-		{heads, lefthandsides, righthandsides}
-	]
+	dummyFunction[x_] := (UpValues[x] = iList);
+	(*define UpValues:*)
+	dummyFunction[head];
 ]
 
 SymUpValues[x___] := Throw[$Failed, failTag[SymUpValues]]
 
 
+ProcessSymRules::usage="ProcessSymRules[SymRules_Association]
+SymRules: Association with SymRules for all heads
+Output: list of all heads such that head[x___] = numberi, for some number i in the SymRules";
+
+ProcessSymRules[SymRules_Association] := Module[
+	{headNumberPair, aux},
+	(*Make all the head-value pairs*)
+	headNumberPair = CreateHeads[Flatten[Values@SymRules]];
+	(*Make the heads evaluate to corresponding numbers*)
+	MapThread[(#1[x___] := #2)&, headNumberPair];
+	(*Just so you can replace numbers by heads in order to define UpValues*)
+	MapThread[
+		(aux[#2] = #1)&,
+		headNumberPair
+	];
+	
+	
+	(*Make the UpValues for each key in the association*)	
+	SymUpValues[#1, aux]&/@SymRules;
+	headNumberPair[[1]]
+]
+
+ProcessSymRules[x___] := Throw[$Failed, faiTag[ProcessSymRules]]
+
+
 GCSymRules[heads_List] := Module[
+	
 	{uniquehs}, 
 	
 	uniquehs = (UpValues/@heads)//Flatten;
@@ -195,11 +244,28 @@ GCSymRules[heads_List] := Module[
 ]
 
 
+(*<|
+	"h1" -> {h1[x__] -> \[TensorProduct], $D[{n__}, h1] -> \[TensorProduct], $D[{n__}, h1]/;cond -> auxh1},
+	"auxh1" -> {auxh1[u__] -> \[TensorProduct]},
+	...
+
+
+|>*)
+
+
+(*$D[{x__}, \[CapitalPhi]IMR][y__]/;Total[{x}[[6;;-1]]] === 1 
+$D[{x__}, \[CapitalPhi]IMR][y__]/; {x}[[1]] === 0 && {x}[[5]] > 0*)
+
+
+iApply[head_, vars_List]/; head[[0]] === CompiledFunction := head@@vars
+iApply[head_, vars_List]/; head[[0]] === HoldForm := head
+iApply[x___] := Throw[$Failed, failTag[iApply]]
+
+
 NDownValue::usage="NDownValue[{NRules___Rule}]
-{NRules}: flat list of all NRules, i.e. Flatten[Values@NRules]
+{NRules}: flat list of  NRules, i.e. Flatten[Values@NRules]
 Output: None. It defines the assignement head[x1_, x2_, ...] := CompiledFunction[...][x1,x2,...]
 * CompiledFunction must have the RuntimeOption \"EvaluateSymbolically\" ->False
-
 Example:
 >>>With[{d = <|
 	\"f1\" -> {$D[{2,0}, f1][x_, y_] -> CompiledFunction[], $D[{2,1}, f1][x_, y_] -> CompiledFunction[]}, 
@@ -217,69 +283,87 @@ Example:
 
 
 NDownValue[{NRules___Rule}] := Module[
-	{simpleFunctions, positions, lhs, rhs},
+	{def, vars, dummyFunction, head = {NRules}[[1,1,0]]},
+	vars = List@@({NRules}[[1, 1, All,1]]);
+	(*You have 1 h[x__] -> \[TensorProduct] per list and it is always in the first element. Make Rule -> RuleDelayed \[And] Insert HoldPattern*)
+	def = MapAt[
+		HoldPattern,
+		{NRules}[[{1}]],
+		{All, 1}
+	];
+	(*Replace the rhs by the function@@vars*)
+	def = RuleDelayed@@@MapAt[iApply[#, vars]&, def, {All,2}];
 	
-	(*Find the position of all Simple Functions, {1,0, 0} in  {NRules}[[All, 1, 0, 0]] returns either Symbol or $D*)
-	positions = Position[{NRules}[[All, 1, 0, 0]], Symbol];
-	(*Collect the corresponding rules*)
-	simpleFunctions = Extract[{NRules}, positions];
+	def = ReplaceAt[def, {HoldForm[x_] :> x}, {All, 2}];
 	
-	(*get the left hand sides and right hand sides*)
-	lhs = simpleFunctions[[All,1]];
-	rhs = simpleFunctions[[All,2]];
+	dummyFunction[a_] := (DownValues[a] = def);
 	
-	MapThread[
-		Inactive[SetDelayed][#1, #2@@#3]&,
-		{lhs, rhs, lhs[[All, All, 1]]} (*lhs[[All, All, 1]] elliminates patterns from {s1[x1_,x2_,...], s2[x1_,x2_,...],...}.*)
-	
-	]//Quiet//Activate;
-	
+	dummyFunction[head];
 ]
 
 NDownValue[x___] := Throw[$Failed, failTag[NDownValue]]
 
 
 NUpValue::usage="NUpValue[{NRules___Rule}]
-{NRules} : Flat NRules list, i.e., Flatten[Values@NRules]
-Output: None. It performs the following kind of assignements 
-uniquehead/: $D[{1,0,0}, uniquehead] = CompiledFunction[...]
+{NRules} : list of NRules
+Output: None. Defines UpValues for the heads in {NRules}
 
 Example:
->>>With[{d = <|
-	\"f1\" -> {$D[{2,0}, f1][x_, y_] -> CompiledFunction[], $D[{2,1}, f1][x_, y_] -> CompiledFunction[]}, 
-	\"f2\" -> {f2[x_] -> CompiledFunction[], $D[{4}, f2][x_] -> CompiledFunction[]}
-|>}, 
-	Echo[NUpValues[Flatten[Values@d]]];
-	UpValues/@{f1,f2}
+>>>With[{d = {f1[x_,y_]-> CompiledFunction[],$D[{2,0}, f1] -> CompiledFunction[], $D[{2,1}, f1] -> CompiledFunction[]}}, 
+	Echo[NUpValue[d]];
+	UpValues/@{f1,f2}//Print;
+	Clear@f1
 ]//Quiet
 
 Null
 {
 	{HoldPattern[$D[{2,0},f1]]\[RuleDelayed]CompiledFunction[],HoldPattern[$D[{2,1},f1]]\[RuleDelayed]CompiledFunction[]},
-	{HoldPattern[$D[{4},f2]]\[RuleDelayed]CompiledFunction[]}
+	{}
 }";
 
-NUpValue[{NRules___Rule}] := Module[
-	{positions, iList, compiledFunctions, tags, positions2},
-	
-	(*position of all functions hi[y__]*)
-	positions  = Position[{NRules}[[All, 1, 0, 0]], Symbol];
-	(*positions2 to account for evaluation of DownValues in the list.*)
-	positions2 = Position[{NRules}[[All, 1, 0, 0]], CompiledFunction|LibraryFunction];
-	
-	iList = Delete[{NRules}, Join[positions, positions2]]; 
-	(*take all tags from the list of $D[{n__}, tagi][y__]*)
-	tags = iList[[All, 1, 0, -1]];
-	
-	(*Make the assignements:*)
-	MapThread[
-		TagSet,
-		{tags, iList[[All, 1, 0]], iList[[All, 2]] }
-	];
+NUpValue[{NRules___Rule}]/; Length[{NRules}]=== 1 := Null
 
+NUpValue[{NRules___Rule}]/; Length[{NRules}] > 1 := Module[
+	{iList = {NRules}[[2;;-1]], head = {NRules}[[1, 1, 0]], dummyFunction},
+	(*Add HoldPattern and RuleDelayed to the list*)
+	iList = RuleDelayed@@@MapAt[HoldPattern, iList, {All, 1}];
+	
+	dummyFunction[x_] := (UpValues[x] = iList);
+	
+	dummyFunction[head];
 ]
 
 NUpValue[x___] := Throw[$Failed, failTag[NUpValue]]
+
+
+ProcessNRules::usage="";
+
+ProcessNRules[NRules_Association] := Module[
+	{},
+	NDownValue/@NRules;
+	NUpValue/@NRules;
+]
+
+ProcessNRules[x___] := Throw[$Failed, failTag[ProcessNRules]]
+
+
+Parser[expr_, originalHeads_List, newHeads_List] := Module[
+	{vars, defs, FullExpr, x},
+	vars =  HoldComplete[x]/.x -> originalHeads;
+	
+	defs = MapThread[set, {originalHeads, newHeads}];
+	defs = HoldComplete[x]/. x-> Join[defs, {expr}];
+	defs = CompoundExpression@@@defs;
+	
+	FullExpr = Join[vars, defs];
+	
+	Block[
+		{set=Set}, 
+		Block@@FullExpr
+	]
+]
+
+Parser[x___] := Throw[$Failed, failTag[Parser]]
 
 
 MakeDefs::usage="MakeDefs[SymRules_Association, NRules_Association]
@@ -343,7 +427,7 @@ MakeDefs[SymRules_Association, NRules_Association] := Module[
 	];
 	(*Make hi[x__] = ni*)
 	MapThread[
-		(#1[x__] = #2)&,
+		(#1[x__]  =  #2)&,
 		HeadNumberPair
 	];
 	
@@ -910,11 +994,11 @@ GradientsList[{gradients__}, {varnumbers__Integer}, n_Integer]/;(
 GradientsList[x___] := Throw[$Failed, failTag[GradientsList]]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Make DALI Tensors*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*GenDaliTerm*)
 
 
@@ -996,7 +1080,7 @@ term  = Sum[matrix[[i,j]]*TensorProduct[list1[[i]], list2[[j]]], {i, 10}, {j, 10
 Clear[list1, list2, a, aValues, values1, values2, values3, matrix,  termValues]*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*GenDaliList*)
 
 
@@ -1114,7 +1198,7 @@ manualDALIlist == automaticDAliLIst*)
 (**)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*DALICoefficients*)
 
 
@@ -1169,7 +1253,7 @@ Map[TensorRank, test, {2}]
 Clear[HEADTEST, points, \[Sigma], test]*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*GWDALICoefficients*)
 
 
@@ -1231,7 +1315,7 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*NDALICoefficients*)
 
 
