@@ -1,6 +1,8 @@
 (* ::Package:: *)
 
 System`$D::usage="$D[{n__}, symbol][y__] is equivalent to Derivative[n__][symbol][y__].";
+System`TagRule::usage="TagRule[f, g[f[x_]], 3] is equivalent in spirit to f/: g[f[x_]] = 3. At some point I will fix the formating so that you 
+can type f/: g[f[x_]] -> 3. For now the syntax is TagRule[tag, lhs, rhs]";
 
 BeginPackage["FelipeBarbosa`SymDALI`"];
 ClearAll[us\[Theta]];

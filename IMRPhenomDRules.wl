@@ -786,11 +786,11 @@ test := Module[
 		ListLinePlot[
 			Take[diff, pos], 
 			GridLines->{{{0.018,Red}, {ringdown/2, Red}}, None}, 
-			PlotRange->All, ImageSize->Medium
+			PlotRange->All, ImageSize->Medium, Background->White
 		],
 		ListLinePlot[
 			{Take[Ripple, pos], Take[MMA, pos]}, GridLines->{{{0.018,Red}, {ringdown/2, Red}}, None},PlotRange->All,
-			PlotLegends->{"Python", "MMA"}, ImageSize->Medium
+			PlotLegends->{"Python", "MMA"}, ImageSize->Medium, Background->White
 		]
 	}
 	
@@ -801,7 +801,7 @@ test := Module[
 test//Quiet
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Derivatives and compilation*)
 
 
@@ -814,14 +814,11 @@ Combinations[vars_List, n_Integer]/;n>0 := Module[
 ]
 
 
-vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2(*, \[Omega]ref*)(*, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4*)};
+vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2};
 
 
 (*All derivatives up to order 3*)
-derivatives = Combinations[vars, 5];
-
-
-Table[Length@Combinations[vars, i], {i, 1 5}]
+derivatives = Combinations[vars, 3];
 
 
 derivatives//Length
@@ -839,40 +836,7 @@ With[{
 	vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}
 	},
 	expr =  Hold[
-	{\[CapitalPhi]IMR,  vars, {i}},
-	Evaluate@$blockexpr,
-	"KeepDefs" -> KeepDefs,
-	"IncludeZeroDerivative"->False
-]//.HoldForm[X_] :> X;
-	expr = Hold[Evaluate@expr];
-	
-	expr = DerivativeRules@@@expr;
-
-]
-
-
-ParallelTable@@Join[expr, Hold[{i, derivatives[[1;;5]]}, "Method" -> "CoarsestGrained"]]//QuietEcho;
-
-
-DistributeDefinitions@@(KeepDefs[[All,1]])
-DistributeDefinitions[DerivativeRules]
-DistributeDefinitions["FelipeBarbosa`SymDALI`*"]
-
-
-Clear@Ds1to4
-Ds4to5 = MemoryConstrained[EchoTiming[DerivativeRules@@expr], 6 10^9];
-
-
-Export["Phase_Ds_order_5_part1.wdx", Ds4to5]
-
-
-Clear@expr;
-
-With[{
-	vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}
-	},
-	expr =  HoldForm[
-	{\[CapitalPhi]IMR,  vars, {i}},
+	{\[CapitalPhi]IMR,  vars, derivatives},
 	Evaluate@$blockexpr,
 	"KeepDefs" -> KeepDefs,
 	"IncludeZeroDerivative"->False
@@ -880,69 +844,21 @@ With[{
 ]
 
 
-Clear@Ds4to5
+Clear@Ds
 
-expr2 = Hold[Evaluate@expr, Evaluate@{i, derivatives[[101;;126]]}]//.HoldForm-> DerivativeRules;
+Ds = MemoryConstrained[DerivativeRules@@expr, 6 10^9];
 
-D5part2 = MemoryConstrained[ Table@@expr2, 5 10^9];
-
-Export["Phase_Ds_order_5_part2.wdx", D5part2]
+Export["Phase_Ds_order_0_to_3.wdx", Ds]
 
 
-$D[{x__}, \[CapitalPhi]IMR][y__]/;Total[{x}[[6;;-1]]] === 1 := Module[
-	{pos = Position[{x}[[6;;-1]], 1], ds, args},
-	ds = Join[
-		{x}[[1;;5]],
-		ConstantArray[0, 16]
-	];
-	args = Join[
-		{y}[[1;;5]],
-		ReplacePart[{y}[[6;;-1]], pos -> 1]
-	];
-	
-	$D[ds, \[CapitalPhi]IMR]@@args
-];
-
-$D[{x__}, \[CapitalPhi]IMR][y__]/; Total[{x}[[6;;-1]]] > 1 := 0
+Ds = Import["Phase_Ds_order_0_to_3.wdx"];
 
 
-(*
-	Consider that \[CapitalPsi] = \[CapitalPhi]IMR[\[Omega]] - \[CapitalPhi][\[Omega]ref] - t0 (\[Omega]-\[Omega]ref) and that \[Omega] variables has to be a vector.
-	The derivative with respect to \[Omega]ref is minus the derivative of \[Omega] evaluated at the value of \[Omega]ref passed as a vector
-*)
-
-$D[{x__}, \[CapitalPhi]IMR][y__]/; {x}[[1]] === 0 && {x}[[5]] > 0 := Module[
-	{ds, args},
-	ds = Join[
-		{x}[[{5}]], 
-		{x}[[2;;4]], 
-		{0}, 
-		{x}[[6;;-1]]
-	];
-	
-	args = Join[
-		{y}[[{5}]], 
-		{y}[[2;;-1]]
-	];
-	
-	-Last[
-		$D[ds, \[CapitalPhi]IMR]@@args
-	]
-]
-
-
-$D[{x__}, \[CapitalPhi]IMR][y__]/; ({x}[[1]] > 0 && {x}[[5]] > 0)  := 0
-
-
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Compiling Phase terms:*)
 
 
-Module[{ds = Import["Phase_Ds_order_1_to_4.wdx"]}, Ds = ds[[2]]];
-
-
-(*Set hold pattern on the lfhs of the rule*)
-Ds = MapAt[HoldPattern, Ds, {All, 1}];
+Module[{ds = Import["Phase_Ds_order_0_to_3.wdx"]}, Ds = ds];
 
 
 (*Function to take HoldForm[Block[...]] and make library functions*)
@@ -998,35 +914,92 @@ With[
 ];
 
 
+Dterms =Module[{Ds = Import["Phase_Ds_order_0_to_3.wdx"]}, Ds[[All,1]] ];
+
+
 phis = Block[
 	{Cvariables},
-	Cvariables= ConstantArray[{Real, 0, "Constant"},20];
-	Cvariables = Join[{{Real,1,"Constant"}}, Cvariables];
+	Cvariables= ConstantArray[{Real, 0},20];
+	Cvariables = Join[{{Real,1}}, Cvariables];
 
 MapThread[
-	(#1 -> libraryFunction[
+	(#1 -> LF[
 		#2, 
 		FileBaseName[#2], 
 		Cvariables,
 		{Real, 1}
 	])&,
-	{Ds[[2, All,1]],list }
+	{Dterms, list}
 ]
 ];
 
 
-phis = phis//.libraryFunction[
-	"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/phi6.so",
-	"phi6",
-	{{Real,1,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"}},
-	{Real,1}] -> libraryFunction[
-	"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/phi6.so",
-	"phi6",
-	{{Real,1,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"},{Real,0,"Constant"}},
-	{Real,0}];
+(*put the rules in the correct format*)
+phis2 = phis//.{($D[{n__}, \[CapitalPhi]IMR][x__] -> LF[y__]) :>  TagRule[\[CapitalPhi]IMR, $D[{n}, \[CapitalPhi]IMR][x],  LF[y]]};
 
 
-phis = phis//.libraryFunction->LibraryFunction;
+(*The derivative of the function with respect to any \[Delta]p (at first order) is the function with the \[Delta]p in question replaced by 1*)
+
+$D[{x__}, \[CapitalPhi]IMR][y__]/;Total[{x}[[6;;-1]]] === 1 -> Aux\[CapitalPhi]IMR1;
+
+AuxRule1 = Aux\[CapitalPhi]IMR1[x__][y__] :>  Module[
+	{pos = Position[{x}[[6;;-1]], 1], ds, args},
+	ds = Join[
+		{x}[[1;;5]],
+		ConstantArray[0, 16]
+	];
+	args = Join[
+		{y}[[1;;5]],
+		ReplacePart[{y}[[6;;-1]], pos -> 1]
+	];
+	
+	$D[ds, \[CapitalPhi]IMR]@@args
+]
+
+
+
+(*more than 1 derivative in \[Delta]pi is zero because each appears linearly*)
+sym1 = $D[{x__}, \[CapitalPhi]IMR]/; Total[{x}[[6;;-1]]] > 1 -> 0
+
+
+(*
+	Consider that \[CapitalPsi] = \[CapitalPhi]IMR[\[Omega]] - \[CapitalPhi][\[Omega]ref] - t0 (\[Omega]-\[Omega]ref) and that \[Omega] variables has to be a vector.
+	The derivative with respect to \[Omega]ref is minus the derivative of \[Omega] evaluated at the value of \[Omega]ref passed as a vector
+*)
+
+$D[{x__}, \[CapitalPhi]IMR][y__]/; {x}[[1]] === 0 && {x}[[5]] > 0 && Total[{x}[[6;;-1]]] === 0 -> Aux\[CapitalPhi]IMR2;
+
+AuxRule2 = Aux\[CapitalPhi]IMR2[x__][y__] :>  Module[
+	{ds, args},
+	ds = Join[
+		{x}[[{5}]], 
+		{x}[[2;;4]], 
+		{0}, 
+		{x}[[6;;-1]]
+	];
+	
+	args = Join[
+		{{y}[[{5}]]}, 
+		{y}[[2;;-1]]
+	];
+	
+	-Last[
+		$D[ds, \[CapitalPhi]IMR]@@args
+	]
+]
+
+
+(*non-zero derivatives in \[Omega] and \[Omega]ref are automatically 0*)
+sym2 = $D[{x__}, \[CapitalPhi]IMR]/;({x}[[1]] > 0 && {x}[[5]] > 0)  ->  0
+
+
+phis3 = Join[
+	phis2,
+	{
+		TagRule[\[CapitalPhi]IMR, $D[{x__}, \[CapitalPhi]IMR]/;Total[{x}[[6;;-1]]] === 1, Aux\[CapitalPhi]IMR1[x]], 
+		TagRule[\[CapitalPhi]IMR, $D[{x__}, \[CapitalPhi]IMR]/; {x}[[1]] === 0 && {x}[[5]] > 0 && Total[{x}[[6;;-1]]] === 0, Aux\[CapitalPhi]IMR2[x]]
+	}
+];
 
 
 (* ::Chapter:: *)
@@ -1289,7 +1262,7 @@ Block[
 ];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Making Block function*)
 
 
@@ -1654,7 +1627,7 @@ test\[ScriptCapitalA] := Module[
 test\[ScriptCapitalA]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Calculating derivatives*)
 
 
@@ -1671,52 +1644,36 @@ vars = {M, \[Eta], \[Chi]1,\[Chi]2};
 
 
 (*All derivatives up to order 3*)
-derivatives = Combinations[vars, 5];
-
-
-(*We need only 1 \[Delta]p_i at a time, and no more than one derivative because they are linear in the phase*)
-derivatives//Length
+derivatives = Combinations[vars, 3];
 
 
 PrependTo[derivatives, {}];
 
 
-Combinations[vars, 3]//Length
-Combinations[vars, 4]//Length
-
-
-derivatives[[36;;70]]
-
-
 expr =  Hold[
-	{\[ScriptA]IMR, {f, M, \[Eta], \[Chi]1, \[Chi]2}, {i}},
+	{\[ScriptA]IMR, {f, M, \[Eta], \[Chi]1, \[Chi]2}, derivatives},
 	Evaluate@$blockexpr,
 	"KeepDefs" -> KeepDefs,
 	"IncludeZeroDerivative"->False
 ]//.HoldForm[X_] :> X;
 
 
-<<FelipeBarbosa`SymDALI`
-
-
 Clear@Ds;
-expr2 = HoldForm[MemoryConstrained[x, 6 10^9], Evaluate[{i,derivatives[[1;;5]] }]]/.x-> expr;
-expr2 = expr2/.Hold-> DerivativeRules;
-Ds = Table@@expr2//QuietEcho;
-(*Export["Amplitude_Ds_order_4.wdx", Ds]*)
+Ds = DerivativeRules@@expr;
+Export["Amplitude_Ds_order_0_to_3.wdx", Ds]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Importing amplitude terms*)
 
 
-Module[{ds = Import["Amplitude_Ds_order_1_to_3.wdx"]}, Ds = ds[[2]]];
+Module[{ds = Import["Amplitude_Ds_order_0_to_3.wdx"]}, Ds = ds];
 
 
 compileThis[x_HoldForm] := Module[
 	{dummy},
 	dummy = Hold[
-		{{f,_Real,1}, M, \[Eta], \[Chi]1, \[Chi]2}, 
+		{{f, _Real, 1}, M, \[Eta], \[Chi]1, \[Chi]2}, 
 		Evaluate[x],
 		RuntimeOptions->{
 			"CatchMachineOverflow"->False,
@@ -1725,22 +1682,19 @@ compileThis[x_HoldForm] := Module[
 			"RuntimeErrorHandler"->None,
 			"WarningMessages"->True
 		}
-	]//.{HoldForm[y_] :> y, us\[Theta]->UnitStep};
+	]//.{HoldForm[y_] :> y, us\[Theta]->UnitStep, Rational[any_, any2_] :> Divide[any, any2]};
 	
 	Compile@@dummy
 ]
 
 
-compileThis[Ds[[-1, 2]]]
-
-
 <<CompiledFunctionTools`
-CompilePrint[]
+compileThis[Ds[[-1, 2]]]//CompilePrint
 
 
 compiledDs = MapAt[
 	compileThis,
-	Ds[[2]], 
+	Ds, 
 	{All, 2}
 ];
 
@@ -1757,34 +1711,51 @@ Needs["CCodeGenerator`"]
 MapIndexed[
 	LibraryGenerate[#1[[2]], "a" <> ToString[#2//First]]&,
 	compiledDs
-]
+];
 
 
-list\[ScriptCapitalA] = {
-	"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/a1.so",
-	"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/a2.so",
-	"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/a3.so",
-	"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/a4.so",
-	"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/a5.so"
-};
+(* ::Subsection:: *)
+(*Defining amplitude for Rosetta stone*)
+
+
+With[
+	{d =FileNames["a*", {"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/"}] },
+	list\[ScriptCapitalA] = SortBy[(StringReplace[FileBaseName[#], "a"->""]//ToExpression)&]@d
+];
+
+
+Dterms\[ScriptCapitalA] =Module[ {Ds = Import["Amplitude_Ds_order_0_to_3.wdx"]}, Ds[[All,1]]];
 
 
 \[ScriptCapitalA]s = MapThread[
-	(#1 -> LibraryFunction[
+	(#1 -> LF[
 		#2, 
 		FileBaseName[#2], 
-		{{Real, 1, "Constant"}, {Real, 0, "Constant"}, {Real, 0, "Constant"}, {Real, 0, "Constant"}, {Real, 0, "Constant"}},
+		{{Real, 1}, {Real, 0}, {Real, 0}, {Real, 0}, {Real, 0}},
 		{Real, 1}
 	])&,
-	{Ds\[ScriptCapitalA][[2, All,1]], list\[ScriptCapitalA]}
-]
+	{Dterms\[ScriptCapitalA], list\[ScriptCapitalA]}
+];
+
+
+\[ScriptCapitalA]s2 = \[ScriptCapitalA]s//.{($D[{n__}, \[ScriptA]IMR][x__] -> LF[y__]) :>  TagRule[\[ScriptA]IMR, $D[{n}, \[ScriptA]IMR][x],  LF[y]]};
 
 
 NRules = <||>;
 
 
-NRules["\[CapitalPhi]IMR"] = phis;
-NRules["\[ScriptA]IMR"] = \[ScriptCapitalA]s;
+NRules["\[CapitalPhi]IMR"] = phis3;
+NRules["\[ScriptA]IMR"] = \[ScriptCapitalA]s2;
+NRules["Aux\[CapitalPhi]IMR2"] = {AuxRule2};
+NRules["Aux\[CapitalPhi]IMR1"] = {AuxRule1};
 
 
 Export["/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/RosettaStone.wdx", NRules];
+
+
+SymRules = <||>;
+
+SymRules["\[CapitalPhi]IMR"] = {sym1, sym2};
+
+
+Export["/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/SymRules/file.wdx", SymRules];

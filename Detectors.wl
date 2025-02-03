@@ -4,12 +4,8 @@ PacletDirectoryLoad["/home/cosmo-ufes/Documentos/GitHub/"];
 <<FelipeBarbosa`SymDALI`
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*old*)
-
-
-PacletDirectoryLoad["/home/cosmo-ufes/Documentos/GitHub/"];
-<<FelipeBarbosa`SymDALI`
 
 
 polarizationTensors[\[Alpha]_, sin\[Delta]_, GMST_] := Module[
@@ -226,7 +222,7 @@ ass["detectors"] = Dets;
 Export["/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/Detectors/NRules/RosettaStone.wdx", ass]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*New*)
 
 
@@ -264,28 +260,27 @@ Fx[\[Theta]_, \[Phi]_,\[Psi]_, D11_, D12_, D13_, D22_, D23_, D33_] = (
 );
 
 
-\[CapitalDelta]t2[detectorposition_, \[Theta]_, \[Phi]_] := Module[
-	{\[Delta], r, c = UnitConvert["SpeedOfLight"][[1]]},
+\[CapitalDelta]t2[p1_, p2_, p3_, \[Theta]_, \[Phi]_] := Module[
+	{\[Delta], r, c = UnitConvert["SpeedOfLight"][[1]], detectorposition},
 	
 	r = FromSphericalCoordinates[{1, \[Theta], \[Phi]}];
+	
+	detectorposition = {p1,p2,p3};
 	
 	-(detectorposition . r/c)
 ]
 
 
-?FromSphericalCoordinates
-
-
-S[\[Theta]_,\[Phi]_, \[Psi]_, cos\[Iota]_, f_ , Dij_, pos_] := Module[
+S[\[Theta]_,\[Phi]_, \[Psi]_, cos\[Iota]_, f_ , Dij_, p1_, p2_,p3_] := Module[
 	{\[Delta]t, D11, D12,D13,D22,D23,D33, comps},
 	
-	\[Delta]t = \[CapitalDelta]t2[pos, \[Theta], \[Phi]];
+	\[Delta]t = \[CapitalDelta]t2[p1,p2,p3, \[Theta], \[Phi]];
 	comps = SymmetrizedIndependentComponents[{3,3}, Symmetric[All]];
 	
 	{D11,D12,D13,D22,D23,D33} = Extract[Dij, comps];
 	
 	(
-		1/2 Fplus[\[Theta],\[Phi],\[Psi],D11,D12,D13,D22,D23,D33] (1 + cos\[Iota]^2) -
+		1/2 Fplus[\[Theta], \[Phi],\[Psi],D11,D12,D13,D22,D23,D33] (1 + cos\[Iota]^2) -
 		I cos\[Iota] Fx[\[Theta],\[Phi],\[Psi],D11,D12,D13,D22,D23,D33]
 	) Exp[- I 2 \[Pi] f \[Delta]t]
 ]
@@ -328,3 +323,159 @@ DetectorTensor["H1"] = With[
 ];
 
 Vertex["H1"] = {-2.16141492636 10^6,  -3.83469517889 10^6   , 4.60035022664 10^6};
+
+
+(* ::Section::Closed:: *)
+(*Calculating Derivatives:*)
+
+
+expr = HoldForm[$Block[
+	{{f1,f2, Fplus, Fcross}},
+	
+	f1[\[Theta]_, \[Phi]_, D11_, D12_, D13_, D22_, D23_, D33_] = \[ScriptF]1;
+	f2[\[Theta]_, \[Phi]_, D11_, D12_, D13_, D22_, D23_] = \[ScriptF]2;
+	
+	Fplus[f1_, f2_, \[Psi]_] := Cos[2 \[Psi]] f1 + Sin[2 \[Psi]] f2;
+	Fcross[f1_, f2_, \[Psi]_] := -Sin[2 \[Psi]] f1 + Cos[2 \[Psi]] f2;
+	
+	(
+		Fplus[f1[\[Theta],\[Phi],D11,D12,D13,D22,D23,D33], f2[\[Theta],\[Phi],D11,D12,D13,D22,D23], \[Psi]] (1+cos\[Iota]^2)/2 - 
+		Fcross[f1[\[Theta],\[Phi],D11,D12,D13,D22,D23,D33], f2[\[Theta],\[Phi],D11,D12,D13,D22,D23], \[Psi]] I cos\[Iota]
+	)*Exp[-I 2 \[Pi] f \[Delta]t]
+]]//.{
+	\[ScriptF]1 -> f1[\[Theta],\[Phi],D11,D12,D13,D22,D23,D33], 
+	\[ScriptF]2 -> f2[\[Theta],\[Phi],D11,D12,D13,D22,D23], 
+	\[Delta]t-> \[CapitalDelta]t2[p1,p2,p3, \[Theta], \[Phi]]
+};
+
+
+Combinations[vars_List, n_Integer]/;n>0 := Module[
+	{result},
+	result  = Table[
+			(Sort/@Tuples[vars, i])//DeleteDuplicates,
+			{i,n}
+	]//Flatten[#,1]&
+]
+
+
+derivatives = Combinations[{\[Theta], \[Phi], \[Psi], cos\[Iota]}, 3];
+
+
+derivatives = DeleteElements[derivatives, {{cos\[Iota], cos\[Iota], cos\[Iota]}}];
+
+
+PrependTo[derivatives, {}];
+
+
+vars = {f, \[Theta], \[Phi], \[Psi], cos\[Iota], p1, p2, p3, D11, D12, D13, D22, D23, D33};
+
+
+Clear[S]
+
+
+expr2 = Hold[Evaluate[{S, vars, derivatives}], Evaluate@expr, "IncludeZeroDerivative"->False]//.HoldForm[x_] :> x;
+
+
+Ds = DerivativeRules@@expr2;
+Export["Detector_Ds_order_0_to_3.wdx", Ds];
+
+
+(* ::Section::Closed:: *)
+(*Compiling*)
+
+
+Ds = Import["Detector_Ds_order_0_to_3.wdx"];
+
+
+Ds[[1,1]]
+
+
+compileThis[x_HoldForm] := Module[
+	{dummy, vars},
+	vars = {{f,  _Real,  1}, \[Theta], \[Phi], \[Psi], cos\[Iota], p1,p2,p3, D11, D12,D13,D22,D23,D33};
+	dummy = Hold[
+		Evaluate[vars], 
+		Evaluate[x],
+		RuntimeOptions->{
+			"CatchMachineOverflow"->False,
+			"CatchMachineIntegerOverflow"->False,
+			"EvaluateSymbolically"->False,
+			"RuntimeErrorHandler"->None,
+			"WarningMessages"->True
+		}
+	]//.{HoldForm[y_] :> y, us\[Theta]->UnitStep, Rational->Divide, Complex[any_,any2_] :> any + I any2 };
+	
+	Compile@@dummy
+]
+
+
+<<CompiledFunctionTools`
+
+
+compiledDs = MapAt[
+	compileThis,
+	Ds, 
+	{All, 2}
+];
+
+
+<<CCompilerDriver`
+
+
+$CCompilerDefaultDirectory = "/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/Detectors/NRules/";
+
+
+Needs["CCodeGenerator`"]
+
+
+MapIndexed[
+	LibraryGenerate[#1[[2]], "D" <> ToString[#2//First]]&,
+	compiledDs
+];
+
+
+(* ::Section:: *)
+(*SymRules and NRules*)
+
+
+With[
+	{d =FileNames["D*", {"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/Detectors/NRules/"}] },
+	list = SortBy[(StringReplace[FileBaseName[#], "D"->""]//ToExpression)&]@d
+];
+
+
+Dterms =Module[ {Ds = Import["Detector_Ds_order_0_to_3.wdx"]}, Ds[[All,1]] ];
+
+
+Detectors = Block[
+	{Cvariables},
+	Cvariables= ConstantArray[{Real, 0}, 13];
+	Cvariables = Join[{{Real,1}}, Cvariables];
+
+MapThread[
+	(#1 -> LF[
+		#2, 
+		FileBaseName[#2], 
+		Cvariables,
+		{Complex, 1}
+	])&,
+	{Dterms, list}
+]
+];
+
+
+Detectors2 = Detectors//.{($D[{n__}, S][x__] -> LF[z__]):> TagRule[S, $D[{n}, S][x], LF[z]]};
+
+
+(*More than 2 derivatives in cos\[Iota] -> 0  automatically.*)
+$D[{n__}, S][y__]/; {n}[[5]] > 2 -> 0;
+
+
+NRules = <||>;
+NRules["S"] = Detectors2;
+Export["/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/Detectors/NRules/RosettaStone.wdx", NRules]
+
+
+SymRules = <||>;
+SymRules["S"] = {$D[{n__}, S]/; {n}[[5]] > 2 -> 0};
+Export["/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/Detectors/SymRules/file.wdx", SymRules];

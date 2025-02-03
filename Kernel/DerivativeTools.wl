@@ -875,7 +875,7 @@ DerivativeRules[{name_, vars_, derivatives_List}, expr_, OptionsPattern[]]/;(
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*DerivativeRulesLoad Defs*)
 
 
@@ -898,6 +898,7 @@ makeWVM[{{x, _Real}, {y, _Real, 2}}, {Real,1}]
 
 makeWVM[vars_List, OutputType_] := Module[
 	{list},
+	
 	list  = List@@Compile[Evaluate@vars, Evaluate[ outType[OutputType] ], CompilationTarget->"WVM"
 	];
 	
@@ -916,7 +917,7 @@ Output: CompiledFunction object with the LibraryFunction corresponding to LF[...
 will display \"expression\" to inform you which function that is supposed to calculate.";
 
 
-MakeCompiledFunction[x_LF,  expression_, WVM_List] := Module[
+MakeCompiledFunction[x_,  expression_, WVM_List] := Module[
 	{compiledfunction, iexpression = expression, Blankvars},
 	
 	(*eliminate patterns from expression and convert it to string:*)
@@ -976,7 +977,13 @@ MakeVars[x___] := Throw[$Failed, failTag[MakeVars]]
 
 
 GetVariables::usage="GetVariables[x]
-x: lhs of the rule in NRules (one of the following options: f[x__], $D[{n__},f][x__], f[x__]/;condition,$D[{n__},f][x__]/;condition )
+x: lhs of the rule in NRules (one of the following options: 
+	f[x__], 
+	$D[{n__},f][x__], 
+	f[x__]/;condition,
+	$D[{n__},f][x__]/;condition
+	TagRule[f, $D[{n__},f][x__]/;condition, LF[...]] (In this case the first 2 terms are in the lhs)
+)
 Output: a list with the function variables
 
 Ex: GetVariables[$D[{1, 0, 2, 4}, g][x1_, x2_, x3_, x4_]/;whathever]
@@ -984,12 +991,28 @@ Ex: GetVariables[$D[{1, 0, 2, 4}, g][x1_, x2_, x3_, x4_]/;whathever]
 
 GetVariables[x_Condition] := With[{patternList = List@@(x[[1]])}, patternList[[All,1]]]
 
-GetVariables[x_] := With[{patternList = List@@(x)}, patternList[[All,1]]]
+GetVariables[x_]/; x=!= TagRule := With[{patternList = List@@(x)}, patternList[[All,1]]]
+
 
 GetVariables[x___] := Throw[$Failed, failTag[GetVariables]]
 
 
-LoadFunctionDef::usage="LoadFunctionDef[Def_Rule]
+FalseQ[False] := True
+FalseQ[x___] := False
+
+
+DropPatternVariables[x_]/; x[[0]] =!= Condition && FalseQ@MatchQ[x[[0]], $D[y__]] := x
+DropPatternVariables[x_]/; x[[0]] =!= Condition && MatchQ[x[[0]], $D[y__]]  := x[[0]]
+
+DropPatternVariables[x_Condition] := Module[
+	{iexpr = x[[1]]}, 
+	Condition@@{iexpr[[0]], x[[2]]}
+]
+
+DropPatternVariables[x___] := Throw[$Failed, failTag[DropPatternVariables]]
+
+
+iLoadFunctionDef::usage="LoadFunctionDef[Def_Rule]
 Def: Rule of the general type f[x__]/;condition -> something. \"something\" is either a \"LF[...]\"
 where with all the info for replacing LF-> LibraryFunctionLoad; or it is HoldForm[...] where the argument
 of HoldForm is anything that when evaluated will give the value of the function (either a number or a 
@@ -998,25 +1021,45 @@ Output:If the rhs is \"LF[...]\" it returns the rule with the rhs replaced by th
 CompiledFunction object. If the rhs is HoldForm[...] it just returns the rule."; 
 
 (*Def : HoldPattern[a[x__]] -> LF[...] or  HoldPattern[a[x__]] -> HoldForm[...]*)
-LoadFunctionDef[Def_Rule]/; Def[[2,0]] === HoldForm := Def
+iLoadFunctionDef[Def_]/; Def[[-1, 0]]  =!=  Global`LF :=  Def
 
-LoadFunctionDef[Def_Rule]/; Def[[2,0]] === LF := Module[
-	{wvmVars, wvm},
+iLoadFunctionDef[Def_]/; Def[[-1,0]] === Global`LF := Module[
+	{wvmVars, wvm, expr, simpleExpr, compiledFunction, vars},
 	
-	wvmVars = With[{vars = GetVariables[Def[[1]]], LFvars = Def[[2, 3]]}, 
+	wvmVars = Module[{vars, LFvars = Def[[-1, 3]]},
+		If[Def[[0]] === TagRule, vars = GetVariables[Def[[2]]], vars = GetVariables[Def[[1]]]];
 	
 		MakeVars[vars, LFvars]
 	];
 	
-	wvm = makeWVM[wvmVars, Def[[2, -1]]]; (*The WVM code also has to match the OutType of Library Function*)
+	wvm = makeWVM[wvmVars, Def[[-1, -1]]]; (*The WVM code also has to match the OutType of Library Function*)
 	
-	MakeCompiledFunction[Def[[2]],  Def[[1]], wvm]
+	If[Def[[0]] === TagRule, expr = Def[[2]], expr=Def[[1]]];
+	
+	
+	simpleExpr = DropPatternVariables[expr];
+	
+	compiledFunction = MakeCompiledFunction[Def[[-1]], expr,  wvm];
+	
+	If[
+		simpleExpr[[0]] =!= $D,
+		vars = GetVariables[Def[[1]]];
+		compiledFunction = compiledFunction@@vars
+	];
+	
+	
+	If[
+		Def[[0]]=== TagRule, 
+		TagRule[Def[[1]], simpleExpr, compiledFunction],
+		simpleExpr -> compiledFunction
+	]
 ]
 
+iLoadFunctionDef[x___] := Throw[$Failed, failTag[iLoadFunctionDef]]
+
+
+LoadFunctionDef[{def__}] := iLoadFunctionDef/@{def}
 LoadFunctionDef[x___] := Throw[$Failed, failTag[LoadFunctionDef]]
-
-
-?LoadFunctionDef
 
 
 (*The convention for the SymRules of a theory is just a <| HoldPattern[] -> number, HoldPattern[]-> other number, ...|>
@@ -1035,13 +1078,14 @@ DerivativeRulesLoad[theory_String] := Module[
 	
 	SymRulesDerivatives = Flatten@(Import[#]&/@FileNames["*.wdx", SymRulesDirec]);
 	
+	
 	RosettaStone = Import[NRulesDirec <> "/RosettaStone.wdx"];
 	
 	NRulesDerivatives = LoadFunctionDef/@RosettaStone;
 	
 	{
-		SymRulesDerivatives, 
-		Association[NRulesDerivatives] 
+		SymRulesDerivatives//Last, 
+		NRulesDerivatives
 	}
 ]
 
