@@ -67,8 +67,108 @@ PermutationsNumber[list_List] := With[
 PermutationsNumber[x___] := Throw[$Failed, failTag[PermutationsNumber]]
 
 
+(*Compile[{x, y}, Module[{h}, h[a_] := 3]]*)
+
+
 c[i_,j_] := -1/(i! j!)
 c[i_,j_]/;i==j := -1/(2 (i!)^2)
+
+
+(*vector = Range[5]*)
+
+
+(*Clear@v*)
+
+
+(*i[dim_, order_] := Module[
+	{IndComp, internalFunction},
+	
+	(IndComp[#] = SymmetrizedIndependentComponents[ConstantArray[dim, #], Symmetric[All]])&/@Range[order];
+	(IndComp[#] = ArrayReshape[IndComp[#], {Length[IndComp[#]]*order, 1}])&/@Range[order];
+	internalFunction = HoldComplete[
+		{matrixVector, iList, k},
+		
+		matrixVector = Table[
+		temp[vector, LIComponents, order,  Length[LIComponents]],
+			{LIComponents,  x}
+		];
+		matrixVector
+		
+		
+		(*Do[
+			KroneckerProduct[matrixVector[[j]], matrixVector[[i]]]//Flatten,
+			{i, 1, order},
+			{j, i, order}
+		]*)
+		
+	]/.{x-> IndComp/@Range[order]}
+]*)
+
+
+(*Clear@vector*)
+
+
+(*c = SymmetrizedIndependentComponents[ConstantArray[11, 3], Symmetric[All]];*)
+
+
+(*temp = Hold[{{vector, _Real, 1}, {LIComponents, _Real, 2}, {l}, {L}}, 
+	Block[
+		{res}, 
+		res = Extract[vector, LIComponents];
+		res = ArrayReshape[res, {L, l}];
+		Times@@@res
+	],
+	CompilationTarget->"C",
+	RuntimeOptions->"Speed"
+];
+
+temp = Compile@@temp*)
+
+
+(*ct = Compile[{{v1, _Real, 1}, {v2, _Real,1}}, 
+	Table[
+		v1[[i]]*v2[[j]],
+		{i, 1 , Length[v1]},
+		{j, 1, Length[v2]}
+	]//Flatten,
+	CompilationTarget->"C",
+	RuntimeOptions->"Speed"
+]*)
+
+
+(*f[vector_] = i[11,2]; DownValues[f] = DownValues[f]/.HoldComplete->Module;*)
+
+
+(*Hold[{{vector, _Real, 1}}, Evaluate[i[11,4]], CompilationTarget->"C",RuntimeOptions->"Speed"]/.HoldComplete->Module;
+cf = Compile@@%*)
+
+
+(*v = RandomReal[{0,1},11]*)
+
+
+(*cf[v];//AbsoluteTiming*)
+
+
+(*F=Function[
+{Typed[vector,"PackedArray"::["Real64", 1]], Typed[LIComponents,"PackedArray"::["Real64", 2]]}, 
+	Block[{res},
+	res = Map[
+		Part[vector, #]&,
+		LIComponents,
+		{2}
+	];
+	
+	Map[(Times@@#)&, res]
+]
+	
+	
+	]*)
+
+
+(*FunctionCompile[F]*)
+
+
+(*?CompilerOptions*)
 
 
 SymbolicVector[LIComponents_, head_Symbol]/;MatrixQ[LIComponents, NumericQ] := Times@@@Map[
@@ -103,7 +203,7 @@ PreprocessDALItensors[DALIlist_List, dimension_Integer] := Module[
 PreprocessDALItensors[x___] := Throw[$Failed, failTag[PreprocessDALItensors]]
 
 
-(LIComponents[#] = SymmetrizedIndependentComponents[ConstantArray[12, #], Symmetric[All]])&/@Range[10];
+(*(LIComponents[#] = SymmetrizedIndependentComponents[ConstantArray[12, #], Symmetric[All]])&/@Range[10];*)
 
 
 \[CapitalDelta]p[i_] := ToExpression["p"<>ToString[i]]
