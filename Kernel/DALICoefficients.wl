@@ -109,7 +109,7 @@ GenMessage[False, mess_] := With[{}, Message[mess]; False]
 (*Make Gradients*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Function Set-Up*)
 
 
@@ -1184,6 +1184,7 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 	detectorGradients = EchoTiming[GenGrads[idetecHs, dims[[1]]&/@Range[detecs], ObsPoints[[1;;detecs]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}], "detectors"];
 
 	remainingGradients = EchoTiming[GenGrads[{h}[[2;;-1]], dims[[2;;-1]], ObsPoints[[detecs+1;;-1]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}], "Core WF"];
+	
 
 	(*Clean definitions:*)
 	

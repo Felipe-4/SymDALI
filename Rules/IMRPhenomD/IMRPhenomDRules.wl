@@ -904,7 +904,7 @@ list = MapIndexed[
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Defining phase terms for RosettaStone*)
 
 
@@ -953,9 +953,13 @@ AuxRule1 = Aux\[CapitalPhi]IMR1[x__][y__] :>  Module[
 		ReplacePart[{y}[[6;;-1]], pos -> 1]
 	];
 	
-	$D[ds, \[CapitalPhi]IMR]@@args
+	If[
+		DeleteDuplicates[ds] === {0}, 
+		\[CapitalPhi]IMR@@args,
+		$D[ds, \[CapitalPhi]IMR]@@args	
+	
+	]
 ]
-
 
 
 (*more than 1 derivative in \[Delta]pi is zero because each appears linearly*)
