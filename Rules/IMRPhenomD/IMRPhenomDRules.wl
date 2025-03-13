@@ -166,7 +166,7 @@ IntVecPhase[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[Beta]2_, \[Delta]\[Beta]3_] =
 IntExpr = {U\[CapitalBeta]1[\[Eta], \[Chi]1, \[Chi]2], U\[CapitalBeta]2[\[Eta], \[Chi]1, \[Chi]2, \[Delta]\[Beta]2],U\[CapitalBeta]3[\[Eta], \[Chi]1, \[Chi]2, \[Delta]\[Beta]3]} . \[Omega]IntVecPhase[\[Omega]];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Ringdown and Damping -Phase*)
 
 
@@ -184,7 +184,7 @@ Erad[\[Eta]_, \[Chi]1_, \[Chi]2_] = Block[
 	(EradNS (1+(-0.00303023` -2.00661` \[Eta]+7.70506` \[Eta]^2) S))/(1+ (-0.67144` -1.47569` \[Eta] + 7.30468` \[Eta]^2) S)
 ]//Simplify;
 
-(*re\[Omega] -> interpolation for ringdown and the other is for damping:*)
+(*re\[Omega] -> interpolation for ringdown and the other is for damping: I think this is frm the PhenomHM paper*)
 re\[Omega][\[Chi]_] :=(0.05947169566573468` -0.14989771215394762` \[Chi]+0.09535606290986028` \[Chi]^2+0.02260924869042963` \[Chi]^3-0.02501704155363241` \[Chi]^4-0.005852438240997211` \[Chi]^5+0.0027489038393367993` \[Chi]^6+0.0005821983163192694` \[Chi]^7)/(1-2.8570126619966296` \[Chi]+2.373335413978394` \[Chi]^2-0.6036964688511505` \[Chi]^4+0.0873798215084077` \[Chi]^6);
 im\[Omega][\[Chi]_] :=(0.014158792290965177` -0.036989395871554566` \[Chi]+0.026822526296575368` \[Chi]^2+0.0008490933750566702` \[Chi]^3-0.004843996907020524` \[Chi]^4-0.00014745235759327472` \[Chi]^5+0.0001504546201236794` \[Chi]^6)/(1-2.5900842798681376` \[Chi]+1.8952576220623967` \[Chi]^2-0.31416610693042507` \[Chi]^4+0.009002719412204133` \[Chi]^6);
 
