@@ -16,7 +16,7 @@ CreateStyleSheet[]
 ApplyStyleSheet[]*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Package Header*)
 
 
@@ -42,9 +42,9 @@ Example:
 
 >>> \"parameters{real x; real y; real z;} model{ target +=-97.59653871634103 + y*(106.6330469515925 + y*(-41.0198425626578 + y*(6.497242207656599 - 0.36233383566103594*y - 1.4622384260186643*z) + (18.25722660084694 - 2.0303585485253195*z)*z) + z*(-70.14591515184834 + (15.362704701457346 - 1.1200882138725219*z)*z)) + x*(87.0145343531812 + y*(-74.63414678790865 + y*(20.105662735773176 - 1.6511359723966994*y - 4.491156243292682*z) + (32.82130742191058 - 3.6044006532284394*z)*z) + x*(-26.671093619701924 + y*(16.055078079792068 - 2.324374825711876*y - 3.536429842538419*z) + x*(3.24359961426922 - 0.13561424012605597*x - 1.0101387721380386*y - 0.7093544931687271*z) + (11.632000203844619 - 1.2672040196842107*z)*z) + z*(-56.686806403151195 + (12.296688555050064 - 0.888176252628384*z)*z)) + z*(84.47371744496604 + z*(-27.389210417613445 + (3.9426922526206813 - 0.21260670717869937*z)*z));}\"
 ";
-(*SymbolicVector::usage="SymbolicVector[listofLIComponents, head] applies head to the list of Linear Independent components of a tensor listOfLIComponents"
+SymbolicVector::usage="SymbolicVector[listofLIComponents, head] applies head to the list of Linear Independent components of a tensor listOfLIComponents"
 PreprocessDALItensors
-TaylorForm*)
+TaylorForm
 
 
 Begin["`Private`"]

@@ -105,7 +105,7 @@ GenMessage[True, mess_] := True;
 GenMessage[False, mess_] := With[{}, Message[mess]; False]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Make Gradients*)
 
 
@@ -578,8 +578,9 @@ iGenGrads[head_Symbol, dim_Integer, obspoints_List, {Orighs___Symbol}, {uniquehs
        {i, ni, order} 
     ];
     
-    (*Clean vars and return result*)
+    (*Clean vars and hs and return result*)
     Remove[Evaluate[Flatten[dummyvariables]//DeleteDuplicates]];
+    Remove[h1,h2];
     
     iiresult
 ]
@@ -892,11 +893,11 @@ GradientsList[{gradients__}, {varnumbers__Integer}, n_Integer]/;(
 GradientsList[x___] := Throw[$Failed, failTag[GradientsList]]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Make DALI Tensors*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*GenDaliTerm*)
 
 
@@ -910,6 +911,12 @@ GenDaliTerm[grads1_, grads2_, matrix_, False]/;(
 ) := Flatten[Transpose[grads1] . matrix . grads2]
 
 
+iGenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_] := Sum[
+	KroneckerProduct[Conjugate[gradlist1[[i]]],gradlist2[[i]]]/SensitivityVector[[i]],
+	{i, 1, Length@gradlist1}
+]//Flatten
+
+
 GenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_,  \[CapitalDelta]f_, "GWs"] := Module[
     {complexSum, inv = SensitivityVector^-1},
     (*Likelihood def. eq. 42 of https://arxiv.org/pdf/1809.02293*)
@@ -917,14 +924,7 @@ GenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_,  \[CapitalDelta]f_, "GWs
     (*complexSum = Flatten[gradlist1\[ConjugateTranspose].(gradlist2*inv)];*) (*This dot product is more efficient, but makes Fisher assymetric on tc, \[Phi]c and dL because of numerical errors*)
    
     
-     complexSum = Flatten@Block[
-		{iiresult},
-		iiresult = MapThread[
-			KroneckerProduct, 
-			{Conjugate[gradlist1], gradlist2}
-		];
-		Total[iiresult/SensitivityVector]
-	];
+     complexSum = Flatten[gradlist1\[ConjugateTranspose] . (gradlist2*inv)];(*iGenDaliTerm[gradlist1, gradlist2, SensitivityVector];*)
    
      4 \[CapitalDelta]f Re[complexSum]  (*I think this 4 \[CapitalDelta]f can be just absorbed in the normalization...*)
 ]
@@ -1151,7 +1151,7 @@ Map[TensorRank, test, {2}]
 Clear[HEADTEST, points, \[Sigma], test]*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*GWDALICoefficients*)
 
 
