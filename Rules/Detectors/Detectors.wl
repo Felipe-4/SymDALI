@@ -3,11 +3,14 @@
 Quit
 
 
-PacletDirectoryLoad["/home/cosmo-ufes/Documentos/GitHub/"];
+SetDirectory[NotebookDirectory[]]
+
+
+PacletDirectoryLoad[ParentDirectory[NotebookDirectory[], 3]];
 <<FelipeBarbosa`SymDALI`
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*New*)
 
 
@@ -110,7 +113,7 @@ DetectorTensor["H1"] = With[
 Vertex["H1"] = {-2.16141492636 10^6,  -3.83469517889 10^6   , 4.60035022664 10^6};
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Calculating Derivatives:*)
 
 
@@ -172,9 +175,6 @@ Export["Detector_Ds_order_0_to_3.wdx", Ds];
 Ds = Import["Detector_Ds_order_0_to_3.wdx"];
 
 
-Ds[[1,1]]
-
-
 compileThis[x_HoldForm] := Module[
 	{dummy, vars},
 	vars = {{f,  _Real,  1}, \[Theta], \[Phi], \[Psi], cos\[Iota], p1,p2,p3, D11, D12,D13,D22,D23,D33};
@@ -207,7 +207,22 @@ compiledDs = MapAt[
 <<CCompilerDriver`
 
 
-$CCompilerDefaultDirectory = "/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/Detectors/NRules/";
+FileNameJoin[{
+	ParentDirectory[NotebookDirectory[], 2],
+	"/LibraryResources/",
+	$SystemID, 
+	"/DerivativeRules/Detectors/NRules/"
+
+}]
+
+
+$CCompilerDefaultDirectory = FileNameJoin[{
+	ParentDirectory[NotebookDirectory[], 2],
+	"/LibraryResources/",
+	$SystemID, 
+	"/DerivativeRules/Detectors/NRules/"
+
+}]
 
 
 Needs["CCodeGenerator`"]
@@ -219,14 +234,26 @@ MapIndexed[
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*SymRules and NRules*)
 
 
-With[
-	{d =FileNames["D*", {"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/Detectors/NRules/"}] },
-	list = SortBy[(StringReplace[FileBaseName[#], "D"->""]//ToExpression)&]@d
-];
+Quit
+
+
+d = FileNames["D*", {"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/Detectors/NRules/"}] 
+
+
+Module[
+	{d, direc = ParentDirectory[NotebookDirectory[], 2]},
+	
+	direc = FileNameJoin[{direc, "/LibraryResources",$SystemID, "DerivativeRules/Detectors/NRules/"}];
+	d = FileNames["D*", {direc}];
+	list = SortBy[(StringReplace[FileBaseName[#], "D"->""]//ToExpression)&]@d;
+]
+
+
+list
 
 
 Dterms =Module[ {Ds = Import["Detector_Ds_order_0_to_3.wdx"]}, Ds[[All,1]] ];
@@ -258,9 +285,20 @@ $D[{n__}, S][y__]/; {n}[[5]] > 2 -> 0;
 
 NRules = <||>;
 NRules["S"] = Detectors2;
-Export["/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/Detectors/NRules/RosettaStone.wdx", NRules]
+
+Module[
+	{name = ParentDirectory[NotebookDirectory[], 2]},
+	
+	name = FileNameJoin[{name, "/LibraryResources",$SystemID, "DerivativeRules/Detectors/NRules/RosettaStone.wdx"}];
+	Export[name, NRules]
+]
 
 
 SymRules = <||>;
 SymRules["S"] = {$D[{n__}, S]/; {n}[[5]] > 2 -> 0};
-Export["/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/Detectors/SymRules/file.wdx", SymRules];
+Module[
+	{name = ParentDirectory[NotebookDirectory[], 2]},
+	
+	name = FileNameJoin[{name, "/LibraryResources",$SystemID, "DerivativeRules/Detectors/SymRules/file.wdx"}];
+	Export[name, SymRules]
+]

@@ -12,7 +12,21 @@ h[f_, fref_, M_,\[Eta]_,\[Chi]1_,\[Chi]2_, \[Delta]\[CurlyPhi]minus2_,\[Delta]\[
 DownValues[h]
 
 
-Export[
+ParentDirectory[NotebookDirectory[], 2]
+
+
+Module[
+	{direc = ParentDirectory[NotebookDirectory[], 2]},
+	
+	Export[
+		FileNameJoin[{direc, "LibraryResources", $SystemID, "DerivativeRules/IMRPhenomD/Defs.wdx"}],
+		DownValues[h][[1]]//.RuleDelayed->Rule
+	]
+]
+
+
+
+(*Export[
 	"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/Defs.wdx",
 	DownValues[h][[1]]//.RuleDelayed->Rule
-]
+]*)

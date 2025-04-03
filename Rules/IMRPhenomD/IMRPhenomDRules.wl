@@ -21,12 +21,9 @@ CreateStyleSheet[];
 ApplyStyleSheet[];*)
 
 
-SetOptions[EvaluationNotebook[], NotebookAutoSave->True];
-
-
 (*Basic stuff:*)
 $HistoryLength = 1;
-PacletDirectoryLoad["/home/cosmo-ufes/Documentos/GitHub"];
+PacletDirectoryLoad[ParentDirectory[NotebookDirectory[], 3]];
 <<FelipeBarbosa`SymDALI`
 
 vectorDefs = Module[
@@ -40,7 +37,7 @@ SymRules = <||>;
 NRules = <||>;
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Phase*)
 
 
@@ -166,7 +163,7 @@ IntVecPhase[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[Beta]2_, \[Delta]\[Beta]3_] =
 IntExpr = {U\[CapitalBeta]1[\[Eta], \[Chi]1, \[Chi]2], U\[CapitalBeta]2[\[Eta], \[Chi]1, \[Chi]2, \[Delta]\[Beta]2],U\[CapitalBeta]3[\[Eta], \[Chi]1, \[Chi]2, \[Delta]\[Beta]3]} . \[Omega]IntVecPhase[\[Omega]];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Ringdown and Damping -Phase*)
 
 
@@ -854,11 +851,11 @@ Export["Phase_Ds_order_0_to_3.wdx", Ds]
 Ds = Import["Phase_Ds_order_0_to_3.wdx"];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Compiling Phase terms:*)
 
 
-Module[{ds = Import["Phase_Ds_order_0_to_3.wdx"]}, Ds = ds];
+Module[{ds = Import["Phase_Ds_order_0_to_3.wdx"]}, Ds = ds;]
 
 
 (*Function to take HoldForm[Block[...]] and make library functions*)
@@ -895,7 +892,13 @@ compiledDs = MapAt[
 <<CCodeGenerator`
 
 
-$CCompilerDefaultDirectory = "/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/";
+ParentDirectory[NotebookDirectory[], 2]
+
+
+$CCompilerDefaultDirectory = FileNameJoin[{
+	ParentDirectory[NotebookDirectory[], 2],
+	"/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomD/NRules"
+}]
 
 
 list = MapIndexed[
@@ -904,12 +907,19 @@ list = MapIndexed[
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Defining phase terms for RosettaStone*)
 
 
-With[
-	{d =FileNames["phi*", {"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/"}] },
+ParentDirectory[NotebookDirectory[], 2]
+
+
+Module[
+	{d, direc = ParentDirectory[NotebookDirectory[], 2]},
+	
+	d =FileNames["phi*", {
+		FileNameJoin[{direc, "/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomD/NRules"}]
+	}]; 
 	list = SortBy[(StringReplace[FileBaseName[#], "phi"->""]//ToExpression)&]@d
 ];
 
@@ -1266,7 +1276,7 @@ Block[
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Making Block function*)
 
 
@@ -1528,7 +1538,7 @@ Block[
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing Against Ripple*)
 
 
@@ -1648,7 +1658,9 @@ vars = {M, \[Eta], \[Chi]1,\[Chi]2};
 
 
 (*All derivatives up to order 3*)
-derivatives = Combinations[vars, 3];
+(*derivatives = Combinations[vars, 3];Let's test how much time does it take on the laptop to get this done*)
+Echo[Length[Combinations[vars,3]]];
+derivatives = Combinations[vars, 4][[35;;-1]]
 
 
 PrependTo[derivatives, {}];
@@ -1663,8 +1675,10 @@ expr =  Hold[
 
 
 Clear@Ds;
+
 Ds = DerivativeRules@@expr;
-Export["Amplitude_Ds_order_0_to_3.wdx", Ds]
+
+(*Export["Amplitude_Ds_order_0_to_3.wdx", Ds]*)
 
 
 (* ::Subsection::Closed:: *)
@@ -1706,10 +1720,16 @@ compiledDs = MapAt[
 <<CCompilerDriver`
 
 
-$CCompilerDefaultDirectory = "/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/";
+$CCompilerDefaultDirectory = FileNameJoin[{
+	ParentDirectory[NotebookDirectory[], 2],
+	"/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomD/NRules"
+}]
 
 
 Needs["CCodeGenerator`"]
+
+
+ClearAll[Ds]
 
 
 MapIndexed[
@@ -1722,8 +1742,13 @@ MapIndexed[
 (*Defining amplitude for Rosetta stone*)
 
 
-With[
-	{d =FileNames["a*", {"/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/"}] },
+Module[
+	{d, direc = ParentDirectory[NotebookDirectory[], 2]},
+	
+	d =FileNames["a*", {
+		FileNameJoin[{direc, "/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomD/NRules"}]
+	}];
+	
 	list\[ScriptCapitalA] = SortBy[(StringReplace[FileBaseName[#], "a"->""]//ToExpression)&]@d
 ];
 
@@ -1754,7 +1779,16 @@ NRules["Aux\[CapitalPhi]IMR2"] = {AuxRule2};
 NRules["Aux\[CapitalPhi]IMR1"] = {AuxRule1};
 
 
-Export["/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/NRules/RosettaStone.wdx", NRules];
+ParentDirectory[NotebookDirectory[],2]
+
+
+Module[
+	{name = ParentDirectory[NotebookDirectory[],2], system = $SystemID},
+	
+	name = FileNameJoin[{name,"LibraryResources/", system,  "/DerivativeRules/IMRPhenomD/NRules/RosettaStone.wdx"}];
+	
+	Export[name, NRules]
+]
 
 
 SymRules = <||>;
@@ -1762,4 +1796,10 @@ SymRules = <||>;
 SymRules["\[CapitalPhi]IMR"] = {sym1, sym2};
 
 
-Export["/home/cosmo-ufes/Documentos/GitHub/SymDALI/LibraryResources/Linux-x86-64/DerivativeRules/IMRPhenomD/SymRules/file.wdx", SymRules];
+Module[
+	{name = ParentDirectory[NotebookDirectory[],2], system = $SystemID},
+	
+	name = FileNameJoin[{name,"LibraryResources/",  system,  "/DerivativeRules/IMRPhenomD/SymRules/file.wdx"}];
+	
+	Export[name, SymRules]
+]
