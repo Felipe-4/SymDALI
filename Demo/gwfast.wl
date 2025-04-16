@@ -244,7 +244,7 @@ expr = Hold[
 	{
 		{detecVars, hvars, auxhvars},
 		{fpL1,fpH1, fph, fpauxh},
-		3
+		1
 	},
 	{20.,1024.,0.125},
 	{PSD["L1"], PSD["H1"]},
@@ -318,7 +318,7 @@ fish  = ArrayReshape[fisher, {11,11}];
 ratio = fish/py;
 
 
-ratio//Round//MatrixForm
+ratio//MatrixForm
 
 
 (* ::Text:: *)

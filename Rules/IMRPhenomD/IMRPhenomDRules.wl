@@ -851,7 +851,7 @@ Export["Phase_Ds_order_0_to_3.wdx", Ds]
 Ds = Import["Phase_Ds_order_0_to_3.wdx"];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Compiling Phase terms:*)
 
 
@@ -915,10 +915,10 @@ ParentDirectory[NotebookDirectory[], 2]
 
 
 Module[
-	{d, direc = ParentDirectory[NotebookDirectory[], 2]},
-	
+	{d, direc = ParentDirectory[NotebookDirectory[], 2], dummy, system=$SystemID},
+	dummy = FileNameJoin[{direc, "/LibraryResources", system,"DerivativeRules/IMRPhenomD/NRules"}];
 	d =FileNames["phi*", {
-		FileNameJoin[{direc, "/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomD/NRules"}]
+		dummy
 	}]; 
 	
 	list = SortBy[(StringReplace[FileBaseName[#], "phi"->""]//ToExpression)&]@d;
@@ -1747,10 +1747,10 @@ MapIndexed[
 
 
 Module[
-	{d, direc = ParentDirectory[NotebookDirectory[], 2]},
-	
+	{d, direc = ParentDirectory[NotebookDirectory[], 2], system = $SystemID, dummy},
+	dummy = FileNameJoin[{direc,"/LibraryResources", system,"/DerivativeRules/IMRPhenomD/NRules"}];
 	d =FileNames["a*", {
-		FileNameJoin[{direc, "/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomD/NRules"}]
+		dummy
 	}];
 	
 	list\[ScriptCapitalA] = SortBy[(StringReplace[FileBaseName[#], "a"->""]//ToExpression)&]@d;

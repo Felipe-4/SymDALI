@@ -256,9 +256,6 @@ Module[
 ]
 
 
-SetDirectory[NotebookDirectory[]]
-
-
 Dterms =Module[ {Ds = Import["Detector_Ds_order_0_to_3.wdx"]}, Ds[[All,1]] ];
 
 
