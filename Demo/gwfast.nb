@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    621802,      12260]
-NotebookOptionsPosition[    604767,      11987]
-NotebookOutlinePosition[    605223,      12005]
-CellTagsIndexPosition[    605180,      12002]
+NotebookDataLength[    621858,      12260]
+NotebookOptionsPosition[    604786,      11987]
+NotebookOutlinePosition[    605231,      12005]
+CellTagsIndexPosition[    605188,      12002]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -44,7 +44,7 @@ Cell[BoxData[
    RowBox[{"StartExternalSession", "[", "\"\<Python\>\"", "]"}]}], 
   ";"}]], "Code",
  CellChangeTimes->{{3.948371985879869*^9, 3.948371998308748*^9}},
- CellLabel->"In[64]:=",ExpressionUUID->"757e299e-8c60-4037-8627-27c10825d7b1"],
+ CellLabel->"In[2]:=",ExpressionUUID->"757e299e-8c60-4037-8627-27c10825d7b1"],
 
 Cell[CellGroupData[{
 
@@ -58,7 +58,7 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd())))\n\
 sys.path.append(SCRIPT_DIR)\nimport gwfast.gwfastGlobals as glob\n\>\""}], 
   "]"}]], "Code",
  CellChangeTimes->{{3.948372017815537*^9, 3.948372049021774*^9}},
- CellLabel->"In[65]:=",ExpressionUUID->"50d04d58-9c29-45ff-8614-b03420f4c274"],
+ CellLabel->"In[3]:=",ExpressionUUID->"50d04d58-9c29-45ff-8614-b03420f4c274"],
 
 Cell[BoxData[
  InterpretationBox[
@@ -302,14 +302,14 @@ that are happening during class serialization\""}},
                     TagBox[
                     
                     GridBox[{{"\"Key\"", "\"Value\""}, {"\"function\"", 
-                    "\"<function handle_message at 0x1060b8860>\""}, {
+                    "\"<function handle_message at 0x105ef4860>\""}, {
                     "\"args\"", 
-                    "\"(<zmq.Socket(zmq.PAIR) at 0x105faed60>,)\""}, {
+                    "\"(<zmq.Socket(zmq.PAIR) at 0x105de6d60>,)\""}, {
                     "\"opts\"", 
                     "\"{'consumer': <ExternalEvaluateConsumer globals=11 \
 objects=0>}\""}, {"\"export_opts\"", 
                     "\"{'object_processor': <function \
-start_zmq_loop.<locals>.<lambda> at 0x1055991c0>, 'target_format': \
+start_zmq_loop.<locals>.<lambda> at 0x1053e91c0>, 'target_format': \
 'wxf'}\""}, {"\"exception_class\"", "\"None\""}, {"\"export_exception\"", 
                     "\"No module named 'gwfast'\""}}, GridBoxAlignment -> {
                     "Columns" -> {{Left}}}, AutoDelete -> False, 
@@ -332,13 +332,13 @@ start_zmq_loop.<locals>.<lambda> at 0x1055991c0>, 'target_format': \
                     Baseline], Deployed -> False, StripOnInput -> False], 
                     OpenerView[{"Local variables", 
                     Grid[{{"Key", "Value"}, {"function", 
-                    "<function handle_message at 0x1060b8860>"}, {
-                    "args", "(<zmq.Socket(zmq.PAIR) at 0x105faed60>,)"}, {
+                    "<function handle_message at 0x105ef4860>"}, {
+                    "args", "(<zmq.Socket(zmq.PAIR) at 0x105de6d60>,)"}, {
                     "opts", 
                     "{'consumer': <ExternalEvaluateConsumer globals=11 \
 objects=0>}"}, {"export_opts", 
                     "{'object_processor': <function \
-start_zmq_loop.<locals>.<lambda> at 0x1055991c0>, 'target_format': 'wxf'}"}, {
+start_zmq_loop.<locals>.<lambda> at 0x1053e91c0>, 'target_format': 'wxf'}"}, {
                     "exception_class", "None"}, {"export_exception", 
                     "No module named 'gwfast'"}}, Background -> {
                     Null, {LightGray}}, Alignment -> Left, Frame -> 
@@ -398,13 +398,13 @@ that are happening during class serialization"}, Background -> {{
                     OpenerView[{"Local variables", 
                     
                     Grid[{{"Key", "Value"}, {"function", 
-                    "<function handle_message at 0x1060b8860>"}, {
-                    "args", "(<zmq.Socket(zmq.PAIR) at 0x105faed60>,)"}, {
+                    "<function handle_message at 0x105ef4860>"}, {
+                    "args", "(<zmq.Socket(zmq.PAIR) at 0x105de6d60>,)"}, {
                     "opts", 
                     "{'consumer': <ExternalEvaluateConsumer globals=11 \
 objects=0>}"}, {"export_opts", 
                     "{'object_processor': <function \
-start_zmq_loop.<locals>.<lambda> at 0x1055991c0>, 'target_format': 'wxf'}"}, {
+start_zmq_loop.<locals>.<lambda> at 0x1053e91c0>, 'target_format': 'wxf'}"}, {
                     "exception_class", "None"}, {
                     "export_exception", "No module named 'gwfast'"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
@@ -517,7 +517,7 @@ write_to_stdout=True, **opts):\""}}, GridBoxAlignment -> {
                     TagBox[
                     
                     GridBox[{{"\"Key\"", "\"Value\""}, {"\"socket\"", 
-                    "\"<zmq.Socket(zmq.PAIR) at 0x105faed60>\""}, {
+                    "\"<zmq.Socket(zmq.PAIR) at 0x105de6d60>\""}, {
                     "\"consumer\"", 
                     "\"<ExternalEvaluateConsumer globals=11 objects=0>\""}}, 
                     GridBoxAlignment -> {"Columns" -> {{Left}}}, AutoDelete -> 
@@ -542,7 +542,7 @@ write_to_stdout=True, **opts):\""}}, GridBoxAlignment -> {
                     OpenerView[{"Local variables", 
                     
                     Grid[{{"Key", "Value"}, {"socket", 
-                    "<zmq.Socket(zmq.PAIR) at 0x105faed60>"}, {
+                    "<zmq.Socket(zmq.PAIR) at 0x105de6d60>"}, {
                     "consumer", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
@@ -602,7 +602,7 @@ write_to_stdout=True, **opts):"}, Background -> {{
                     OpenerView[{"Local variables", 
                     
                     Grid[{{"Key", "Value"}, {"socket", 
-                    "<zmq.Socket(zmq.PAIR) at 0x105faed60>"}, {
+                    "<zmq.Socket(zmq.PAIR) at 0x105de6d60>"}, {
                     "consumer", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
@@ -730,7 +730,7 @@ glob\\nA\.00S\\nExpression\""}, {"\"consumer\"",
                     "\"<ExternalEvaluateConsumer globals=11 objects=0>\""}, {
                     "\"kwargs\"", "\"{}\""}, {"\"parser\"", 
                     "\"<wolframclient.deserializers.wxf.wxfparser.WXFParser \
-object at 0x1056bbb10>\""}}, GridBoxAlignment -> {"Columns" -> {{Left}}}, 
+object at 0x105247b10>\""}}, GridBoxAlignment -> {"Columns" -> {{Left}}}, 
                     AutoDelete -> False, GridBoxBackground -> {"Columns" -> {{
                     Null}}, "Rows" -> {
                     GrayLevel[0.85]}}, 
@@ -763,7 +763,7 @@ Expression"}, {"consumer",
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "kwargs", "{}"}, {"parser", 
                     "<wolframclient.deserializers.wxf.wxfparser.WXFParser \
-object at 0x1056bbb10>"}}, Background -> {Null, {LightGray}}, Alignment -> 
+object at 0x105247b10>"}}, Background -> {Null, {LightGray}}, Alignment -> 
                     Left, Frame -> LightGray]}, False]], DynamicModuleValues -> 
                     Automatic], Setting[#, {0}]& ]}}, 
                     GridBoxAlignment -> {"Columns" -> {{Left}}}, 
@@ -835,7 +835,7 @@ Expression"}, {"consumer",
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "kwargs", "{}"}, {"parser", 
                     "<wolframclient.deserializers.wxf.wxfparser.WXFParser \
-object at 0x1056bbb10>"}}, Background -> {Null, {LightGray}}, Alignment -> 
+object at 0x105247b10>"}}, Background -> {Null, {LightGray}}, Alignment -> 
                     Left, Frame -> LightGray]}]}]}, False]], 
                     DynamicModuleValues -> Automatic], Setting[#, {0}]& ]}, {
                     TagBox[
@@ -953,7 +953,7 @@ wxf_type):\""}, {"\"  79.          try:\""}, {
                     "\"<ExternalEvaluateConsumer globals=11 objects=0>\""}, {
                     "\"tokens\"", 
                     "\"<generator object WXFParser.tokens at \
-0x105f4b340>\""}, {"\"kwargs\"", "\"{}\""}, {"\"token\"", 
+0x105d83340>\""}, {"\"kwargs\"", "\"{}\""}, {"\"token\"", 
                     "\"WXFToken<b'f', data=None, len=3>\""}, {"\"consumer\"", 
                     "\"<bound method \
 ExternalEvaluateConsumer.consume_function of <ExternalEvaluateConsumer \
@@ -981,7 +981,7 @@ globals=11 objects=0>>\""}}, GridBoxAlignment -> {"Columns" -> {{Left}}},
                     Grid[{{"Key", "Value"}, {"self", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                    "<generator object WXFParser.tokens at 0x105d83340>"}, {
                     "kwargs", "{}"}, {"token", 
                     "WXFToken<b'f', data=None, len=3>"}, {
                     "consumer", 
@@ -1052,7 +1052,7 @@ self._consumer_from_type(token.wxf_type)",
                     Grid[{{"Key", "Value"}, {"self", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                    "<generator object WXFParser.tokens at 0x105d83340>"}, {
                     "kwargs", "{}"}, {"token", 
                     "WXFToken<b'f', data=None, len=3>"}, {
                     "consumer", 
@@ -1177,8 +1177,8 @@ self.dispatch_wl_object(*expr.args)\""}, {"\" 399.  \""}, {
                     "\"<ExternalEvaluateConsumer globals=11 objects=0>\""}, {
                     "\"args\"", 
                     "\"(<wolframclient.deserializers.wxf.wxfparser.WXFToken \
-object at 0x1056ea160>, <generator object WXFParser.tokens at \
-0x105f4b340>)\""}, {"\"kwargs\"", "\"{}\""}, {"\"__class__\"", 
+object at 0x10555e200>, <generator object WXFParser.tokens at \
+0x105d83340>)\""}, {"\"kwargs\"", "\"{}\""}, {"\"__class__\"", 
                     "\"<class \
 'wolframclient.utils.externalevaluate.ExternalEvaluateConsumer'>\""}}, 
                     GridBoxAlignment -> {"Columns" -> {{Left}}}, AutoDelete -> 
@@ -1206,8 +1206,8 @@ object at 0x1056ea160>, <generator object WXFParser.tokens at \
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "args", 
                     "(<wolframclient.deserializers.wxf.wxfparser.WXFToken \
-object at 0x1056ea160>, <generator object WXFParser.tokens at \
-0x105f4b340>)"}, {"kwargs", "{}"}, {"__class__", 
+object at 0x10555e200>, <generator object WXFParser.tokens at \
+0x105d83340>)"}, {"kwargs", "{}"}, {"__class__", 
                     
                     "<class \
 'wolframclient.utils.externalevaluate.ExternalEvaluateConsumer'>"}}, 
@@ -1275,8 +1275,8 @@ self.dispatch_wl_object(*expr.args)", " 399.  ",
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "args", 
                     "(<wolframclient.deserializers.wxf.wxfparser.WXFToken \
-object at 0x1056ea160>, <generator object WXFParser.tokens at \
-0x105f4b340>)"}, {"kwargs", "{}"}, {"__class__", 
+object at 0x10555e200>, <generator object WXFParser.tokens at \
+0x105d83340>)"}, {"kwargs", "{}"}, {"__class__", 
                     "<class \
 'wolframclient.utils.externalevaluate.ExternalEvaluateConsumer'>"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
@@ -1401,7 +1401,7 @@ args, **kwargs)\""}}, GridBoxAlignment -> {"Columns" -> {{Left}}},
                     "\"current_token\"", 
                     "\"WXFToken<b'f', data=None, len=3>\""}, {"\"tokens\"", 
                     "\"<generator object WXFParser.tokens at \
-0x105f4b340>\""}, {"\"kwargs\"", "\"{}\""}, {"\"head\"", 
+0x105d83340>\""}, {"\"kwargs\"", "\"{}\""}, {"\"head\"", 
                     "\"ExternalEvaluate`Private`ExternalEvaluateCommand\""}}, 
                     GridBoxAlignment -> {"Columns" -> {{Left}}}, AutoDelete -> 
                     False, GridBoxBackground -> {"Columns" -> {{Null}}, 
@@ -1428,7 +1428,7 @@ args, **kwargs)\""}}, GridBoxAlignment -> {"Columns" -> {{Left}}},
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "current_token", "WXFToken<b'f', data=None, len=3>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                    "<generator object WXFParser.tokens at 0x105d83340>"}, {
                     "kwargs", "{}"}, {"head", 
                     "ExternalEvaluate`Private`ExternalEvaluateCommand"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
@@ -1498,7 +1498,7 @@ args, **kwargs)"}, Background -> {{
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "current_token", "WXFToken<b'f', data=None, len=3>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                    "<generator object WXFParser.tokens at 0x105d83340>"}, {
                     "kwargs", "{}"}, {"head", 
                     "ExternalEvaluate`Private`ExternalEvaluateCommand"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
@@ -1616,13 +1616,13 @@ args, **kwargs)\""}, {"\" 108.  \""}}, GridBoxAlignment -> {
                     TagBox[
                     
                     GridBox[{{"\"Key\"", "\"Value\""}, {"\".0\"", 
-                    "\"<range_iterator object at 0x1060a6ac0>\""}, {
+                    "\"<range_iterator object at 0x105edeac0>\""}, {
                     "\"i\"", "\"1\""}, {"\"kwargs\"", "\"{}\""}, {
                     "\"self\"", 
                     "\"<ExternalEvaluateConsumer globals=11 objects=0>\""}, {
                     "\"tokens\"", 
                     "\"<generator object WXFParser.tokens at \
-0x105f4b340>\""}}, GridBoxAlignment -> {"Columns" -> {{Left}}}, AutoDelete -> 
+0x105d83340>\""}}, GridBoxAlignment -> {"Columns" -> {{Left}}}, AutoDelete -> 
                     False, GridBoxBackground -> {"Columns" -> {{Null}}, 
                     "Rows" -> {
                     GrayLevel[0.85]}}, 
@@ -1644,11 +1644,11 @@ args, **kwargs)\""}, {"\" 108.  \""}}, GridBoxAlignment -> {
                     OpenerView[{"Local variables", 
                     
                     Grid[{{"Key", "Value"}, {".0", 
-                    "<range_iterator object at 0x1060a6ac0>"}, {"i", "1"}, {
+                    "<range_iterator object at 0x105edeac0>"}, {"i", "1"}, {
                     "kwargs", "{}"}, {"self", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}}, 
+                    "<generator object WXFParser.tokens at 0x105d83340>"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
                     Frame -> LightGray]}, False]], DynamicModuleValues -> 
                     Automatic], Setting[#, {0}]& ]}}, 
@@ -1711,11 +1711,11 @@ args, **kwargs)", " 108.  "}, Background -> {{
                     OpenerView[{"Local variables", 
                     
                     Grid[{{"Key", "Value"}, {".0", 
-                    "<range_iterator object at 0x1060a6ac0>"}, {"i", "1"}, {
+                    "<range_iterator object at 0x105edeac0>"}, {"i", "1"}, {
                     "kwargs", "{}"}, {"self", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}}, 
+                    "<generator object WXFParser.tokens at 0x105d83340>"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
                     Frame -> LightGray]}]}]}, False]], DynamicModuleValues -> 
                     Automatic], Setting[#, {0}]& ]}, {
@@ -1834,7 +1834,7 @@ wxf_type):\""}, {"\"  79.          try:\""}, {
                     "\"<ExternalEvaluateConsumer globals=11 objects=0>\""}, {
                     "\"tokens\"", 
                     "\"<generator object WXFParser.tokens at \
-0x105f4b340>\""}, {"\"kwargs\"", "\"{}\""}, {"\"token\"", 
+0x105d83340>\""}, {"\"kwargs\"", "\"{}\""}, {"\"token\"", 
                     "\"WXFToken<b'f', data=None, len=3>\""}, {"\"consumer\"", 
                     "\"<bound method \
 ExternalEvaluateConsumer.consume_function of <ExternalEvaluateConsumer \
@@ -1862,7 +1862,7 @@ globals=11 objects=0>>\""}}, GridBoxAlignment -> {"Columns" -> {{Left}}},
                     Grid[{{"Key", "Value"}, {"self", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                    "<generator object WXFParser.tokens at 0x105d83340>"}, {
                     "kwargs", "{}"}, {"token", 
                     "WXFToken<b'f', data=None, len=3>"}, {
                     "consumer", 
@@ -1933,7 +1933,7 @@ self._consumer_from_type(token.wxf_type)",
                     Grid[{{"Key", "Value"}, {"self", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                    "<generator object WXFParser.tokens at 0x105d83340>"}, {
                     "kwargs", "{}"}, {"token", 
                     "WXFToken<b'f', data=None, len=3>"}, {
                     "consumer", 
@@ -2053,8 +2053,8 @@ self.dispatch_wl_object(*expr.args)\"", Background -> RGBColor[1, 1, 0.85],
                     "\"<ExternalEvaluateConsumer globals=11 objects=0>\""}, {
                     "\"args\"", 
                     "\"(<wolframclient.deserializers.wxf.wxfparser.WXFToken \
-object at 0x105b5c9a0>, <generator object WXFParser.tokens at \
-0x105f4b340>)\""}, {"\"kwargs\"", "\"{}\""}, {"\"expr\"", 
+object at 0x105ef1170>, <generator object WXFParser.tokens at \
+0x105d83340>)\""}, {"\"kwargs\"", "\"{}\""}, {"\"expr\"", 
                     "\"ExternalEvaluate`Private`ExternalEvaluateCommand['Eval'\
 , \\\"\\\\nimport jax\\\\nimport os\\\\nimport sys\\\\n\\\\nimport \
 copy\\\\nimport numpy as onp\\\\nfrom astropy.cosmology import \
@@ -2089,8 +2089,8 @@ append(SCRIPT_DIR)\\\\nimport gwfast.gwfastGlobals as glob\\\\n\\\", {}]\""}, \
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "args", 
                     "(<wolframclient.deserializers.wxf.wxfparser.WXFToken \
-object at 0x105b5c9a0>, <generator object WXFParser.tokens at \
-0x105f4b340>)"}, {"kwargs", "{}"}, {"expr", 
+object at 0x105ef1170>, <generator object WXFParser.tokens at \
+0x105d83340>)"}, {"kwargs", "{}"}, {"expr", 
                     "ExternalEvaluate`Private`ExternalEvaluateCommand['Eval', \
 \"\\nimport jax\\nimport os\\nimport sys\\n\\nimport copy\\nimport numpy as \
 onp\\nfrom astropy.cosmology import Planck18\\n\\nPACKAGE_PARENT = \
@@ -2161,8 +2161,8 @@ self.dispatch_wl_object(*expr.args)", Background -> LightYellow], " 399.  ",
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "args", 
                     "(<wolframclient.deserializers.wxf.wxfparser.WXFToken \
-object at 0x105b5c9a0>, <generator object WXFParser.tokens at \
-0x105f4b340>)"}, {"kwargs", "{}"}, {"expr", 
+object at 0x105ef1170>, <generator object WXFParser.tokens at \
+0x105d83340>)"}, {"kwargs", "{}"}, {"expr", 
                     "ExternalEvaluate`Private`ExternalEvaluateCommand['Eval', \
 \"\\nimport jax\\nimport os\\nimport sys\\n\\nimport copy\\nimport numpy as \
 onp\\nfrom astropy.cosmology import Planck18\\n\\nPACKAGE_PARENT = \
@@ -2508,13 +2508,13 @@ append(SCRIPT_DIR)\\nimport gwfast.gwfastGlobals as glob\\n\""}, {
                     "\"constants\"", "\"{}\""}, {"\"env\"", 
                     "\"<registry len=11>\""}, {"\"result\"", "\"None\""}, {
                     "\"expressions\"", 
-                    "\"[<ast.Import object at 0x1060a7fa0>, <ast.Import \
-object at 0x1060a7f40>, <ast.Import object at 0x1060a7ee0>, <ast.Import \
-object at 0x1060a7e80>, <ast.Import object at 0x1060a7e20>, <ast.ImportFrom \
-object at 0x1060a7dc0>, <ast.Assign object at 0x1060a7d60>, <ast.Assign \
-object at 0x1060a7a30>, <ast.Expr object at 0x1060a7700>, <ast.Import object \
-at 0x1060a75e0>]\""}, {"\"last_expr\"", 
-                    "\"<ast.Import object at 0x1060a75e0>\""}}, 
+                    "\"[<ast.Import object at 0x105edffa0>, <ast.Import \
+object at 0x105edff40>, <ast.Import object at 0x105edfee0>, <ast.Import \
+object at 0x105edfe80>, <ast.Import object at 0x105edfe20>, <ast.ImportFrom \
+object at 0x105edfdc0>, <ast.Assign object at 0x105edfd60>, <ast.Assign \
+object at 0x105edfa30>, <ast.Expr object at 0x105edf700>, <ast.Import object \
+at 0x105edf5e0>]\""}, {"\"last_expr\"", 
+                    "\"<ast.Import object at 0x105edf5e0>\""}}, 
                     GridBoxAlignment -> {"Columns" -> {{Left}}}, AutoDelete -> 
                     False, GridBoxBackground -> {"Columns" -> {{Null}}, 
                     "Rows" -> {
@@ -2546,12 +2546,12 @@ os.path.dirname(os.path.realpath(os.path.join(os.getcwd())))\n\
 sys.path.append(SCRIPT_DIR)\nimport gwfast.gwfastGlobals as glob\n"}, {
                     "constants", "{}"}, {"env", "<registry len=11>"}, {
                     "result", "None"}, {"expressions", 
-                    "[<ast.Import object at 0x1060a7fa0>, <ast.Import object \
-at 0x1060a7f40>, <ast.Import object at 0x1060a7ee0>, <ast.Import object at \
-0x1060a7e80>, <ast.Import object at 0x1060a7e20>, <ast.ImportFrom object at \
-0x1060a7dc0>, <ast.Assign object at 0x1060a7d60>, <ast.Assign object at \
-0x1060a7a30>, <ast.Expr object at 0x1060a7700>, <ast.Import object at \
-0x1060a75e0>]"}, {"last_expr", "<ast.Import object at 0x1060a75e0>"}}, 
+                    "[<ast.Import object at 0x105edffa0>, <ast.Import object \
+at 0x105edff40>, <ast.Import object at 0x105edfee0>, <ast.Import object at \
+0x105edfe80>, <ast.Import object at 0x105edfe20>, <ast.ImportFrom object at \
+0x105edfdc0>, <ast.Assign object at 0x105edfd60>, <ast.Assign object at \
+0x105edfa30>, <ast.Expr object at 0x105edf700>, <ast.Import object at \
+0x105edf5e0>]"}, {"last_expr", "<ast.Import object at 0x105edf5e0>"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
                     Frame -> LightGray]}, False]], DynamicModuleValues -> 
                     Automatic], Setting[#, {0}]& ]}}, 
@@ -2617,12 +2617,12 @@ os.path.dirname(os.path.realpath(os.path.join(os.getcwd())))\n\
 sys.path.append(SCRIPT_DIR)\nimport gwfast.gwfastGlobals as glob\n"}, {
                     "constants", "{}"}, {"env", "<registry len=11>"}, {
                     "result", "None"}, {"expressions", 
-                    "[<ast.Import object at 0x1060a7fa0>, <ast.Import object \
-at 0x1060a7f40>, <ast.Import object at 0x1060a7ee0>, <ast.Import object at \
-0x1060a7e80>, <ast.Import object at 0x1060a7e20>, <ast.ImportFrom object at \
-0x1060a7dc0>, <ast.Assign object at 0x1060a7d60>, <ast.Assign object at \
-0x1060a7a30>, <ast.Expr object at 0x1060a7700>, <ast.Import object at \
-0x1060a75e0>]"}, {"last_expr", "<ast.Import object at 0x1060a75e0>"}}, 
+                    "[<ast.Import object at 0x105edffa0>, <ast.Import object \
+at 0x105edff40>, <ast.Import object at 0x105edfee0>, <ast.Import object at \
+0x105edfe80>, <ast.Import object at 0x105edfe20>, <ast.ImportFrom object at \
+0x105edfdc0>, <ast.Assign object at 0x105edfd60>, <ast.Assign object at \
+0x105edfa30>, <ast.Expr object at 0x105edf700>, <ast.Import object at \
+0x105edf5e0>]"}, {"last_expr", "<ast.Import object at 0x105edf5e0>"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
                     Frame -> LightGray]}]}]}, True]], DynamicModuleValues -> 
                     Automatic], Setting[#, {0}]& ]}, {
@@ -2855,13 +2855,13 @@ that are happening during class serialization"}, Background -> {{
                     OpenerView[{"Local variables", 
                     
                     Grid[{{"Key", "Value"}, {
-                    "function", "<function handle_message at 0x1060b8860>"}, {
-                    "args", "(<zmq.Socket(zmq.PAIR) at 0x105faed60>,)"}, {
+                    "function", "<function handle_message at 0x105ef4860>"}, {
+                    "args", "(<zmq.Socket(zmq.PAIR) at 0x105de6d60>,)"}, {
                     "opts", 
                     "{'consumer': <ExternalEvaluateConsumer globals=11 \
 objects=0>}"}, {"export_opts", 
                     "{'object_processor': <function \
-start_zmq_loop.<locals>.<lambda> at 0x1055991c0>, 'target_format': 'wxf'}"}, {
+start_zmq_loop.<locals>.<lambda> at 0x1053e91c0>, 'target_format': 'wxf'}"}, {
                     "exception_class", "None"}, {
                     "export_exception", "No module named 'gwfast'"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
@@ -2903,7 +2903,7 @@ write_to_stdout=True, **opts):"}, Background -> {{
                     OpenerView[{"Local variables", 
                     
                     Grid[{{"Key", "Value"}, {
-                    "socket", "<zmq.Socket(zmq.PAIR) at 0x105faed60>"}, {
+                    "socket", "<zmq.Socket(zmq.PAIR) at 0x105de6d60>"}, {
                     "consumer", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
@@ -2963,7 +2963,7 @@ Expression"}, {"consumer",
                     "kwargs", "{}"}, {
                     "parser", 
                     "<wolframclient.deserializers.wxf.wxfparser.WXFParser \
-object at 0x1056bbb10>"}}, Background -> {Null, {LightGray}}, Alignment -> 
+object at 0x105247b10>"}}, Background -> {Null, {LightGray}}, Alignment -> 
                     Left, Frame -> LightGray]}]}]}, False], 
                     OpenerView[{
                     Row[{
@@ -3011,7 +3011,7 @@ self._consumer_from_type(token.wxf_type)",
                     "self", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                    "<generator object WXFParser.tokens at 0x105d83340>"}, {
                     "kwargs", "{}"}, {
                     "token", "WXFToken<b'f', data=None, len=3>"}, {
                     "consumer", 
@@ -3066,8 +3066,8 @@ self.dispatch_wl_object(*expr.args)", " 399.  ",
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "args", 
                     "(<wolframclient.deserializers.wxf.wxfparser.WXFToken \
-object at 0x1056ea160>, <generator object WXFParser.tokens at \
-0x105f4b340>)"}, {"kwargs", "{}"}, {
+object at 0x10555e200>, <generator object WXFParser.tokens at \
+0x105d83340>)"}, {"kwargs", "{}"}, {
                     "__class__", 
                     "<class \
 'wolframclient.utils.externalevaluate.ExternalEvaluateConsumer'>"}}, 
@@ -3123,7 +3123,7 @@ args, **kwargs)"}, Background -> {{
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "current_token", "WXFToken<b'f', data=None, len=3>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                    "<generator object WXFParser.tokens at 0x105d83340>"}, {
                     "kwargs", "{}"}, {
                     "head", 
                     "ExternalEvaluate`Private`ExternalEvaluateCommand"}}, 
@@ -3172,12 +3172,12 @@ args, **kwargs)", " 108.  "}, Background -> {{
                     OpenerView[{"Local variables", 
                     
                     Grid[{{"Key", "Value"}, {
-                    ".0", "<range_iterator object at 0x1060a6ac0>"}, {
+                    ".0", "<range_iterator object at 0x105edeac0>"}, {
                     "i", "1"}, {"kwargs", "{}"}, {
                     "self", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}}, 
+                    "<generator object WXFParser.tokens at 0x105d83340>"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
                     Frame -> LightGray]}]}]}, False], 
                     OpenerView[{
@@ -3226,7 +3226,7 @@ self._consumer_from_type(token.wxf_type)",
                     "self", 
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "tokens", 
-                    "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                    "<generator object WXFParser.tokens at 0x105d83340>"}, {
                     "kwargs", "{}"}, {
                     "token", "WXFToken<b'f', data=None, len=3>"}, {
                     "consumer", 
@@ -3277,8 +3277,8 @@ self.dispatch_wl_object(*expr.args)", Background -> LightYellow], " 399.  ",
                     "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                     "args", 
                     "(<wolframclient.deserializers.wxf.wxfparser.WXFToken \
-object at 0x105b5c9a0>, <generator object WXFParser.tokens at \
-0x105f4b340>)"}, {"kwargs", "{}"}, {
+object at 0x105ef1170>, <generator object WXFParser.tokens at \
+0x105d83340>)"}, {"kwargs", "{}"}, {
                     "expr", 
                     "ExternalEvaluate`Private`ExternalEvaluateCommand['Eval', \
 \"\\nimport jax\\nimport os\\nimport sys\\n\\nimport copy\\nimport numpy as \
@@ -3391,12 +3391,12 @@ sys.path.append(SCRIPT_DIR)\nimport gwfast.gwfastGlobals as glob\n"}, {
                     "constants", "{}"}, {"env", "<registry len=11>"}, {
                     "result", "None"}, {
                     "expressions", 
-                    "[<ast.Import object at 0x1060a7fa0>, <ast.Import object \
-at 0x1060a7f40>, <ast.Import object at 0x1060a7ee0>, <ast.Import object at \
-0x1060a7e80>, <ast.Import object at 0x1060a7e20>, <ast.ImportFrom object at \
-0x1060a7dc0>, <ast.Assign object at 0x1060a7d60>, <ast.Assign object at \
-0x1060a7a30>, <ast.Expr object at 0x1060a7700>, <ast.Import object at \
-0x1060a75e0>]"}, {"last_expr", "<ast.Import object at 0x1060a75e0>"}}, 
+                    "[<ast.Import object at 0x105edffa0>, <ast.Import object \
+at 0x105edff40>, <ast.Import object at 0x105edfee0>, <ast.Import object at \
+0x105edfe80>, <ast.Import object at 0x105edfe20>, <ast.ImportFrom object at \
+0x105edfdc0>, <ast.Assign object at 0x105edfd60>, <ast.Assign object at \
+0x105edfa30>, <ast.Expr object at 0x105edf700>, <ast.Import object at \
+0x105edf5e0>]"}, {"last_expr", "<ast.Import object at 0x105edf5e0>"}}, 
                     Background -> {Null, {LightGray}}, Alignment -> Left, 
                     Frame -> LightGray]}]}]}, True], 
                     OpenerView[{"<module>", 
@@ -3494,13 +3494,13 @@ are happening during class serialization"}, Background -> {{
               OpenerView[{"Local variables", 
                 
                 Grid[{{"Key", "Value"}, {
-                  "function", "<function handle_message at 0x1060b8860>"}, {
-                  "args", "(<zmq.Socket(zmq.PAIR) at 0x105faed60>,)"}, {
+                  "function", "<function handle_message at 0x105ef4860>"}, {
+                  "args", "(<zmq.Socket(zmq.PAIR) at 0x105de6d60>,)"}, {
                   "opts", 
                    "{'consumer': <ExternalEvaluateConsumer globals=11 \
 objects=0>}"}, {"export_opts", 
                    "{'object_processor': <function \
-start_zmq_loop.<locals>.<lambda> at 0x1055991c0>, 'target_format': 'wxf'}"}, {
+start_zmq_loop.<locals>.<lambda> at 0x1053e91c0>, 'target_format': 'wxf'}"}, {
                   "exception_class", "None"}, {
                   "export_exception", "No module named 'gwfast'"}}, 
                  Background -> {Null, {LightGray}}, Alignment -> Left, Frame -> 
@@ -3540,7 +3540,7 @@ write_to_stdout=True, **opts):"}, Background -> {{
               OpenerView[{"Local variables", 
                 
                 Grid[{{"Key", "Value"}, {
-                  "socket", "<zmq.Socket(zmq.PAIR) at 0x105faed60>"}, {
+                  "socket", "<zmq.Socket(zmq.PAIR) at 0x105de6d60>"}, {
                   "consumer", 
                    "<ExternalEvaluateConsumer globals=11 objects=0>"}}, 
                  Background -> {Null, {LightGray}}, Alignment -> Left, Frame -> 
@@ -3594,7 +3594,7 @@ Expression"}, {"consumer",
                   "kwargs", "{}"}, {
                   "parser", 
                    "<wolframclient.deserializers.wxf.wxfparser.WXFParser \
-object at 0x1056bbb10>"}}, Background -> {Null, {LightGray}}, Alignment -> 
+object at 0x105247b10>"}}, Background -> {Null, {LightGray}}, Alignment -> 
                  Left, Frame -> LightGray]}]}]}, False], 
           OpenerView[{
             Row[{
@@ -3638,7 +3638,7 @@ self._consumer_from_type(token.wxf_type)",
                   "self", 
                    "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                   "tokens", 
-                   "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                   "<generator object WXFParser.tokens at 0x105d83340>"}, {
                   "kwargs", "{}"}, {
                   "token", "WXFToken<b'f', data=None, len=3>"}, {
                   "consumer", 
@@ -3690,8 +3690,8 @@ self.dispatch_wl_object(*expr.args)", " 399.  ",
                    "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                   "args", 
                    "(<wolframclient.deserializers.wxf.wxfparser.WXFToken \
-object at 0x1056ea160>, <generator object WXFParser.tokens at \
-0x105f4b340>)"}, {"kwargs", "{}"}, {
+object at 0x10555e200>, <generator object WXFParser.tokens at \
+0x105d83340>)"}, {"kwargs", "{}"}, {
                   "__class__", 
                    "<class \
 'wolframclient.utils.externalevaluate.ExternalEvaluateConsumer'>"}}, 
@@ -3742,7 +3742,7 @@ for i in range(current_token.length)", " 103.          )",
                    "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                   "current_token", "WXFToken<b'f', data=None, len=3>"}, {
                   "tokens", 
-                   "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                   "<generator object WXFParser.tokens at 0x105d83340>"}, {
                   "kwargs", "{}"}, {
                   "head", 
                    "ExternalEvaluate`Private`ExternalEvaluateCommand"}}, 
@@ -3786,12 +3786,12 @@ for i in range(current_token.length)", Background -> LightYellow],
               OpenerView[{"Local variables", 
                 
                 Grid[{{"Key", "Value"}, {
-                  ".0", "<range_iterator object at 0x1060a6ac0>"}, {
+                  ".0", "<range_iterator object at 0x105edeac0>"}, {
                   "i", "1"}, {"kwargs", "{}"}, {
                   "self", 
                    "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                   "tokens", 
-                   "<generator object WXFParser.tokens at 0x105f4b340>"}}, 
+                   "<generator object WXFParser.tokens at 0x105d83340>"}}, 
                  Background -> {Null, {LightGray}}, Alignment -> Left, Frame -> 
                  LightGray]}]}]}, False], 
           OpenerView[{
@@ -3836,7 +3836,7 @@ self._consumer_from_type(token.wxf_type)",
                   "self", 
                    "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                   "tokens", 
-                   "<generator object WXFParser.tokens at 0x105f4b340>"}, {
+                   "<generator object WXFParser.tokens at 0x105d83340>"}, {
                   "kwargs", "{}"}, {
                   "token", "WXFToken<b'f', data=None, len=3>"}, {
                   "consumer", 
@@ -3884,8 +3884,8 @@ self.dispatch_wl_object(*expr.args)", Background -> LightYellow], " 399.  ",
                    "<ExternalEvaluateConsumer globals=11 objects=0>"}, {
                   "args", 
                    "(<wolframclient.deserializers.wxf.wxfparser.WXFToken \
-object at 0x105b5c9a0>, <generator object WXFParser.tokens at \
-0x105f4b340>)"}, {"kwargs", "{}"}, {
+object at 0x105ef1170>, <generator object WXFParser.tokens at \
+0x105d83340>)"}, {"kwargs", "{}"}, {
                   "expr", 
                    "ExternalEvaluate`Private`ExternalEvaluateCommand['Eval', \
 \"\\nimport jax\\nimport os\\nimport sys\\n\\nimport copy\\nimport numpy as \
@@ -3992,12 +3992,12 @@ sys.path.append(SCRIPT_DIR)\nimport gwfast.gwfastGlobals as glob\n"}, {
                   "constants", "{}"}, {"env", "<registry len=11>"}, {
                   "result", "None"}, {
                   "expressions", 
-                   "[<ast.Import object at 0x1060a7fa0>, <ast.Import object \
-at 0x1060a7f40>, <ast.Import object at 0x1060a7ee0>, <ast.Import object at \
-0x1060a7e80>, <ast.Import object at 0x1060a7e20>, <ast.ImportFrom object at \
-0x1060a7dc0>, <ast.Assign object at 0x1060a7d60>, <ast.Assign object at \
-0x1060a7a30>, <ast.Expr object at 0x1060a7700>, <ast.Import object at \
-0x1060a75e0>]"}, {"last_expr", "<ast.Import object at 0x1060a75e0>"}}, 
+                   "[<ast.Import object at 0x105edffa0>, <ast.Import object \
+at 0x105edff40>, <ast.Import object at 0x105edfee0>, <ast.Import object at \
+0x105edfe80>, <ast.Import object at 0x105edfe20>, <ast.ImportFrom object at \
+0x105edfdc0>, <ast.Assign object at 0x105edfd60>, <ast.Assign object at \
+0x105edfa30>, <ast.Expr object at 0x105edf700>, <ast.Import object at \
+0x105edf5e0>]"}, {"last_expr", "<ast.Import object at 0x105edf5e0>"}}, 
                  Background -> {Null, {LightGray}}, Alignment -> Left, Frame -> 
                  LightGray]}]}]}, True], 
           OpenerView[{"<module>", 
@@ -4035,8 +4035,8 @@ Ob0=0.04897)"}, {"PACKAGE_PARENT", ".."}, {"SCRIPT_DIR", "/Users"}},
   Editable->False,
   SelectWithContents->True,
   Selectable->False]], "Output",
- CellChangeTimes->{3.952000043019725*^9},
- CellLabel->"Out[65]=",ExpressionUUID->"09e02100-7cd7-4e2b-8b52-e2c0837bcbd0"]
+ CellChangeTimes->{3.952000043019725*^9, 3.953802928301046*^9},
+ CellLabel->"Out[3]=",ExpressionUUID->"6bc28bd0-193f-42ae-939c-b5f55af8553a"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -4044,11 +4044,11 @@ Cell[CellGroupData[{
 Cell[BoxData[
  RowBox[{"ExternalEvaluate", "[", 
   RowBox[{
-  "python", ",", " ", 
-   "\"\<\nalldetectors = copy.deepcopy(glob.detectors)\nprint('All available \
-detectors are: '+str(list(alldetectors.keys())))\n\n# select only LIGO and \
-Virgo\nLVdetectors = {det:alldetectors[det] for det in ['L1', 'H1', 'Virgo']}\
-\nprint('Using detectors '+str(list(LVdetectors.keys())))\n\>\""}], 
+  "python", ",", 
+   " ", "\"\<\nalldetectors = copy.deepcopy(glob.detectors)\nprint('All \
+available detectors are: '+str(list(alldetectors.keys())))\n\n# select only \
+LIGO and Virgo\nLVdetectors = {det:alldetectors[det] for det in ['L1', 'H1', \
+'Virgo']}\nprint('Using detectors '+str(list(LVdetectors.keys())))\n\>\""}], 
   "]"}]], "Code",
  CellChangeTimes->{{3.948372060814776*^9, 3.9483720729103336`*^9}},
  CellLabel->"In[4]:=",ExpressionUUID->"595b7454-89a7-44af-8f34-697682c6e336"],
@@ -5454,7 +5454,7 @@ Cell[BoxData[
    3.951838310879202*^9},
  CellLabel->"Out[11]=",ExpressionUUID->"d6f666dd-c6c6-42f8-b0c1-01a936548d5a"]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -11988,7 +11988,7 @@ Cell[BoxData[""], "Output",
 WindowSize->{Full, Full},
 WindowMargins->{{7, Automatic}, {7, Automatic}},
 DefaultNewCellStyle->"Code",
-Magnification:>1.5 Inherited,
+Magnification->2.,
 FrontEndVersion->"14.2 for Mac OS X ARM (64-bit) (December 26, 2024)",
 StyleDefinitions->"Default.nb",
 ExpressionUUID->"7ee2fa0a-c055-4105-ae5a-7d7672062c96"
@@ -12004,261 +12004,261 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 176, 2, 44, "Input",ExpressionUUID->"11b9b443-0aa6-4ea9-98c5-01cb3b3b580b"],
-Cell[737, 24, 418, 7, 44, "Input",ExpressionUUID->"a8e72f98-801c-45dc-8b26-9daa1facc01a"],
+Cell[558, 20, 176, 2, 58, "Input",ExpressionUUID->"11b9b443-0aa6-4ea9-98c5-01cb3b3b580b"],
+Cell[737, 24, 418, 7, 58, "Input",ExpressionUUID->"a8e72f98-801c-45dc-8b26-9daa1facc01a"],
 Cell[CellGroupData[{
-Cell[1180, 35, 156, 3, 99, "Section",ExpressionUUID->"f6ade05f-b728-4aa4-a8e7-9e842a2c9a18"],
-Cell[1339, 40, 290, 6, 76, "Code",ExpressionUUID->"757e299e-8c60-4037-8627-27c10825d7b1"],
+Cell[1180, 35, 156, 3, 132, "Section",ExpressionUUID->"f6ade05f-b728-4aa4-a8e7-9e842a2c9a18"],
+Cell[1339, 40, 289, 6, 102, "Code",ExpressionUUID->"757e299e-8c60-4037-8627-27c10825d7b1"],
 Cell[CellGroupData[{
-Cell[1654, 50, 548, 10, 444, "Code",ExpressionUUID->"50d04d58-9c29-45ff-8614-b03420f4c274"],
-Cell[2205, 62, 217916, 3976, 89, "Output",ExpressionUUID->"09e02100-7cd7-4e2b-8b52-e2c0837bcbd0"]
+Cell[1653, 50, 547, 10, 592, "Code",ExpressionUUID->"50d04d58-9c29-45ff-8614-b03420f4c274"],
+Cell[2203, 62, 217937, 3976, 118, "Output",ExpressionUUID->"6bc28bd0-193f-42ae-939c-b5f55af8553a"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[220158, 4043, 550, 10, 274, "Code",ExpressionUUID->"595b7454-89a7-44af-8f34-697682c6e336"],
+Cell[220177, 4043, 550, 10, 366, "Code",ExpressionUUID->"595b7454-89a7-44af-8f34-697682c6e336"],
 Cell[CellGroupData[{
-Cell[220733, 4057, 374, 7, 62, "Print",ExpressionUUID->"af153f67-f57e-4582-8b30-4ca9d140aaa7"],
-Cell[221110, 4066, 266, 5, 34, "Print",ExpressionUUID->"f5fa1c28-8ad5-43aa-b5e7-463ca806e064"]
+Cell[220752, 4057, 374, 7, 83, "Print",ExpressionUUID->"af153f67-f57e-4582-8b30-4ca9d140aaa7"],
+Cell[221129, 4066, 266, 5, 46, "Print",ExpressionUUID->"f5fa1c28-8ad5-43aa-b5e7-463ca806e064"]
 }, Open  ]]
 }, Open  ]],
-Cell[221403, 4075, 547, 11, 189, "Code",ExpressionUUID->"29f77fc6-7efd-4e81-b9ff-0351d5ce5fda"],
+Cell[221422, 4075, 547, 11, 253, "Code",ExpressionUUID->"29f77fc6-7efd-4e81-b9ff-0351d5ce5fda"],
 Cell[CellGroupData[{
-Cell[221975, 4090, 473, 9, 221, "Code",ExpressionUUID->"83bfd391-8425-4fbf-89dc-614eb4ea58ff"],
-Cell[222451, 4101, 387, 7, 62, "Print",ExpressionUUID->"303b21c6-e72e-43b6-ab00-8f8c3ed0fb88"]
+Cell[221994, 4090, 473, 9, 290, "Code",ExpressionUUID->"83bfd391-8425-4fbf-89dc-614eb4ea58ff"],
+Cell[222470, 4101, 387, 7, 83, "Print",ExpressionUUID->"303b21c6-e72e-43b6-ab00-8f8c3ed0fb88"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[222875, 4113, 871, 15, 609, "Code",ExpressionUUID->"ea4e0650-3ead-4ba8-b176-c28b9f7a7f92"],
+Cell[222894, 4113, 871, 15, 818, "Code",ExpressionUUID->"ea4e0650-3ead-4ba8-b176-c28b9f7a7f92"],
 Cell[CellGroupData[{
-Cell[223771, 4132, 403, 8, 90, "Print",ExpressionUUID->"dc48cbc8-9a47-4a3d-9755-f9b000ea0553"],
-Cell[224177, 4142, 276, 6, 33, "Print",ExpressionUUID->"d84d0d6d-ff91-4a54-a6ab-64dbf327afa5"],
-Cell[224456, 4150, 280, 6, 33, "Print",ExpressionUUID->"302daefa-e2f0-44f8-8f71-81fb166d1a1e"],
-Cell[224739, 4158, 275, 6, 33, "Print",ExpressionUUID->"b33fb3e6-e4d9-4a58-9485-944947ed5cf3"],
-Cell[225017, 4166, 403, 8, 90, "Print",ExpressionUUID->"61f0f152-7594-4f9b-aa16-b20bb33f230c"],
-Cell[225423, 4176, 274, 6, 33, "Print",ExpressionUUID->"39c66e2b-21fc-46e4-a418-1838021ac02a"],
-Cell[225700, 4184, 280, 6, 33, "Print",ExpressionUUID->"0210d450-f349-4cf0-8da8-ab9a89161e81"],
-Cell[225983, 4192, 275, 6, 33, "Print",ExpressionUUID->"58224cc4-05a8-4e38-b980-af29a3ecee1b"]
-}, Open  ]]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[226307, 4204, 1167, 19, 748, "Code",ExpressionUUID->"5bf4fa3a-4c5e-4d29-a187-c881c09c45af"],
-Cell[227477, 4225, 226, 4, 33, "Print",ExpressionUUID->"6062cba4-d8dd-4a7b-9fc9-51ac82273cfb"],
-Cell[227706, 4231, 49171, 1034, 555, "Output",ExpressionUUID->"0b6bad35-d330-40ea-8046-f7f141907d52"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[276914, 5270, 497, 9, 276, "Code",ExpressionUUID->"ac5867b5-9d94-4b0f-ae9b-4b46b96f169a"],
-Cell[CellGroupData[{
-Cell[277436, 5283, 230, 4, 33, "Print",ExpressionUUID->"7c9aca00-98d0-4ad6-8cae-ffe2671e79f7"],
-Cell[277669, 5289, 228, 4, 33, "Print",ExpressionUUID->"f621f40a-af30-4808-998e-de17dd3ebe89"],
-Cell[277900, 5295, 230, 4, 33, "Print",ExpressionUUID->"5621ebbd-9d2b-421c-a9c1-c547582f98f8"],
-Cell[278133, 5301, 230, 4, 33, "Print",ExpressionUUID->"0e9d0ef7-7968-49b7-b2ae-01cf80b89148"],
-Cell[278366, 5307, 211, 4, 33, "Print",ExpressionUUID->"20137808-704a-45ba-a604-cfffb7c95282"],
-Cell[278580, 5313, 222, 4, 33, "Print",ExpressionUUID->"35ae6198-c6b2-438a-9d2b-4924ed18b633"],
-Cell[278805, 5319, 254, 5, 33, "Print",ExpressionUUID->"d66d0a0d-8995-405f-8a2a-9bc4da0eaa1e"]
+Cell[223790, 4132, 403, 8, 120, "Print",ExpressionUUID->"dc48cbc8-9a47-4a3d-9755-f9b000ea0553"],
+Cell[224196, 4142, 276, 6, 44, "Print",ExpressionUUID->"d84d0d6d-ff91-4a54-a6ab-64dbf327afa5"],
+Cell[224475, 4150, 280, 6, 44, "Print",ExpressionUUID->"302daefa-e2f0-44f8-8f71-81fb166d1a1e"],
+Cell[224758, 4158, 275, 6, 44, "Print",ExpressionUUID->"b33fb3e6-e4d9-4a58-9485-944947ed5cf3"],
+Cell[225036, 4166, 403, 8, 120, "Print",ExpressionUUID->"61f0f152-7594-4f9b-aa16-b20bb33f230c"],
+Cell[225442, 4176, 274, 6, 44, "Print",ExpressionUUID->"39c66e2b-21fc-46e4-a418-1838021ac02a"],
+Cell[225719, 4184, 280, 6, 44, "Print",ExpressionUUID->"0210d450-f349-4cf0-8da8-ab9a89161e81"],
+Cell[226002, 4192, 275, 6, 44, "Print",ExpressionUUID->"58224cc4-05a8-4e38-b980-af29a3ecee1b"]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[279108, 5330, 544, 14, 110, "Code",ExpressionUUID->"de8a02ee-0ee7-4bea-aab6-d6c3cffd094d"],
-Cell[279655, 5346, 5472, 108, 572, "Output",ExpressionUUID->"d6f666dd-c6c6-42f8-b0c1-01a936548d5a"]
+Cell[226326, 4204, 1167, 19, 997, "Code",ExpressionUUID->"5bf4fa3a-4c5e-4d29-a187-c881c09c45af"],
+Cell[227496, 4225, 226, 4, 44, "Print",ExpressionUUID->"6062cba4-d8dd-4a7b-9fc9-51ac82273cfb"],
+Cell[227725, 4231, 49171, 1034, 740, "Output",ExpressionUUID->"0b6bad35-d330-40ea-8046-f7f141907d52"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[276933, 5270, 497, 9, 368, "Code",ExpressionUUID->"ac5867b5-9d94-4b0f-ae9b-4b46b96f169a"],
+Cell[CellGroupData[{
+Cell[277455, 5283, 230, 4, 44, "Print",ExpressionUUID->"7c9aca00-98d0-4ad6-8cae-ffe2671e79f7"],
+Cell[277688, 5289, 228, 4, 44, "Print",ExpressionUUID->"f621f40a-af30-4808-998e-de17dd3ebe89"],
+Cell[277919, 5295, 230, 4, 44, "Print",ExpressionUUID->"5621ebbd-9d2b-421c-a9c1-c547582f98f8"],
+Cell[278152, 5301, 230, 4, 44, "Print",ExpressionUUID->"0e9d0ef7-7968-49b7-b2ae-01cf80b89148"],
+Cell[278385, 5307, 211, 4, 44, "Print",ExpressionUUID->"20137808-704a-45ba-a604-cfffb7c95282"],
+Cell[278599, 5313, 222, 4, 44, "Print",ExpressionUUID->"35ae6198-c6b2-438a-9d2b-4924ed18b633"],
+Cell[278824, 5319, 254, 5, 44, "Print",ExpressionUUID->"d66d0a0d-8995-405f-8a2a-9bc4da0eaa1e"]
 }, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[279127, 5330, 544, 14, 146, "Code",ExpressionUUID->"de8a02ee-0ee7-4bea-aab6-d6c3cffd094d"],
+Cell[279674, 5346, 5472, 108, 762, "Output",ExpressionUUID->"d6f666dd-c6c6-42f8-b0c1-01a936548d5a"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[285195, 5460, 155, 3, 100, "Section",ExpressionUUID->"444ca2c7-8949-4ce8-9544-9d495bb776f7"],
+Cell[CellGroupData[{
+Cell[285375, 5467, 251, 5, 101, "Code",ExpressionUUID->"a066a54f-6f1d-49e2-95a2-ce7fb873ce07"],
+Cell[285629, 5474, 217, 2, 66, "Output",ExpressionUUID->"b224433e-e4ae-4daf-90a1-8b92dc4c9135"]
+}, Open  ]],
+Cell[285861, 5479, 484, 11, 138, "Code",ExpressionUUID->"4921c21c-c88d-4b03-b840-743b4cd388f4"],
+Cell[286348, 5492, 897, 21, 214, "Code",ExpressionUUID->"c23053ec-a1a7-41e7-93ba-015fc74f80b9"],
+Cell[287248, 5515, 2434, 52, 302, "Code",ExpressionUUID->"04d07a3b-01ee-4ce8-a7ab-fe5efaa86d5a"],
+Cell[289685, 5569, 843, 20, 129, "Code",ExpressionUUID->"71026edd-2d08-4115-a49b-737fe5094641"],
+Cell[CellGroupData[{
+Cell[290553, 5593, 2127, 39, 365, "Code",ExpressionUUID->"b89c83bb-92a0-4a24-b3e2-3909dbd56e1a"],
+Cell[292683, 5634, 856, 14, 66, "Output",ExpressionUUID->"21c96e1c-fc70-4f3b-b59f-af1b91250446"]
+}, Open  ]],
+Cell[293554, 5651, 3964, 108, 1098, "Code",ExpressionUUID->"899ba683-7681-4fdf-9468-fc1ff7443672"],
+Cell[297521, 5761, 2765, 79, 516, "Code",ExpressionUUID->"9702e989-883a-4af9-9fd6-0a380d9b7cf0"],
+Cell[300289, 5842, 1825, 44, 328, "Code",ExpressionUUID->"ec545e1d-a1c0-459e-9967-97bb84234b8c"],
+Cell[302117, 5888, 1930, 37, 177, "Code",ExpressionUUID->"1b16b47d-d1ef-4e8a-a2e2-6f0248094847"],
+Cell[CellGroupData[{
+Cell[304072, 5929, 799, 12, 478, "Code",ExpressionUUID->"edf84ea2-35bc-41ff-94a4-8992a3a479cc"],
+Cell[304874, 5943, 763, 12, 45, "Print",ExpressionUUID->"793779b7-d795-4628-9fd1-63e27f114ea7"]
+}, Open  ]],
+Cell[305652, 5958, 3360, 66, 416, "Code",ExpressionUUID->"d8a80115-859a-4412-8cdc-efe409a90c49"],
+Cell[309015, 6026, 2531, 44, 554, "Code",ExpressionUUID->"6816160a-56ae-492d-aa26-082d3c5f5a2f"],
+Cell[311549, 6072, 210, 3, 101, "Code",ExpressionUUID->"4f9fb1a1-fd58-483c-8d2d-70c1dba9986d"],
+Cell[CellGroupData[{
+Cell[311784, 6079, 837, 16, 222, "Code",ExpressionUUID->"cc20a26b-2d3a-4a63-9143-1d4426a808ee"],
+Cell[CellGroupData[{
+Cell[312646, 6099, 209, 6, 46, "EchoTiming",ExpressionUUID->"5c7c3d42-5041-4df4-96d4-247ffad7e7b0"],
+Cell[312858, 6107, 208, 6, 46, "EchoTiming",ExpressionUUID->"04c5c2df-74e3-465a-989a-8ba5f5d846bc"],
+Cell[313069, 6115, 206, 6, 46, "EchoTiming",ExpressionUUID->"cadd828d-92b7-40e9-8eab-9b4764b7e132"],
+Cell[313278, 6123, 213, 6, 46, "EchoTiming",ExpressionUUID->"c95ae4bf-2c80-4dd7-ac1a-59cde6065721"],
+Cell[313494, 6131, 216, 5, 46, "EchoTiming",ExpressionUUID->"1128af31-5c94-4574-9d45-21bdc16a6486"],
+Cell[313713, 6138, 207, 6, 46, "EchoTiming",ExpressionUUID->"2f9abc6b-917c-4640-a30a-71268e21d4be"],
+Cell[313923, 6146, 221, 6, 46, "EchoTiming",ExpressionUUID->"c41ac1cc-f67e-4bb3-a57b-1ec5a1350f88"],
+Cell[314147, 6154, 144, 3, 46, "EchoTiming",ExpressionUUID->"9ce94a56-ef82-48ae-b645-ba3636584764"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[314340, 6163, 575, 13, 101, "Code",ExpressionUUID->"a5076eb4-e307-47b1-ac18-c1bdcd7e6ec4"],
+Cell[314918, 6178, 374, 5, 66, "Output",ExpressionUUID->"fea3aa9b-9bae-4051-bf1d-a9f292fafda4"]
+}, Open  ]],
+Cell[315307, 6186, 673, 19, 177, "Code",ExpressionUUID->"60208417-fa00-4bfa-8e55-26a02c2e00bb"],
+Cell[CellGroupData[{
+Cell[316005, 6209, 893, 18, 441, "Code",ExpressionUUID->"e8b6a29d-20da-40a2-ac77-2a28b4944b25"],
+Cell[316901, 6229, 575, 12, 66, "Output",ExpressionUUID->"d9d31131-af82-48d7-998a-bc43ddc14d97"]
+}, Open  ]],
+Cell[317491, 6244, 848, 15, 214, "Code",ExpressionUUID->"e4ff9087-6faa-44fd-a6f1-2d835fcbdbed"],
+Cell[318342, 6261, 361, 8, 101, "Code",ExpressionUUID->"f8c72f94-47ab-4573-b98d-8d566a39fe47"],
+Cell[CellGroupData[{
+Cell[318728, 6273, 245, 4, 101, "Code",ExpressionUUID->"28d11d24-c970-4347-bfec-75ccc8ee28fe"],
+Cell[318976, 6279, 245, 4, 66, "Output",ExpressionUUID->"0ab4dfd3-7b06-4c69-a215-0d6fd736d94d"]
+}, Open  ]],
+Cell[319236, 6286, 1580, 35, 441, "Code",ExpressionUUID->"bcfaf969-18ac-4a7d-a0fa-c60c22a8cc9a"],
+Cell[320819, 6323, 1056, 21, 101, "Code",ExpressionUUID->"eb2147c8-dc24-4dc3-9418-8c46dff5c8d6"],
+Cell[321878, 6346, 308, 6, 101, "Code",ExpressionUUID->"59c181a6-9d3a-427d-a34b-ec84d18543a9"],
+Cell[322189, 6354, 499, 10, 101, "Code",ExpressionUUID->"a0f37a14-a12d-4943-b61e-13d55859863d"],
+Cell[322691, 6366, 301, 6, 101, "Code",ExpressionUUID->"8f1c7664-411b-4262-9100-b608aa628e65"],
+Cell[CellGroupData[{
+Cell[323017, 6376, 258, 4, 101, "Code",ExpressionUUID->"e8337b05-a240-4c43-b665-4e77bd76c4a9"],
+Cell[323278, 6382, 3931, 67, 434, "Output",ExpressionUUID->"e39fc60f-0f1c-4c29-9a3c-b65a1fb5458f"]
 }, Closed]],
+Cell[327224, 6452, 621, 14, 100, "Text",ExpressionUUID->"8ed0d465-78aa-4d47-96eb-29663ba5bfb5"],
 Cell[CellGroupData[{
-Cell[285176, 5460, 155, 3, 76, "Section",ExpressionUUID->"444ca2c7-8949-4ce8-9544-9d495bb776f7"],
-Cell[CellGroupData[{
-Cell[285356, 5467, 251, 5, 76, "Code",ExpressionUUID->"a066a54f-6f1d-49e2-95a2-ce7fb873ce07"],
-Cell[285610, 5474, 217, 2, 50, "Output",ExpressionUUID->"b224433e-e4ae-4daf-90a1-8b92dc4c9135"]
-}, Open  ]],
-Cell[285842, 5479, 484, 11, 104, "Code",ExpressionUUID->"4921c21c-c88d-4b03-b840-743b4cd388f4"],
-Cell[286329, 5492, 897, 21, 161, "Code",ExpressionUUID->"c23053ec-a1a7-41e7-93ba-015fc74f80b9"],
-Cell[287229, 5515, 2434, 52, 227, "Code",ExpressionUUID->"04d07a3b-01ee-4ce8-a7ab-fe5efaa86d5a"],
-Cell[289666, 5569, 843, 20, 97, "Code",ExpressionUUID->"71026edd-2d08-4115-a49b-737fe5094641"],
-Cell[CellGroupData[{
-Cell[290534, 5593, 2127, 39, 274, "Code",ExpressionUUID->"b89c83bb-92a0-4a24-b3e2-3909dbd56e1a"],
-Cell[292664, 5634, 856, 14, 50, "Output",ExpressionUUID->"21c96e1c-fc70-4f3b-b59f-af1b91250446"]
-}, Open  ]],
-Cell[293535, 5651, 3964, 108, 824, "Code",ExpressionUUID->"899ba683-7681-4fdf-9468-fc1ff7443672"],
-Cell[297502, 5761, 2765, 79, 387, "Code",ExpressionUUID->"9702e989-883a-4af9-9fd6-0a380d9b7cf0"],
-Cell[300270, 5842, 1825, 44, 246, "Code",ExpressionUUID->"ec545e1d-a1c0-459e-9967-97bb84234b8c"],
-Cell[302098, 5888, 1930, 37, 133, "Code",ExpressionUUID->"1b16b47d-d1ef-4e8a-a2e2-6f0248094847"],
-Cell[CellGroupData[{
-Cell[304053, 5929, 799, 12, 359, "Code",ExpressionUUID->"edf84ea2-35bc-41ff-94a4-8992a3a479cc"],
-Cell[304855, 5943, 763, 12, 34, "Print",ExpressionUUID->"793779b7-d795-4628-9fd1-63e27f114ea7"]
-}, Open  ]],
-Cell[305633, 5958, 3360, 66, 312, "Code",ExpressionUUID->"d8a80115-859a-4412-8cdc-efe409a90c49"],
-Cell[308996, 6026, 2531, 44, 416, "Code",ExpressionUUID->"6816160a-56ae-492d-aa26-082d3c5f5a2f"],
-Cell[311530, 6072, 210, 3, 76, "Code",ExpressionUUID->"4f9fb1a1-fd58-483c-8d2d-70c1dba9986d"],
-Cell[CellGroupData[{
-Cell[311765, 6079, 837, 16, 167, "Code",ExpressionUUID->"cc20a26b-2d3a-4a63-9143-1d4426a808ee"],
-Cell[CellGroupData[{
-Cell[312627, 6099, 209, 6, 35, "EchoTiming",ExpressionUUID->"5c7c3d42-5041-4df4-96d4-247ffad7e7b0"],
-Cell[312839, 6107, 208, 6, 35, "EchoTiming",ExpressionUUID->"04c5c2df-74e3-465a-989a-8ba5f5d846bc"],
-Cell[313050, 6115, 206, 6, 35, "EchoTiming",ExpressionUUID->"cadd828d-92b7-40e9-8eab-9b4764b7e132"],
-Cell[313259, 6123, 213, 6, 35, "EchoTiming",ExpressionUUID->"c95ae4bf-2c80-4dd7-ac1a-59cde6065721"],
-Cell[313475, 6131, 216, 5, 35, "EchoTiming",ExpressionUUID->"1128af31-5c94-4574-9d45-21bdc16a6486"],
-Cell[313694, 6138, 207, 6, 35, "EchoTiming",ExpressionUUID->"2f9abc6b-917c-4640-a30a-71268e21d4be"],
-Cell[313904, 6146, 221, 6, 35, "EchoTiming",ExpressionUUID->"c41ac1cc-f67e-4bb3-a57b-1ec5a1350f88"],
-Cell[314128, 6154, 144, 3, 35, "EchoTiming",ExpressionUUID->"9ce94a56-ef82-48ae-b645-ba3636584764"]
-}, Open  ]]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[314321, 6163, 575, 13, 76, "Code",ExpressionUUID->"a5076eb4-e307-47b1-ac18-c1bdcd7e6ec4"],
-Cell[314899, 6178, 374, 5, 50, "Output",ExpressionUUID->"fea3aa9b-9bae-4051-bf1d-a9f292fafda4"]
-}, Open  ]],
-Cell[315288, 6186, 673, 19, 133, "Code",ExpressionUUID->"60208417-fa00-4bfa-8e55-26a02c2e00bb"],
-Cell[CellGroupData[{
-Cell[315986, 6209, 893, 18, 331, "Code",ExpressionUUID->"e8b6a29d-20da-40a2-ac77-2a28b4944b25"],
-Cell[316882, 6229, 575, 12, 50, "Output",ExpressionUUID->"d9d31131-af82-48d7-998a-bc43ddc14d97"]
-}, Open  ]],
-Cell[317472, 6244, 848, 15, 161, "Code",ExpressionUUID->"e4ff9087-6faa-44fd-a6f1-2d835fcbdbed"],
-Cell[318323, 6261, 361, 8, 76, "Code",ExpressionUUID->"f8c72f94-47ab-4573-b98d-8d566a39fe47"],
-Cell[CellGroupData[{
-Cell[318709, 6273, 245, 4, 76, "Code",ExpressionUUID->"28d11d24-c970-4347-bfec-75ccc8ee28fe"],
-Cell[318957, 6279, 245, 4, 50, "Output",ExpressionUUID->"0ab4dfd3-7b06-4c69-a215-0d6fd736d94d"]
-}, Open  ]],
-Cell[319217, 6286, 1580, 35, 331, "Code",ExpressionUUID->"bcfaf969-18ac-4a7d-a0fa-c60c22a8cc9a"],
-Cell[320800, 6323, 1056, 21, 76, "Code",ExpressionUUID->"eb2147c8-dc24-4dc3-9418-8c46dff5c8d6"],
-Cell[321859, 6346, 308, 6, 76, "Code",ExpressionUUID->"59c181a6-9d3a-427d-a34b-ec84d18543a9"],
-Cell[322170, 6354, 499, 10, 76, "Code",ExpressionUUID->"a0f37a14-a12d-4943-b61e-13d55859863d"],
-Cell[322672, 6366, 301, 6, 76, "Code",ExpressionUUID->"8f1c7664-411b-4262-9100-b608aa628e65"],
-Cell[CellGroupData[{
-Cell[322998, 6376, 258, 4, 76, "Code",ExpressionUUID->"e8337b05-a240-4c43-b665-4e77bd76c4a9"],
-Cell[323259, 6382, 3931, 67, 326, "Output",ExpressionUUID->"e39fc60f-0f1c-4c29-9a3c-b65a1fb5458f"]
-}, Closed]],
-Cell[327205, 6452, 621, 14, 75, "Text",ExpressionUUID->"8ed0d465-78aa-4d47-96eb-29663ba5bfb5"],
-Cell[CellGroupData[{
-Cell[327851, 6470, 234, 4, 76, "Code",ExpressionUUID->"18672f4f-c5ac-41db-9d3b-4b6d970fc0aa"],
-Cell[328088, 6476, 1290, 28, 322, "Output",ExpressionUUID->"8f0819fd-303c-40ef-b74e-a400f8b87e14"]
+Cell[327870, 6470, 234, 4, 101, "Code",ExpressionUUID->"18672f4f-c5ac-41db-9d3b-4b6d970fc0aa"],
+Cell[328107, 6476, 1290, 28, 429, "Output",ExpressionUUID->"8f0819fd-303c-40ef-b74e-a400f8b87e14"]
 }, Closed]]
 }, Closed]],
 Cell[CellGroupData[{
-Cell[329427, 6510, 181, 3, 76, "Section",ExpressionUUID->"5936340c-fef0-48ea-96ed-04f910366681"],
-Cell[329611, 6515, 256, 4, 76, "Code",ExpressionUUID->"73d73260-eb13-4bb0-814b-b49a7a764b47"],
+Cell[329446, 6510, 181, 3, 100, "Section",ExpressionUUID->"5936340c-fef0-48ea-96ed-04f910366681"],
+Cell[329630, 6515, 256, 4, 102, "Code",ExpressionUUID->"73d73260-eb13-4bb0-814b-b49a7a764b47"],
 Cell[CellGroupData[{
-Cell[329892, 6523, 152, 3, 79, "Subsection",ExpressionUUID->"2d96bb06-2991-4b8d-8bb9-f0a6b3e083b2"],
-Cell[330047, 6528, 1863, 44, 529, "Code",ExpressionUUID->"fe74eac1-fd51-4af9-afc7-96a57db18fb6"],
+Cell[329911, 6523, 152, 3, 106, "Subsection",ExpressionUUID->"2d96bb06-2991-4b8d-8bb9-f0a6b3e083b2"],
+Cell[330066, 6528, 1863, 44, 705, "Code",ExpressionUUID->"fe74eac1-fd51-4af9-afc7-96a57db18fb6"],
 Cell[CellGroupData[{
-Cell[331935, 6576, 520, 11, 167, "Code",ExpressionUUID->"d5eb7854-c35c-45fb-abc7-0da5a93fb0f8"],
-Cell[332458, 6589, 143, 3, 35, "EchoTiming",ExpressionUUID->"9aca7618-ccf5-4b40-be5c-d7ab3f67c27f"],
-Cell[332604, 6594, 4211, 99, 165, "Output",ExpressionUUID->"5b09b8c1-ad94-4480-92cc-9ca6fc5b23ef"]
+Cell[331954, 6576, 520, 11, 222, "Code",ExpressionUUID->"d5eb7854-c35c-45fb-abc7-0da5a93fb0f8"],
+Cell[332477, 6589, 143, 3, 46, "EchoTiming",ExpressionUUID->"9aca7618-ccf5-4b40-be5c-d7ab3f67c27f"],
+Cell[332623, 6594, 4211, 99, 220, "Output",ExpressionUUID->"5b09b8c1-ad94-4480-92cc-9ca6fc5b23ef"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[336852, 6698, 1097, 25, 331, "Code",ExpressionUUID->"b916125f-7b9d-4a7a-a2a3-2a574b84e8c3"],
-Cell[337952, 6725, 143, 3, 35, "EchoTiming",ExpressionUUID->"c7d89ef8-8ca6-40ce-98de-ce6065c0d689"]
+Cell[336871, 6698, 1097, 25, 441, "Code",ExpressionUUID->"b916125f-7b9d-4a7a-a2a3-2a574b84e8c3"],
+Cell[337971, 6725, 143, 3, 46, "EchoTiming",ExpressionUUID->"c7d89ef8-8ca6-40ce-98de-ce6065c0d689"]
 }, Open  ]],
-Cell[338110, 6731, 263, 4, 76, "Code",ExpressionUUID->"790f1ba0-5806-448e-b18b-55aa3459498c"],
+Cell[338129, 6731, 263, 4, 101, "Code",ExpressionUUID->"790f1ba0-5806-448e-b18b-55aa3459498c"],
 Cell[CellGroupData[{
-Cell[338398, 6739, 376, 9, 76, "Code",ExpressionUUID->"faa147d3-5ae5-484c-a359-6ce2b08b734b"],
-Cell[338777, 6750, 681, 22, 73, "Output",ExpressionUUID->"a32168c7-4f84-4ed1-892b-45477b725442"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[339495, 6777, 256, 5, 76, "Code",ExpressionUUID->"b0bca263-1c6d-4665-9037-4d7a08453b43"],
-Cell[339754, 6784, 370, 7, 50, "Output",ExpressionUUID->"12a75475-5ad7-485a-9775-50988dc9ad81"]
+Cell[338417, 6739, 376, 9, 101, "Code",ExpressionUUID->"faa147d3-5ae5-484c-a359-6ce2b08b734b"],
+Cell[338796, 6750, 681, 22, 97, "Output",ExpressionUUID->"a32168c7-4f84-4ed1-892b-45477b725442"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[340161, 6796, 534, 13, 76, "Code",ExpressionUUID->"9ef935a3-795d-49c7-90d5-ac10f24af6dd"],
-Cell[340698, 6811, 355, 7, 50, "Output",ExpressionUUID->"a6d5976a-5fed-4b53-aeb8-c903b2efd837"]
-}, Open  ]],
-Cell[341068, 6821, 657, 13, 76, "Code",ExpressionUUID->"05aee8aa-0e35-4380-88a6-5d480235dc01"],
-Cell[CellGroupData[{
-Cell[341750, 6838, 2015, 40, 585, "Code",ExpressionUUID->"0d02464d-4ffe-455f-ad61-a0c94c76320a"],
-Cell[343768, 6880, 1216, 24, 80, "Output",ExpressionUUID->"5726976d-bbb2-492c-b821-a42a293ec9df"]
+Cell[339514, 6777, 256, 5, 101, "Code",ExpressionUUID->"b0bca263-1c6d-4665-9037-4d7a08453b43"],
+Cell[339773, 6784, 370, 7, 66, "Output",ExpressionUUID->"12a75475-5ad7-485a-9775-50988dc9ad81"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[345021, 6909, 1145, 22, 416, "Code",ExpressionUUID->"5a963080-3ffe-482e-bc06-a949e24902b3"],
-Cell[346169, 6933, 1226, 24, 80, "Output",ExpressionUUID->"0131cc42-bdb3-474b-99d0-f5af4065665d"]
+Cell[340180, 6796, 534, 13, 101, "Code",ExpressionUUID->"9ef935a3-795d-49c7-90d5-ac10f24af6dd"],
+Cell[340717, 6811, 355, 7, 66, "Output",ExpressionUUID->"a6d5976a-5fed-4b53-aeb8-c903b2efd837"]
+}, Open  ]],
+Cell[341087, 6821, 657, 13, 101, "Code",ExpressionUUID->"05aee8aa-0e35-4380-88a6-5d480235dc01"],
+Cell[CellGroupData[{
+Cell[341769, 6838, 2015, 40, 780, "Code",ExpressionUUID->"0d02464d-4ffe-455f-ad61-a0c94c76320a"],
+Cell[343787, 6880, 1216, 24, 106, "Output",ExpressionUUID->"5726976d-bbb2-492c-b821-a42a293ec9df"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[347432, 6962, 246, 5, 76, "Code",ExpressionUUID->"a92c37a9-7517-40d1-b3d1-561deecfad05"],
-Cell[347681, 6969, 364, 11, 70, "Output",ExpressionUUID->"3e37e6c4-0325-42f1-b780-6b087f2babe0"]
-}, Open  ]],
-Cell[348060, 6983, 726, 20, 76, "Code",ExpressionUUID->"34b079cb-6f16-40aa-9380-8946346e3e10"],
-Cell[CellGroupData[{
-Cell[348811, 7007, 170, 2, 76, "Code",ExpressionUUID->"ea857cc3-9469-4b71-82f0-c868f1b5ba72"],
-Cell[348984, 7011, 7997, 198, 54, "Output",ExpressionUUID->"653d0003-f4da-46dd-ba9a-b93bee7af9e8"]
+Cell[345040, 6909, 1145, 22, 554, "Code",ExpressionUUID->"5a963080-3ffe-482e-bc06-a949e24902b3"],
+Cell[346188, 6933, 1226, 24, 106, "Output",ExpressionUUID->"0131cc42-bdb3-474b-99d0-f5af4065665d"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[357018, 7214, 960, 19, 280, "Code",ExpressionUUID->"0a4c77ac-f75f-4dc9-815f-85b9871bbb86"],
-Cell[357981, 7235, 145, 3, 35, "EchoTiming",ExpressionUUID->"2d6d58ee-da84-4106-a210-ace91d8ce086"]
+Cell[347451, 6962, 246, 5, 101, "Code",ExpressionUUID->"a92c37a9-7517-40d1-b3d1-561deecfad05"],
+Cell[347700, 6969, 364, 11, 93, "Output",ExpressionUUID->"3e37e6c4-0325-42f1-b780-6b087f2babe0"]
+}, Open  ]],
+Cell[348079, 6983, 726, 20, 101, "Code",ExpressionUUID->"34b079cb-6f16-40aa-9380-8946346e3e10"],
+Cell[CellGroupData[{
+Cell[348830, 7007, 170, 2, 101, "Code",ExpressionUUID->"ea857cc3-9469-4b71-82f0-c868f1b5ba72"],
+Cell[349003, 7011, 7997, 198, 72, "Output",ExpressionUUID->"653d0003-f4da-46dd-ba9a-b93bee7af9e8"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[358163, 7243, 268, 4, 76, "Code",ExpressionUUID->"2e44907c-43ab-4e1e-8b30-111c932eafa7"],
-Cell[358434, 7249, 43870, 842, 87, "Output",ExpressionUUID->"0e122337-7747-4efd-885d-58ded17b4402"]
+Cell[357037, 7214, 960, 19, 373, "Code",ExpressionUUID->"0a4c77ac-f75f-4dc9-815f-85b9871bbb86"],
+Cell[358000, 7235, 145, 3, 46, "EchoTiming",ExpressionUUID->"2d6d58ee-da84-4106-a210-ace91d8ce086"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[402341, 8096, 563, 14, 136, "Code",ExpressionUUID->"e4bbf3da-c155-4199-b95d-40a4a9e2fdc9"],
-Cell[402907, 8112, 260, 5, 50, "Output",ExpressionUUID->"0b4147fd-2409-4e3c-a7e3-f15893133c60"]
-}, Open  ]],
-Cell[403182, 8120, 473, 10, 218, "Code",ExpressionUUID->"3a1e160c-1184-460e-890a-218416ec59ec"],
-Cell[403658, 8132, 5069, 106, 98, "Input",ExpressionUUID->"ae6075f6-1c93-48af-a448-045745ebf909"],
-Cell[CellGroupData[{
-Cell[408752, 8242, 552, 11, 105, "Input",ExpressionUUID->"a0435dea-5c8e-4d8e-8fa3-d98c8d22a2fa"],
-Cell[409307, 8255, 169, 2, 50, "Output",ExpressionUUID->"2cecdc6e-aed5-479c-a516-233751860de2"]
-}, Open  ]],
-Cell[409491, 8260, 281, 6, 246, "Code",ExpressionUUID->"12b85a00-0a45-47e9-aa3b-1cc15499afb9"],
-Cell[CellGroupData[{
-Cell[409797, 8270, 483, 9, 302, "Code",ExpressionUUID->"446222e5-940e-43aa-805a-2408d3ac8c4c"],
-Cell[410283, 8281, 19222, 352, 86, "Output",ExpressionUUID->"ff385fe5-eab0-461c-b6d4-f29e104866b8"]
+Cell[358182, 7243, 268, 4, 101, "Code",ExpressionUUID->"2e44907c-43ab-4e1e-8b30-111c932eafa7"],
+Cell[358453, 7249, 43870, 842, 116, "Output",ExpressionUUID->"0e122337-7747-4efd-885d-58ded17b4402"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[429542, 8638, 264, 4, 104, "Code",ExpressionUUID->"ab7e3803-27f5-4db1-93ae-21b85fc22883"],
-Cell[429809, 8644, 192, 2, 50, "Output",ExpressionUUID->"5b4068a9-2e31-48a2-9dcd-5ff8c12848aa"],
-Cell[430004, 8648, 192, 2, 50, "Output",ExpressionUUID->"23c22b9b-fa2c-4c80-bbf1-3129b9551782"]
+Cell[402360, 8096, 563, 14, 181, "Code",ExpressionUUID->"e4bbf3da-c155-4199-b95d-40a4a9e2fdc9"],
+Cell[402926, 8112, 260, 5, 66, "Output",ExpressionUUID->"0b4147fd-2409-4e3c-a7e3-f15893133c60"]
 }, Open  ]],
-Cell[430211, 8653, 704, 13, 585, "Code",ExpressionUUID->"11a180ac-f23f-4b38-8164-3b7607779dd1"]
+Cell[403201, 8120, 473, 10, 290, "Code",ExpressionUUID->"3a1e160c-1184-460e-890a-218416ec59ec"],
+Cell[403677, 8132, 5069, 106, 130, "Input",ExpressionUUID->"ae6075f6-1c93-48af-a448-045745ebf909"],
+Cell[CellGroupData[{
+Cell[408771, 8242, 552, 11, 140, "Input",ExpressionUUID->"a0435dea-5c8e-4d8e-8fa3-d98c8d22a2fa"],
+Cell[409326, 8255, 169, 2, 66, "Output",ExpressionUUID->"2cecdc6e-aed5-479c-a516-233751860de2"]
 }, Open  ]],
+Cell[409510, 8260, 281, 6, 328, "Code",ExpressionUUID->"12b85a00-0a45-47e9-aa3b-1cc15499afb9"],
 Cell[CellGroupData[{
-Cell[430952, 8671, 165, 3, 79, "Subsection",ExpressionUUID->"a55deb27-8b1e-4cdb-baad-4bfda3d186e2"],
-Cell[CellGroupData[{
-Cell[431142, 8678, 1230, 29, 356, "Code",ExpressionUUID->"f39bc7dd-8eb4-442d-bfe0-bf9516fadc15"],
-Cell[432375, 8709, 806, 16, 61, "Message",ExpressionUUID->"af5c12cc-df9a-4008-8a69-8b2d21c1a490"],
-Cell[433184, 8727, 21741, 419, 150, "Output",ExpressionUUID->"5faf10d1-6598-41b1-af3c-ab415f7a4f00"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[454962, 9151, 738, 19, 79, "Code",ExpressionUUID->"34df551c-ade6-4494-b0a4-f1db8023762d"],
-Cell[455703, 9172, 15130, 289, 86, "Output",ExpressionUUID->"8839f616-d385-4bf0-8d5d-831177f03cb6"]
+Cell[409816, 8270, 483, 9, 402, "Code",ExpressionUUID->"446222e5-940e-43aa-805a-2408d3ac8c4c"],
+Cell[410302, 8281, 19222, 352, 114, "Output",ExpressionUUID->"ff385fe5-eab0-461c-b6d4-f29e104866b8"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[470870, 9466, 570, 12, 76, "Code",ExpressionUUID->"334a2e44-a14f-4bcf-8684-4fe7432d9572"],
-Cell[471443, 9480, 17643, 340, 123, "Output",ExpressionUUID->"ffca9ef2-7c5c-41e9-9735-0b3600499dad"]
+Cell[429561, 8638, 264, 4, 138, "Code",ExpressionUUID->"ab7e3803-27f5-4db1-93ae-21b85fc22883"],
+Cell[429828, 8644, 192, 2, 66, "Output",ExpressionUUID->"5b4068a9-2e31-48a2-9dcd-5ff8c12848aa"],
+Cell[430023, 8648, 192, 2, 66, "Output",ExpressionUUID->"23c22b9b-fa2c-4c80-bbf1-3129b9551782"]
 }, Open  ]],
-Cell[489101, 9823, 2990, 67, 670, "Code",ExpressionUUID->"82355577-7bf6-466d-9e09-469713865e7f"],
-Cell[492094, 9892, 4240, 97, 636, "Code",ExpressionUUID->"a9dc131b-380a-491e-9992-42ec9ac3bbf5"],
-Cell[496337, 9991, 212, 3, 76, "Code",ExpressionUUID->"672ba949-0e28-42ae-8931-77f7ba7f7cf1"],
-Cell[CellGroupData[{
-Cell[496574, 9998, 622, 11, 105, "Input",ExpressionUUID->"d3403b5c-faec-4722-bc64-6d748147b4a5"],
-Cell[497199, 10011, 333, 6, 50, "Output",ExpressionUUID->"81b2fb6a-9088-40dc-bfd8-36d9f02d1ff4"]
+Cell[430230, 8653, 704, 13, 780, "Code",ExpressionUUID->"11a180ac-f23f-4b38-8164-3b7607779dd1"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[497569, 10022, 405, 8, 76, "Code",ExpressionUUID->"af8c2c88-8d89-44eb-b2b0-bee25fbbae51"],
-Cell[497977, 10032, 1015, 20, 111, "Output",ExpressionUUID->"160143ae-85d1-4aa8-8976-fb53f5a6ee3b"]
+Cell[430971, 8671, 165, 3, 105, "Subsection",ExpressionUUID->"a55deb27-8b1e-4cdb-baad-4bfda3d186e2"],
+Cell[CellGroupData[{
+Cell[431161, 8678, 1230, 29, 474, "Code",ExpressionUUID->"f39bc7dd-8eb4-442d-bfe0-bf9516fadc15"],
+Cell[432394, 8709, 806, 16, 81, "Message",ExpressionUUID->"af5c12cc-df9a-4008-8a69-8b2d21c1a490"],
+Cell[433203, 8727, 21741, 419, 200, "Output",ExpressionUUID->"5faf10d1-6598-41b1-af3c-ab415f7a4f00"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[499029, 10057, 307, 5, 104, "Code",ExpressionUUID->"6281eaca-67e2-469c-8017-39f525cf83ba"],
-Cell[499339, 10064, 263, 4, 50, "Output",ExpressionUUID->"b6135e0f-c965-4665-8f9c-4fb2faa911e0"],
-Cell[499605, 10070, 56583, 941, 86, "Output",ExpressionUUID->"56a02daa-e8d0-4df0-979a-12ad9f232896"]
+Cell[454981, 9151, 738, 19, 105, "Code",ExpressionUUID->"34df551c-ade6-4494-b0a4-f1db8023762d"],
+Cell[455722, 9172, 15130, 289, 114, "Output",ExpressionUUID->"8839f616-d385-4bf0-8d5d-831177f03cb6"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[556225, 11016, 1320, 26, 308, "Code",ExpressionUUID->"37ed45fc-b42c-484e-b006-2861efc5a4e3"],
-Cell[557548, 11044, 146, 3, 35, "EchoTiming",ExpressionUUID->"ecf47238-04f9-4dd7-9516-f5d4dc7cc015"]
+Cell[470889, 9466, 570, 12, 101, "Code",ExpressionUUID->"334a2e44-a14f-4bcf-8684-4fe7432d9572"],
+Cell[471462, 9480, 17643, 340, 164, "Output",ExpressionUUID->"ffca9ef2-7c5c-41e9-9735-0b3600499dad"]
+}, Open  ]],
+Cell[489120, 9823, 2990, 67, 893, "Code",ExpressionUUID->"82355577-7bf6-466d-9e09-469713865e7f"],
+Cell[492113, 9892, 4240, 97, 848, "Code",ExpressionUUID->"a9dc131b-380a-491e-9992-42ec9ac3bbf5"],
+Cell[496356, 9991, 212, 3, 101, "Code",ExpressionUUID->"672ba949-0e28-42ae-8931-77f7ba7f7cf1"],
+Cell[CellGroupData[{
+Cell[496593, 9998, 622, 11, 140, "Input",ExpressionUUID->"d3403b5c-faec-4722-bc64-6d748147b4a5"],
+Cell[497218, 10011, 333, 6, 66, "Output",ExpressionUUID->"81b2fb6a-9088-40dc-bfd8-36d9f02d1ff4"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[557731, 11052, 306, 5, 76, "Code",ExpressionUUID->"e4e9f3a9-8497-40ae-b306-8dcba0579575"],
-Cell[558040, 11059, 188, 2, 50, "Output",ExpressionUUID->"4f72ce8e-6381-4d60-8231-e730d2484b9f"]
-}, Open  ]],
-Cell[558243, 11064, 310, 7, 76, "Code",ExpressionUUID->"549194e8-9c48-4c51-accb-5c5233dd0c7f"],
-Cell[CellGroupData[{
-Cell[558578, 11075, 397, 8, 104, "Code",ExpressionUUID->"9570025b-7f01-48c8-aef1-20a8694a3b55"],
-Cell[558978, 11085, 224, 4, 50, "Output",ExpressionUUID->"8687bac7-9877-4d87-af6c-3c3503f8306a"]
+Cell[497588, 10022, 405, 8, 101, "Code",ExpressionUUID->"af8c2c88-8d89-44eb-b2b0-bee25fbbae51"],
+Cell[497996, 10032, 1015, 20, 148, "Output",ExpressionUUID->"160143ae-85d1-4aa8-8976-fb53f5a6ee3b"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[559239, 11094, 564, 14, 136, "Code",ExpressionUUID->"dc0cbcb4-be4c-4c46-a2d2-2784029f40be"],
-Cell[559806, 11110, 236, 4, 50, "Output",ExpressionUUID->"4fe67053-26b6-4858-ae0c-1a93fe06049d"]
+Cell[499048, 10057, 307, 5, 138, "Code",ExpressionUUID->"6281eaca-67e2-469c-8017-39f525cf83ba"],
+Cell[499358, 10064, 263, 4, 66, "Output",ExpressionUUID->"b6135e0f-c965-4665-8f9c-4fb2faa911e0"],
+Cell[499624, 10070, 56583, 941, 114, "Output",ExpressionUUID->"56a02daa-e8d0-4df0-979a-12ad9f232896"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[560079, 11119, 270, 4, 76, "Code",ExpressionUUID->"8d3eaaa9-9419-4fac-846a-874c23294633"],
-Cell[560352, 11125, 43842, 841, 87, "Output",ExpressionUUID->"cf6277ac-ebe2-40c8-9c42-2d81a3383b5b"]
+Cell[556244, 11016, 1320, 26, 410, "Code",ExpressionUUID->"37ed45fc-b42c-484e-b006-2861efc5a4e3"],
+Cell[557567, 11044, 146, 3, 46, "EchoTiming",ExpressionUUID->"ecf47238-04f9-4dd7-9516-f5d4dc7cc015"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[604231, 11971, 343, 7, 218, "Code",ExpressionUUID->"d2fb6634-46c2-4dd2-b140-05c981ace1ea"],
-Cell[604577, 11980, 150, 2, 50, "Output",ExpressionUUID->"fcdf5c26-57ba-4f25-9e63-9f3a2e42d770"]
+Cell[557750, 11052, 306, 5, 101, "Code",ExpressionUUID->"e4e9f3a9-8497-40ae-b306-8dcba0579575"],
+Cell[558059, 11059, 188, 2, 66, "Output",ExpressionUUID->"4f72ce8e-6381-4d60-8231-e730d2484b9f"]
+}, Open  ]],
+Cell[558262, 11064, 310, 7, 101, "Code",ExpressionUUID->"549194e8-9c48-4c51-accb-5c5233dd0c7f"],
+Cell[CellGroupData[{
+Cell[558597, 11075, 397, 8, 138, "Code",ExpressionUUID->"9570025b-7f01-48c8-aef1-20a8694a3b55"],
+Cell[558997, 11085, 224, 4, 66, "Output",ExpressionUUID->"8687bac7-9877-4d87-af6c-3c3503f8306a"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[559258, 11094, 564, 14, 181, "Code",ExpressionUUID->"dc0cbcb4-be4c-4c46-a2d2-2784029f40be"],
+Cell[559825, 11110, 236, 4, 66, "Output",ExpressionUUID->"4fe67053-26b6-4858-ae0c-1a93fe06049d"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[560098, 11119, 270, 4, 101, "Code",ExpressionUUID->"8d3eaaa9-9419-4fac-846a-874c23294633"],
+Cell[560371, 11125, 43842, 841, 116, "Output",ExpressionUUID->"cf6277ac-ebe2-40c8-9c42-2d81a3383b5b"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[604250, 11971, 343, 7, 290, "Code",ExpressionUUID->"d2fb6634-46c2-4dd2-b140-05c981ace1ea"],
+Cell[604596, 11980, 150, 2, 66, "Output",ExpressionUUID->"fcdf5c26-57ba-4f25-9e63-9f3a2e42d770"]
 }, Open  ]]
 }, Closed]]
 }, Open  ]]
