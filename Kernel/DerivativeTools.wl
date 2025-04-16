@@ -17,7 +17,7 @@ CreateStyleSheet[]
 ApplyStyleSheet[]*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Package Header*)
 
 
@@ -908,6 +908,9 @@ makeWVM[vars_List, OutputType_] := Module[
 makeWVM[x___] := Throw[$Failed, failTag[makeWVM]]
 
 
+PacletLocation = FindFile["FelipeBarbosa`SymDALI`"]//FileNameDrop[#, -3]&;
+
+
 MakeCompiledFunction::usage="MakeCompiledFunction[x_LF,  expression_, WVM_List]
 x: LibraryFunction quantity with the head \"LibraryFunction\" -> \"LF\"
 expression: left hand side of the rule in the list \"NRules\" (f[x__], $D[{n__}, f][y__],$D[{n__}, f][y__]/;condition, ...)
@@ -918,7 +921,11 @@ will display \"expression\" to inform you which function that is supposed to cal
 
 
 MakeCompiledFunction[x_,  expression_, WVM_List] := Module[
-	{compiledfunction, iexpression = expression, Blankvars},
+	{compiledfunction, iexpression = expression, Blankvars, ix},
+	
+	(*This will add the paclet location to SymDALI/... in the first argument of x*)
+	ix = x;
+	ix[[1]] = FileNameJoin[{PacletLocation, x[[1]]}];
 	
 	(*eliminate patterns from expression and convert it to string:*)
 	iexpression = ToString[iexpression/. dummy_Pattern :> dummy[[1]]];
@@ -932,7 +939,7 @@ MakeCompiledFunction[x_,  expression_, WVM_List] := Module[
 		Sequence@@WVM, (*WVM for the correct number of variables. Apparently it has to match the declared number*)
 		Function[{}, Evaluate@iexpression, Listable],
 		None,
-		LibraryFunctionLoad@@x
+		LibraryFunctionLoad@@ix
 	};
 	
 	CompiledFunction@@compiledfunction

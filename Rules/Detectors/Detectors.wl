@@ -249,11 +249,14 @@ Module[
 	
 	direc = FileNameJoin[{direc, "/LibraryResources",$SystemID, "DerivativeRules/Detectors/NRules/"}];
 	d = FileNames["D*", {direc}];
+	
 	list = SortBy[(StringReplace[FileBaseName[#], "D"->""]//ToExpression)&]@d;
+	
+	list = FileNameDrop[#,5]&/@list;
 ]
 
 
-list
+SetDirectory[NotebookDirectory[]]
 
 
 Dterms =Module[ {Ds = Import["Detector_Ds_order_0_to_3.wdx"]}, Ds[[All,1]] ];

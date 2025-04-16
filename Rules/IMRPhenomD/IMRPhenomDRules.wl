@@ -37,7 +37,7 @@ SymRules = <||>;
 NRules = <||>;
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Phase*)
 
 
@@ -920,7 +920,11 @@ Module[
 	d =FileNames["phi*", {
 		FileNameJoin[{direc, "/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomD/NRules"}]
 	}]; 
-	list = SortBy[(StringReplace[FileBaseName[#], "phi"->""]//ToExpression)&]@d
+	
+	list = SortBy[(StringReplace[FileBaseName[#], "phi"->""]//ToExpression)&]@d;
+	
+	(*THIS IS IMPORTANT IT TAKES FROM THE FILE NAME EVERETHING BEFORE "SymDALI/...":*)
+	list = FileNameDrop[#, 5]&/@list
 ];
 
 
@@ -1276,7 +1280,7 @@ Block[
 ];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Making Block function*)
 
 
@@ -1538,7 +1542,7 @@ Block[
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing Against Ripple*)
 
 
@@ -1749,7 +1753,9 @@ Module[
 		FileNameJoin[{direc, "/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomD/NRules"}]
 	}];
 	
-	list\[ScriptCapitalA] = SortBy[(StringReplace[FileBaseName[#], "a"->""]//ToExpression)&]@d
+	list\[ScriptCapitalA] = SortBy[(StringReplace[FileBaseName[#], "a"->""]//ToExpression)&]@d;
+	
+	list\[ScriptCapitalA] = FileNameDrop[#,5]&/@list\[ScriptCapitalA];
 ];
 
 
