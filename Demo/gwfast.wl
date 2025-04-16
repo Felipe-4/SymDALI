@@ -8,7 +8,7 @@
 (*$HistoryLength=1;*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Python FM*)
 
 
@@ -119,7 +119,7 @@ py = ExternalEvaluate[python, "totF"]//Normal;
 py = ArrayReshape[py, {11,11}]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Comparison*)
 
 
@@ -165,7 +165,7 @@ laptopPrefix = "/Users/felipe/anaconda3/envs/GWFAST/lib/python3.10";
 
 Block[
 	{
-		asd = Import[FileNameJoin[{laptopPrefix, "/site-packages/psds/LVC_O1O2O3/2017-08-06_DCH_C02_L1_O2_Sensitivity_strain_asd.txt"}], "Data"],
+		asd = Import[FileNameJoin[{desktopPrefix, "/site-packages/psds/LVC_O1O2O3/2017-08-06_DCH_C02_L1_O2_Sensitivity_strain_asd.txt"}], "Data"],
 		pos1, pos2
 	},
 	pos1 = FirstPosition[asd[[All,1]], x_/;x>=20.]//Last;
@@ -177,7 +177,7 @@ Block[
 
 Block[
 	{
-		asd = Import[FileNameJoin[{laptopPrefix, "/site-packages/psds/LVC_O1O2O3/2017-06-10_DCH_C02_H1_O2_Sensitivity_strain_asd.txt"}], "Data"], 
+		asd = Import[FileNameJoin[{desktopPrefix, "/site-packages/psds/LVC_O1O2O3/2017-06-10_DCH_C02_H1_O2_Sensitivity_strain_asd.txt"}], "Data"], 
 		pos1, pos2
 	},
 	pos1 = FirstPosition[asd[[All,1]], x_/;x>=20.]//Last;
@@ -318,12 +318,11 @@ fish  = ArrayReshape[fisher, {11,11}];
 ratio = fish/py;
 
 
-ratio//MatrixForm
+ratio//Round//MatrixForm
 
 
 (* ::Text:: *)
-(*-> The 0 is actually correct, it should be zero by definition *)
-(*->2.8 10^-12 should be 0 by definition*)
+(*-> the matrix elements (dL, tc) and (dl,\[Phi]c) should be identically zero, in linux neither gwfast nor SymDALI get zero for them, but SymDALI gets smaller numbers that is why these elements are the ones farther from 1. in the ratio.*)
 
 
 ratio//Round//MatrixForm
