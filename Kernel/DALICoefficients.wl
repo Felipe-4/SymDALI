@@ -921,10 +921,11 @@ GenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_,  \[CapitalDelta]f_, "GWs
     {complexSum, inv = SensitivityVector^-1},
     (*Likelihood def. eq. 42 of https://arxiv.org/pdf/1809.02293*)
     (*maybe it would still be faster to do this part with high work precision...*)
+    
     (*complexSum = Flatten[gradlist1\[ConjugateTranspose].(gradlist2*inv)];*) (*This dot product is more efficient, but makes Fisher assymetric on tc, \[Phi]c and dL because of numerical errors*)
    
     
-     complexSum = Flatten[gradlist1\[ConjugateTranspose] . (gradlist2*inv)];(*iGenDaliTerm[gradlist1, gradlist2, SensitivityVector];*)
+    complexSum = iGenDaliTerm[gradlist1, gradlist2, SensitivityVector];
    
      4 \[CapitalDelta]f Re[complexSum]  (*I think this 4 \[CapitalDelta]f can be just absorbed in the normalization...*)
 ]
