@@ -60,17 +60,16 @@ Erad[args___] := Throw[$Failed, failTag[PhenomCoeff]]
 aeff[\[Eta]_, S_]= S + 2 Sqrt[3.] \[Eta]+(-0.085` S+0.102` S^2-1.355` S^3-0.868` S^4) \[Eta]-4.399` \[Eta]^2+(-5.837` S-2.097` S^2+4.109` S^3+2.064` S^4) \[Eta]^2+9.397` \[Eta]^3-13.181` \[Eta]^4;
 
 
-FDAMP[\[Chi]_] := Module[
-	{idata = Riffle[data, fdamp]//Partition[#,2]&, int},
-	int = Interpolation[idata, InterpolationOrder->1];
-	int[\[Chi]]
-]
+(*re\[Omega] -> interpolation for ringdown and the other is for damping: I think this is from the PhenomHM paper*)
+re\[Omega][\[Chi]_] :=(0.05947169566573468` -0.14989771215394762` \[Chi]+0.09535606290986028` \[Chi]^2+0.02260924869042963` \[Chi]^3-0.02501704155363241` \[Chi]^4-0.005852438240997211` \[Chi]^5+0.0027489038393367993` \[Chi]^6+0.0005821983163192694` \[Chi]^7)/(1-2.8570126619966296` \[Chi]+2.373335413978394` \[Chi]^2-0.6036964688511505` \[Chi]^4+0.0873798215084077` \[Chi]^6);
+im\[Omega][\[Chi]_] :=(0.014158792290965177` -0.036989395871554566` \[Chi]+0.026822526296575368` \[Chi]^2+0.0008490933750566702` \[Chi]^3-0.004843996907020524` \[Chi]^4-0.00014745235759327472` \[Chi]^5+0.0001504546201236794` \[Chi]^6)/(1-2.5900842798681376` \[Chi]+1.8952576220623967` \[Chi]^2-0.31416610693042507` \[Chi]^4+0.009002719412204133` \[Chi]^6);
 
-FRD[\[Chi]_] := Module[
-	{idata = Riffle[data, frd]//Partition[#,2]&, int},
-	int = Interpolation[idata, InterpolationOrder->1];
-	int[\[Chi]]
-]
+(*\[Omega]RdDamping[int_, Erad_] = int/(1 - Erad);*)
+
+
+FDAMP[\[Chi]_] := im\[Omega][\[Chi]]
+
+FRD[\[Chi]_] := re\[Omega][\[Chi]]
 
 
 SpecialFrequencies[\[Eta]_,  S_, \[Gamma]2_, \[Gamma]3_]  := Module[
@@ -80,7 +79,12 @@ SpecialFrequencies[\[Eta]_,  S_, \[Gamma]2_, \[Gamma]3_]  := Module[
     
     fDamp = FDAMP[aeff[\[Eta], S]]/(1- Erad[\[Eta], S/(1 - 2 \[Eta])]);
    
-   fPeak = Abs[fRD + (fDamp \[Gamma]3 (Sqrt[1- \[Gamma]2^2]-1))/\[Gamma]2]; (*Ripple does not use this for \[Gamma]2>1, why?*)
+   fPeak = If[
+       \[Gamma]2<=1,
+       fRD + (fDamp \[Gamma]3 (Sqrt[1- \[Gamma]2^2]-1))/\[Gamma]2,
+       fRD - fDamp \[Gamma]3/\[Gamma]2
+   
+   ]; 
    
    
    {fPeak, fRD, fDamp} (*Dimensionless frequencies*)
