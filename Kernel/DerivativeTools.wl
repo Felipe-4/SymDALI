@@ -123,7 +123,9 @@ DerivativesExpression[parsedexpr_HoldComplete,  derivatives_List, {}, {keepDefs_
 	
 	(*Implement the definitions, if there are any:*)
 	rules = Dispatch@(Reverse/@{keepDefs});
-	result//.rules
+	result = result//.rules;
+	
+	result
 ]
 
 (*DerivativesExpression[expr_, derivatives_List, {kernels_Integer}, {keepDefs___Rule}]/;Positive[kernels] := Module[
@@ -837,6 +839,7 @@ DerivativeRules[{name_, vars_, n_Integer}, expr_, OptionsPattern[]]/;(
 	
 	Catch[
 		listOfDerivatives = DerivativeCombinations[vars, n, OptionValue[DerivativeRules, "IncludeZeroDerivative"]];
+		
 		listOfFunctions = AuxiliarFunctions[
 			expr, 
 			listOfDerivatives,
