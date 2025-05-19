@@ -3,15 +3,8 @@
 BeginPackage["FelipeBarbosa`SymDALI`Detectors`"]
 
 
-epec::usage = "epec[\[Alpha], sin\[Delta], \[Psi], GMST] returns the {\!\(\*SubscriptBox[\(e\), \(+\)]\), \!\(\*SubscriptBox[\(e\), \(x\)]\)} polarization tensors in the geocentric frame, assuming
-a GW coming from a sky direction with right ascencion \[Alpha], declination with Sin sin\[Delta] a polarization angle \[Psi] at 
-the GMST time GMST.";
-
-\[CapitalDelta]t::usage = "\[CapitalDelta]t[pos, \[Alpha], sin\[Delta], GMST] returns the time interval that it takes a GW (with propagation speed c)
-to go from the detector to the Earth's center, assuming the wave is coming from the direction \[Alpha], sin\[Delta] at GMST time
-GMST and the detector is in the position pos. The position should be given in metters following the convention of 
-https://www.ligo.org/scientists/GW100916/detectors.txt 
-";
+Fp::usage = "Pattern Function \!\(\*SubscriptBox[\(F\), \(+\)]\)";
+Fx::usage= "Pattern Function \!\(\*SubscriptBox[\(F\), \(x\)]\)";
 
 
 Begin["`Private`"];
@@ -49,44 +42,38 @@ DetectorTensor["V1"] = With[
 (*Antenna Pattern Functions*)
 
 
-epec[\[Alpha]_, sin\[Delta]_, \[Psi]_, GMST_] := Module[
-    {\[Theta] = \[Pi]/2 - \[Delta], \[Phi] = \[Alpha] - GMST, eplus, ecross, R1, R2, T, D, eplusGeoFrame, ecrossGeoFrame, sinvar},
-	(*Polarization frame tensors*)
-    eplus = {{1,0,0}, {0,-1,0}, {0,0,0}};
-    ecross = {{0,1,0}, {1,0,0}, {0,0,0}};
-    
-    (*R1: Geocentric frame -> Wave-Frame (apart of a parity transf.)
-	  R2: Wave-frame -> polarization frame*)
-    R1 = List[ (*Writing it already as a function of sin\[Delta]: *)
-        {-Sin[\[Phi]], Cos[\[Phi]], 0}, (*\hat{\[Phi]} decomposed in \hat{e}_i*)
-        {sin\[Delta] Cos[\[Phi]],  sin\[Delta] Sin[\[Phi]],  -Sqrt[1- sin\[Delta]^2]}, (*\hat{\[Theta]} decomposed in \hat{e}_i*)
-        {Sqrt[1- sin\[Delta]^2] Cos[\[Phi]], Sqrt[1- sin\[Delta]^2] Sin[\[Phi]], sin\[Delta]} (*\hat{r}decomposed in \hat{e}_i*)
-    ];
-    
-    R2 = RotationMatrix[-\[Psi], {0,0,1}];
-    T = R2 . R1//Simplify;
-    eplusGeoFrame = (T\[Transpose] . eplus . T);
-    ecrossGeoFrame = (T\[Transpose] . ecross . T);
-    
-    {eplusGeoFrame,ecrossGeoFrame}//FullSimplify
-    
-    
-   (* D = 0.5 (nx\[TensorProduct]nx - ny\[TensorProduct]ny);
-    (*D_{ij} e_{ij} = Tr[D.e\[Transpose]]*)
-    Tr/@{D . eplusGeoFrame\[Transpose], D . ecrossGeoFrame\[Transpose]}//Simplify
-   *)
-]
+f1[\[Theta]_, \[Phi]_, D11_, D12_, D13_, D22_, D23_, D33_] = Module[
+	{expr},
+	expr = (
+		(D22 - D11 Cos[\[Theta]]^2) Cos[\[Phi]]^2
+		- D33 Sin[\[Theta]]^2
+		+ Sin[2 \[Theta]] (D13 Cos[\[Phi]] + D23 Sin[\[Phi]])
+		+ (D11 - D22 Cos[\[Theta]]^2) Sin[\[Phi]]^2
+		- D12 Sin[2 \[Phi]] (1+Cos[\[Theta]]^2)
+	);
+	
+	expr = (expr)//.{Cos[d_]^2 :> (1+ Cos[2 d])/2, Sin[d_]^2 :> (1- Cos[2 d])/2 };
+	
+	
+	expr//Simplify
+] 
 
 
-\[CapitalDelta]t[pos_, \[Alpha]_, sin\[Delta]_, GMST_] := Module[
-	{\[Phi] = \[Alpha]-GMST, r, c = UnitConvert["SpeedOfLight"][[1]]},
-	
-	(*radial unit vector: {Cos[\[Phi]] Sin[\[Theta]],Sin[\[Theta]] Sin[\[Phi]],Cos[\[Theta]]}, with \[Theta] = \[Pi]/2 - \[Delta] *)
-	r = {Sqrt[1- sin\[Delta]^2] Cos[\[Phi]], Sqrt[1- sin\[Delta]^2] Sin[\[Phi]], sin\[Delta]};
-	
-	-(pos . r/c)
-	
-]//Simplify;
+f2[\[Theta]_, \[Phi]_, D11_, D12_, D13_, D22_, D23_] = (
+	2 Sin[\[Theta]] (D13 Sin[\[Phi]] - D23 Cos[\[Phi]]) +
+	Cos[\[Theta]] (2 D12 Cos[2 \[Phi]] + (D22-D11) Sin[2 \[Phi]])
+)//Simplify
+
+
+Fp[\[Theta]_, \[Phi]_,\[Psi]_, D11_, D12_, D13_, D22_, D23_, D33_] = (
+	Cos[2 \[Psi]] f1[\[Theta], \[Phi], D11, D12, D13, D22, D23, D33] + 
+	Sin[2 \[Psi]] f2[\[Theta], \[Phi], D11, D12, D13, D22, D23]
+);
+
+Fx[\[Theta]_, \[Phi]_,\[Psi]_, D11_, D12_, D13_, D22_, D23_, D33_] = (
+	- Sin[2 \[Psi]] f1[\[Theta], \[Phi], D11, D12, D13, D22, D23, D33] +
+	Cos[2 \[Psi]] f2[\[Theta], \[Phi], D11, D12, D13, D22, D23]
+);
 
 
 End[];

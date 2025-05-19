@@ -1,8 +1,10 @@
 (* ::Package:: *)
 
 (*
+
 SetOptions[EvaluationNotebook[], WindowElements->{"MemoryMonitor","VerticalScrollBar","MenuBar", "HorizontalScrollBar"}]
 SetDirectory[NotebookDirectory[]];
+SetOptions[EvaluationNotebook[], DefaultNewCellStyle->"Code"]
 
 Get["maTHEMEatica.wl"];
 
@@ -939,6 +941,10 @@ RelativeDiff[x_, y_]/; x!=0 &&y!=0 := With[
 ]
 
 
+SetDirectory[NotebookDirectory[]];
+res = Import["Phase_Ds_order_0_to_1.wdx"];
+
+
 Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
 	rule = MapThread[
 		Rule,
@@ -985,7 +991,7 @@ def Ripple_hp(f, f_ref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, dL, tc,iota, phi_r
 
     theta = jnp.array([Mc, eta, s1x, s1y, s1z, s2x, s2y, s2z, dL, tc, phi_ref, iota])
 
-    hp, hc, t2m, tm2m, zeta, epsilon, phi_Jsf, t0, a, psi = IMRPhenomPv2.gen_IMRPhenomPv2_hphc(f_array, theta, f_ref)
+    hp, hc, t2m, tm2m, zeta, epsilon, phi_Jsf, t0, a, psi, alpha = IMRPhenomPv2.gen_IMRPhenomPv2_hphc(f_array, theta, f_ref)
     
     result = psi + 2*phi_Jsf - (-2*np.pi*t0)*f_array + 2*epsilon
     
@@ -1072,7 +1078,32 @@ NGrad[f_, vars_, n_] := Module[
 ]
 
 
-Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
+{SymRules, NRules} = DerivativeRulesLoad["IMRPhenomPv2"];
+
+
+
+(*GRAD WITH COMPILED FUNCTIONS:*)
+Block[{\[Delta]s, args}, 
+	
+	\[Delta]s = ConstantArray[0, 16];
+	args = Join[{f,fref,m1,m2,s1x,s1y,s1z,s2x,s2y,s2z}, \[Delta]s];
+	
+	ClearAll[TestGrad\[CapitalPsi]];
+	
+	TestGrad\[CapitalPsi][f_,fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_] = Table[
+	(NRules["\[CapitalPhi]IMR"])[[i, 3]]@@args,
+	{i, 2, 9}
+	]
+
+]
+DownValues[TestGrad\[CapitalPsi]] = DownValues[TestGrad\[CapitalPsi]]//.HoldForm[x_]:> x;
+
+
+(*BELOW IS USEFUL FOR THE BLOCK FUNCTIONS*)
+
+
+
+(*Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
 	rule = MapThread[
 		Rule,
 		{{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}, ConstantArray[0,16]}
@@ -1083,7 +1114,7 @@ Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Sec
 	TestGrad\[CapitalPsi][f_,fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_] = res[[2;;-1, 2]]//.Join[rule, {G -> g}];
 
 ]
-DownValues[TestGrad\[CapitalPsi]] = DownValues[TestGrad\[CapitalPsi]]//.HoldForm[x_]:> x;
+DownValues[TestGrad\[CapitalPsi]] = DownValues[TestGrad\[CapitalPsi]]//.HoldForm[x_]:> x;*)
 
 
 Clear@Test
@@ -1098,11 +1129,11 @@ Test := Module[
 	{s1x, s1y, s1z} = RandomReal[{-1,1}, 3];
 	{s2x, s2y, s2z} = RandomReal[{-1,1}, 3];
 	
-	f = RandomReal[{10., 0.2/(G (m1+m2))}];
-	fref = RandomReal[{10, f}];
+	f = RandomReal[{10., 0.2/(G (m1+m2))}]//List;
+	fref = RandomReal[10];
 	
-	Symbolic = TestGrad\[CapitalPsi][f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z ];
-	vars = {f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z};
+	Symbolic = Last/@TestGrad\[CapitalPsi][f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z ];
+	vars = {f[[1]], fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z};
 	Numeric = NGrad[Test\[CapitalPsi], vars, 2];
 	
 	RelativeDiff@@{Symbolic, Numeric}
@@ -1180,7 +1211,7 @@ list = MapIndexed[
 ];
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Amplitude*)
 
 
@@ -2283,6 +2314,10 @@ RelativeDiff[x_, y_]/; x!=0 &&y!=0 := With[
 ]
 
 
+SetDirectory[NotebookDirectory[]];
+Ds = Import["Amp_Ds_order_0_to_1.wdx"];
+
+
 Block[{g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
 	
 	ClearAll[Test\[ScriptCapitalA]];
@@ -2435,7 +2470,7 @@ Test := Block[
 Test
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Testing Symbolic vs Numerical derivatives*)
 
 
@@ -2458,7 +2493,39 @@ NGrad[f_, vars_, n_] := Module[
 ]
 
 
-Block[{g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
+{SymRules, NRules} =  DerivativeRulesLoad["IMRPhenomPv2"];
+
+
+NRules["\[ScriptA]IMR"][[1]]
+
+
+(*Symbolic grad from compiled functions*)
+
+Block[
+	{p1, p2, p3, D11, D12, D13, D22, D23, D33, args},
+	
+	{D12, D13, D23} = {0,0,0};
+	{D11, D22, D33} = {1,0,1};
+	{p1, p2, p3} = {1,1,1};
+	
+	args = Join[{f,fref,m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Phi]ref,\[Iota],\[Theta],\[Phi],\[Psi]}, {p1, p2, p3, D11, D12, D13, D22, D23, D33}];
+
+	ClearAll[TestGrad\[ScriptCapitalA]];
+	
+	TestGrad\[ScriptCapitalA][f_, fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_,\[Theta]_,\[Phi]_,\[Psi]_] = Table[
+		NRules["\[ScriptA]IMR"][[i, 3]]@@args, 
+		{i, 2, 14}
+	
+	]
+];
+DownValues[TestGrad\[ScriptCapitalA]] = DownValues[TestGrad\[ScriptCapitalA]]//.HoldForm[x_]:> x;
+
+
+
+(*BELOW IS THE DEFINITION FOR BLOCK FUNCTIONS*)
+
+
+(*Block[{g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
 	
 	
 	ClearAll[TestGrad\[ScriptCapitalA]];
@@ -2466,7 +2533,7 @@ Block[{g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")
 	TestGrad\[ScriptCapitalA][f_, fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_,\[Theta]_,\[Phi]_,\[Psi]_] = Ds[[2;;-1, 2]]//.G->g;
 
 ]
-DownValues[TestGrad\[ScriptCapitalA]] = DownValues[TestGrad\[ScriptCapitalA]]//.HoldForm[x_]:> x;
+DownValues[TestGrad\[ScriptCapitalA]] = DownValues[TestGrad\[ScriptCapitalA]]//.HoldForm[x_]:> x;*)
 
 
 RandomSpin[] := Module[
@@ -2496,14 +2563,14 @@ Test := Block[
 	{s1x, s1y, s1z} = RandomSpin[];
 	{s2x, s2y, s2z} = RandomSpin[];
 	
-	f = RandomReal[{10., 0.2/(G (m1+m2))}];
-	fref = RandomReal[{10, f}];
+	f = RandomReal[{10., 0.2/(G (m1+m2))}]//List;
+	fref = RandomReal[10];
 	{\[Phi]ref, \[Phi]} = RandomReal[{0, 2 \[Pi]},2];
 	{\[Theta], \[Iota], \[Psi]}  = RandomReal[{0, \[Pi]}, 3];
 	
 	
-	Symbolic = TestGrad\[ScriptCapitalA][f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota], \[Theta], \[Phi], \[Psi]];
-	vars = {f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota], \[Theta], \[Phi], \[Psi]};
+	Symbolic = Last/@TestGrad\[ScriptCapitalA][f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota], \[Theta], \[Phi], \[Psi]];
+	vars = {f[[1]], fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota], \[Theta], \[Phi], \[Psi]};
 	Numeric = NGrad[Test\[ScriptCapitalA], vars, 2];
 	
 	Rediff = RelativeDiff@@{Abs@Symbolic, Abs@Numeric};
@@ -2524,7 +2591,7 @@ Test := Block[
 Table[Test, {50}]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Compiling*)
 
 
@@ -2587,3 +2654,421 @@ MapIndexed[
 	LibraryGenerate[#1[[2]], "a" <> ToString[#2//First]]&,
 	compiledDs
 ];
+
+
+(* ::Chapter::Closed:: *)
+(*Testing Compiled functions for the Waveform*)
+
+
+(* ::Input:: *)
+(**)
+
+
+Clear@RelativeDiff
+
+Attributes[RelativeDiff] = {Listable};
+RelativeDiff[x_,y_]/;x==0 && y==0 := 0
+RelativeDiff[x_, y_]/; x==0&&y!=0 := 1
+RelativeDiff[x_, y_]/; y==0&&x!=0 := 1
+
+RelativeDiff[x_, y_]/; x!=0 &&y!=0 := With[
+	{diff = x-y},
+	Max[Abs@{diff/x, diff/y}]
+]
+
+
+NotebookDirectory[]//ParentDirectory[#, 2]&
+
+
+SetDirectory[FileNameJoin[{
+	NotebookDirectory[]//ParentDirectory[#, 2]&,
+	"/LibraryResources", 
+	$SystemID,
+	"DerivativeRules/IMRPhenomPv2/NRules"
+}]]
+
+
+{\[CapitalPsi], \[ScriptCapitalA]} = Module[
+	{\[Psi], a, direc, \[Psi]name, \[Psi]args, aname, aArgs},
+	direc =  FileNameJoin[{
+		NotebookDirectory[]//ParentDirectory[#, 2]&,
+		"/LibraryResources", 
+		$SystemID,
+		"DerivativeRules/IMRPhenomPv2/NRules"
+	}];
+	
+	(*CHANGE .dylib to something else if you are in linux or Windows*)
+	\[Psi]name = FileNameJoin[{direc, "phi1.dylib"}];
+	aname = FileNameJoin[{direc, "a1.dylib"}];
+	
+	aArgs = Join[{{Real,1}}, ConstantArray[Real, 23]];
+	\[Psi]args = Join[{{Real,1}}, ConstantArray[Real, 25]];
+	
+	\[Psi] = LibraryFunctionLoad[\[Psi]name, "phi1", \[Psi]args, {Real,1}];
+	a = LibraryFunctionLoad[aname, "a1", aArgs, {Complex,1}];
+	
+	{\[Psi], a}
+
+]
+
+
+Clear[hp, hx]
+hp[f_,fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_] := Module[
+	{\[Theta], \[Phi], \[Psi], p1, p2, p3, D11, D12, D13, D22, D23, D33, aArgs, \[Psi]Args},
+	
+	
+	
+	{\[Theta], \[Phi], \[Psi], p1, p2, p3} = ConstantArray[0, 6];
+	
+	{D11, D12, D13, D22, D23, D33} = ConstantArray[0,6];
+	
+	(*Fplus=1, Fx=0*)
+	D22=1; 
+	
+	aArgs = {f, fref, m1,m2, s1x,s1y,s1z,s2x,s2y,s2z,\[Phi]ref,\[Iota],\[Theta], \[Phi],\[Psi], p1,p2,p3, D11, D12, D13, D22, D23, D33};
+	
+	\[Psi]Args = {f, fref,m1,m2,s1x,s1y,s1z,s2x,s2y,s2z, Sequence@@ConstantArray[0, 16]};
+	
+	(\[ScriptCapitalA]@@aArgs)*Exp[-I*(\[CapitalPsi]@@\[Psi]Args)]
+]
+
+hx[f_,fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_] := Module[
+	{\[Theta], \[Phi], \[Psi], p1, p2, p3, D11, D12, D13, D22, D23, D33, aArgs, \[Psi]Args},
+	
+	
+	
+	{\[Theta], \[Phi], \[Psi], p1, p2, p3} = ConstantArray[0, 6];
+	
+	{D11, D12, D13, D22, D23, D33} = ConstantArray[0,6];
+	
+	(*Fplus=0, Fx=1*)
+	D12=1/2; 
+	
+	aArgs = {f, fref, m1,m2, s1x,s1y,s1z,s2x,s2y,s2z,\[Phi]ref,\[Iota],\[Theta], \[Phi],\[Psi], p1,p2,p3, D11, D12, D13, D22, D23, D33};
+	
+	\[Psi]Args = {f, fref,m1,m2,s1x,s1y,s1z,s2x,s2y,s2z, Sequence@@ConstantArray[0, 16]};
+	
+	(\[ScriptCapitalA]@@aArgs)*Exp[-I*(\[CapitalPsi]@@\[Psi]Args)]
+]
+
+
+DeleteObject/@ExternalSessions[]
+
+Clear@python
+
+python = StartExternalSession["Python"];
+ExternalEvaluate[python,"
+import numpy as np
+
+import jax
+import jax.numpy as jnp
+
+from jax import grad, vmap
+from functools import partial
+
+from ripplegw.waveforms import IMRPhenomPv2
+from ripplegw import get_match_arr, get_eff_pads
+from ripplegw import ms_to_Mc_eta
+from ripplegw.constants import MSUN, gt
+"]
+
+
+Rh = ExternalFunction[python,"
+def Ripple_hp(f, f_ref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, dL, tc,iota, phi_ref):
+    f_array = jnp.array(f)
+
+    Mc = (m1 * m2)**(3/5) / (m1 + m2)**(1/5)
+    eta = m1 * m2 / ((m1 + m2)**2)
+
+    theta = jnp.array([Mc, eta, s1x, s1y, s1z, s2x, s2y, s2z, dL, tc, phi_ref, iota])
+
+    hp, hc, t2m, tm2m, zeta, epsilon, phi_Jsf, t0, a, psi, alpha = IMRPhenomPv2.gen_IMRPhenomPv2_hphc(f_array, theta, f_ref)
+    
+    result = hp + hc
+    
+    return result.tolist()
+
+
+"]
+
+
+Clear@Test
+
+Test := Block[
+	{
+		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota], f, MMA,Rippleh, RRe, MMARe, RIm, MMAIm, \[Chi]s, \[Chi]a,diffRe,
+		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]],
+		ReMMA, ReRipple, ImMMA, ImRipple, diffIm
+	},
+	
+	{m1, m2} = ReverseSort[RandomReal[{20, 100},2]];
+	
+	{s1x, s1y, s1z} = RandomReal[{-1,1}, 3];
+	{s2x, s2y, s2z} = RandomReal[{-1,1}, 3];
+	
+	
+	\[Phi]Ref = RandomReal[{0, 2 \[Pi]}];
+	\[Iota] = RandomReal[{0, \[Pi]}];
+	
+	f = Range[10., 0.2/(G (m1+m2)), 1.];
+	(*f_,fref_,m1_,m2_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_*)
+	MMA = 10^3/(2 Sqrt[5/(64 \[Pi])] ) (
+		hp[f, 10, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota]] + 
+		hx[f, 10, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota]]
+	);
+	
+	Rippleh = Rh[f,10, m1,m2,s1x,s1y,s1z,s2x,s2y,s2z, 1, 0, \[Iota],\[Phi]Ref];
+	
+	ReMMA = Re[MMA];
+	ReRipple = Re[Rippleh];
+	
+	ImMMA = Im[MMA];
+	ImRipple = Im[Rippleh];
+	
+	diffRe = RelativeDiff@@{ReMMA, ReRipple};
+	
+	diffIm = RelativeDiff@@{ImMMA, ImRipple};
+	
+	
+	{ListLinePlot[
+		{ReMMA, ReRipple},
+		Frame->True,
+		PlotLegends->{"MMA", "Ripple"},
+		PlotRange->All,
+		ImageSize->Medium,
+		GridLines->{{0.014/(G (m2+m1))}, None},
+		GridLinesStyle->Directive[Red, 13, Dashed],
+		Background->White,
+		DataRange->{10, 0.2/(G (m1+m2))}
+	],
+	ListLinePlot[
+		diffRe,
+		Frame->True,
+		PlotLegends->{"Relative Difference"},
+		PlotRange->All,
+		ImageSize->Medium,
+		GridLines->{{0.014/(G (m2+m1))}, None},
+		GridLinesStyle->Directive[Red, 13, Dashed],
+		Background->White,
+		DataRange->{10, 0.2/(G (m1+m2))}
+	],
+	
+	ListLinePlot[
+		{ImMMA, ImRipple},
+		Frame->True,
+		PlotLegends->{"MMA", "Ripple"},
+		PlotRange->All,
+		ImageSize->Medium,
+		GridLines->{{0.014/(G (m2+m1))}, None},
+		GridLinesStyle->Directive[Red, 13, Dashed],
+		Background->White,
+		DataRange->{10, 0.2/(G (m1+m2))}
+	],
+	ListLinePlot[
+		diffIm,
+		Frame->True,
+		PlotLegends->{"Relative Difference"},
+		PlotRange->All,
+		ImageSize->Medium,
+		GridLines->{{0.014/(G (m2+m1))}, None},
+		GridLinesStyle->Directive[Red, 13, Dashed],
+		Background->White,
+		DataRange->{10, 0.2/(G (m1+m2))}
+	]}
+	
+]
+
+
+Test
+
+
+(* ::Chapter::Closed:: *)
+(*Rosetta Stone*)
+
+
+(* ::Section::Closed:: *)
+(*Phase*)
+
+
+ParentDirectory[NotebookDirectory[], 2]
+
+
+Module[
+	{d, direc = ParentDirectory[NotebookDirectory[], 2], dummy},
+	
+	dummy = FileNameJoin[{
+		direc,
+		"/LibraryResources",
+		$SystemID,
+		"DerivativeRules/IMRPhenomPv2/NRules"
+	}];
+	
+	d =FileNames["phi*", {
+		dummy
+	}]; 
+	
+	list = SortBy[(StringReplace[FileBaseName[#], "phi"->""]//ToExpression)&]@d;
+	
+	(*THIS IS IMPORTANT IT TAKES FROM THE FILE NAME EVERETHING BEFORE "SymDALI/...":*)
+	list = FileNameDrop[#, 5]&/@list
+];
+
+
+Directory[]
+
+
+SetDirectory[NotebookDirectory[]]
+
+
+Dterms =Block[
+	{ Ds},
+	
+	Ds = Import["Phase_Ds_order_0_to_1.wdx"];
+	
+	Ds[[All,1]]
+];
+
+Dterms = Dterms//.test->\[CapitalPhi]IMR;
+
+
+phis = Block[
+	{Cvariables},
+	
+	Cvariables= ConstantArray[{Real, 0},25];
+	
+	Cvariables = Join[{{Real,1}}, Cvariables];
+
+MapThread[
+	(#1 -> LF[
+		#2, 
+		FileBaseName[#2], 
+		Cvariables,
+		{Real, 1}
+	])&,
+	{Dterms, list}
+]
+];
+
+
+(*put the rules in the correct format*)
+phis2 = phis//.{($D[{n__}, \[CapitalPhi]IMR][x__] -> LF[y__]) :>  TagRule[\[CapitalPhi]IMR, $D[{n}, \[CapitalPhi]IMR][x],  LF[y]]};
+
+
+(*The derivative of the function with respect to any \[Delta]p (at first order) is the function with the \[Delta]p in question replaced by 1*)
+
+$D[{x__}, \[CapitalPhi]IMR][y__]/;Total[{x}[[11;;-1]]] === 1 -> Aux\[CapitalPhi]IMR1;
+
+AuxRule1 = Aux\[CapitalPhi]IMR1[x__][y__] :>  Module[
+	{pos = Position[{x}[[11;;-1]], 1], ds, args},
+	
+	ds = Join[
+		{x}[[1;;10]],
+		ConstantArray[0, 16]
+	];
+	
+	args = Join[
+		{y}[[1;;10]],
+		ReplacePart[{y}[[11;;-1]], pos -> 1]
+	];
+	
+	If[
+		DeleteDuplicates[ds] === {0}, 
+		\[CapitalPhi]IMR@@args,
+		$D[ds, \[CapitalPhi]IMR]@@args	
+	
+	]
+]
+
+
+(*more than 1 derivative in \[Delta]pi is zero because each appears linearly*)
+sym1 = $D[{x__}, \[CapitalPhi]IMR]/; Total[{x}[[11;;-1]]] > 1 -> 0
+
+
+phis3 = Join[
+	phis2,
+	{
+		TagRule[\[CapitalPhi]IMR, $D[{x__}, \[CapitalPhi]IMR]/;Total[{x}[[11;;-1]]] === 1, Aux\[CapitalPhi]IMR1[x]]
+	}
+];
+
+
+(* ::Section::Closed:: *)
+(*Amplitude*)
+
+
+Module[
+	{d, direc = ParentDirectory[NotebookDirectory[], 2],  dummy},
+	dummy = FileNameJoin[{direc,"/LibraryResources", $SystemID,"/DerivativeRules/IMRPhenomPv2/NRules"}];
+	d =FileNames["a*", {
+		dummy
+	}];
+	
+	list\[ScriptCapitalA] = SortBy[(StringReplace[FileBaseName[#], "a"->""]//ToExpression)&]@d;
+	
+	list\[ScriptCapitalA] = FileNameDrop[#,5]&/@list\[ScriptCapitalA];
+];
+
+
+Dterms\[ScriptCapitalA] =Module[ {Ds = Import["Amp_Ds_order_0_to_1.wdx"]}, Ds[[All,1]]];
+
+
+Dterms\[ScriptCapitalA] = Dterms\[ScriptCapitalA]//.test->\[ScriptA]IMR;
+
+
+Dterms\[ScriptCapitalA][[1]]
+
+
+{fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_,\[Theta]_,\[Phi]_,\[Psi]_,p1_,p2_,p3_,D11_,D12_,D13_,D22_,D23_,D33_}//Length
+
+
+\[ScriptCapitalA]s = MapThread[
+	(#1 -> LF[
+		#2, 
+		FileBaseName[#2], 
+		Join[{{Real, 1}}, ConstantArray[{Real,0}, 23]],
+		{Complex, 1}
+	])&,
+	
+	{Dterms\[ScriptCapitalA], list\[ScriptCapitalA]}
+];
+
+
+\[ScriptCapitalA]s2 = \[ScriptCapitalA]s//.{($D[{n__}, \[ScriptA]IMR][x__] -> LF[y__]) :>  TagRule[\[ScriptA]IMR, $D[{n}, \[ScriptA]IMR][x],  LF[y]]};
+
+
+(* ::Section::Closed:: *)
+(*Exporting files*)
+
+
+NRules = <||>;
+
+
+NRules["\[CapitalPhi]IMR"] = phis3;
+NRules["\[ScriptA]IMR"] = \[ScriptCapitalA]s2;
+NRules["Aux\[CapitalPhi]IMR1"] = {AuxRule1};
+
+
+ParentDirectory[NotebookDirectory[],2]
+
+
+Module[
+	{name = ParentDirectory[NotebookDirectory[],2]},
+	
+	name = FileNameJoin[{name,"LibraryResources/", $SystemID,  "/DerivativeRules/IMRPhenomPv2/NRules/RosettaStone.wdx"}];
+	
+	Export[name, NRules]
+]
+
+
+SymRules = <||>;
+
+SymRules["\[CapitalPhi]IMR"] = {sym1};
+
+
+Module[
+	{name = ParentDirectory[NotebookDirectory[],2]},
+	
+	name = FileNameJoin[{name,"LibraryResources/",$SystemID,  "/DerivativeRules/IMRPhenomPv2/SymRules/file.wdx"}];
+	
+	Export[name, SymRules]
+]
