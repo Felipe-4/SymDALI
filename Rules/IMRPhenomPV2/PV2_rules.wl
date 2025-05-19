@@ -1153,7 +1153,7 @@ Table[Round@Test, {20}]//MatrixForm
 (*Compiling*)
 
 
-Module[{ds = Import["Phase_Ds_order_0_to_3.wdx"]}, Ds = ds//.G->UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]];
+Module[{ds = Import["Phase_Ds_order_0_to_1.wdx"]}, Ds = ds//.G->UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]];
 
 
 (*Function to take HoldForm[Block[...]] and make library functions*)
@@ -1188,6 +1188,9 @@ compiledDs = MapAt[
 	Ds, 
 	{All, 2}
 ];
+
+
+CompilePrint[compiledDs[[-1,2]]]
 
 
 <<CCompilerDriver`
@@ -2591,7 +2594,7 @@ Test := Block[
 Table[Test, {50}]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Compiling*)
 
 
@@ -2623,7 +2626,7 @@ compileThis[x_HoldForm] := Module[
 
 
 <<CompiledFunctionTools`
-compileThis[Ds[[2, 2]]]//CompilePrint
+compileThis[Ds[[-1, 2]]]//CompilePrint
 
 
 compiledDs = MapAt[
@@ -2698,8 +2701,8 @@ SetDirectory[FileNameJoin[{
 	}];
 	
 	(*CHANGE .dylib to something else if you are in linux or Windows*)
-	\[Psi]name = FileNameJoin[{direc, "phi1.dylib"}];
-	aname = FileNameJoin[{direc, "a1.dylib"}];
+	\[Psi]name = FileNameJoin[{direc, "phi1.so"}];
+	aname = FileNameJoin[{direc, "a1.so"}];
 	
 	aArgs = Join[{{Real,1}}, ConstantArray[Real, 23]];
 	\[Psi]args = Join[{{Real,1}}, ConstantArray[Real, 25]];
@@ -2782,13 +2785,11 @@ def Ripple_hp(f, f_ref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, dL, tc,iota, phi_r
 
     theta = jnp.array([Mc, eta, s1x, s1y, s1z, s2x, s2y, s2z, dL, tc, phi_ref, iota])
 
-    hp, hc, t2m, tm2m, zeta, epsilon, phi_Jsf, t0, a, psi, alpha = IMRPhenomPv2.gen_IMRPhenomPv2_hphc(f_array, theta, f_ref)
+    hp, hc = IMRPhenomPv2.gen_IMRPhenomPv2_hphc(f_array, theta, f_ref)
     
     result = hp + hc
     
     return result.tolist()
-
-
 "]
 
 
@@ -2882,11 +2883,11 @@ Test := Block[
 Test
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Rosetta Stone*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Phase*)
 
 
@@ -2912,9 +2913,6 @@ Module[
 	(*THIS IS IMPORTANT IT TAKES FROM THE FILE NAME EVERETHING BEFORE "SymDALI/...":*)
 	list = FileNameDrop[#, 5]&/@list
 ];
-
-
-Directory[]
 
 
 SetDirectory[NotebookDirectory[]]
@@ -2992,7 +2990,7 @@ phis3 = Join[
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Amplitude*)
 
 
@@ -3018,9 +3016,6 @@ Dterms\[ScriptCapitalA] = Dterms\[ScriptCapitalA]//.test->\[ScriptA]IMR;
 Dterms\[ScriptCapitalA][[1]]
 
 
-{fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_,\[Theta]_,\[Phi]_,\[Psi]_,p1_,p2_,p3_,D11_,D12_,D13_,D22_,D23_,D33_}//Length
-
-
 \[ScriptCapitalA]s = MapThread[
 	(#1 -> LF[
 		#2, 
@@ -3036,7 +3031,7 @@ Dterms\[ScriptCapitalA][[1]]
 \[ScriptCapitalA]s2 = \[ScriptCapitalA]s//.{($D[{n__}, \[ScriptA]IMR][x__] -> LF[y__]) :>  TagRule[\[ScriptA]IMR, $D[{n}, \[ScriptA]IMR][x],  LF[y]]};
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Exporting files*)
 
 
