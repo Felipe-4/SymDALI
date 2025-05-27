@@ -105,7 +105,7 @@ GenMessage[True, mess_] := True;
 GenMessage[False, mess_] := With[{}, Message[mess]; False]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Make Gradients*)
 
 
@@ -400,7 +400,7 @@ TakeGrad[functionhead_Symbol, dummyvariables_List, -1]/;(
 TakeGrad[x___] := Throw[$Failed, failTag[TakeGrad]]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Calculate numerical gradients*)
 
 
@@ -1097,7 +1097,7 @@ manualDALIlist == automaticDAliLIst*)
 (**)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*DALICoefficients*)
 
 
@@ -1152,7 +1152,7 @@ Map[TensorRank, test, {2}]
 Clear[HEADTEST, points, \[Sigma], test]*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*GWDALICoefficients*)
 
 

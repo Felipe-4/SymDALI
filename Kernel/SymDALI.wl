@@ -19,6 +19,7 @@ End[];
 
 
 EndPackage[];
+<<FelipeBarbosa`SymDALI`IMRPhenomPv2`;
 <<FelipeBarbosa`SymDALI`DALICoefficients`;
 <<FelipeBarbosa`SymDALI`DerivativeTools`;
 <<FelipeBarbosa`SymDALI`Detectors`;

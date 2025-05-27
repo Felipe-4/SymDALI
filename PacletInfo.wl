@@ -20,6 +20,7 @@ PacletObject[
             {"FelipeBarbosa`SymDALI`DALICoefficients`", "DALICoefficients.wl"}, 
             {"FelipeBarbosa`SymDALI`Detectors`", "Detectors.wl"}, 
             {"FelipeBarbosa`SymDALI`IMRPhenomD`", "IMRPhenomD.wl"}, 
+            {"FelipeBarbosa`SymDALI`IMRPhenomPv2`", "IMRPhenomPv2.wl"},
             {"PNCoefficients`", "PNCoefficients.wl"}, 
             {"FelipeBarbosa`SymDALI`DerivativeTools`", "DerivativeTools.wl"}, 
             {"FelipeBarbosa`SymDALI`DALIPolynomial`", "DALIPolynomial.wl"},

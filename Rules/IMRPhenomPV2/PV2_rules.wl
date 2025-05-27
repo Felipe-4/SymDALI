@@ -866,7 +866,12 @@ Combinations[vars_List, n_Integer]/;n>0 := Module[
 ]
 
 
-vars = {m1, m2, s1x, s1y, s1z, s2x, s2y, s2z};
+vars = {
+	m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, 
+	\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,
+	\[Delta]\[Beta]2,\[Delta]\[Beta]3,
+	\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4
+};
 
 
 (*All derivatives up to order 3*)
@@ -894,7 +899,7 @@ With[{
 
 res = MemoryConstrained[
 	DerivativeRules@@expr,
-	8 10^9];
+	8 10^9]//EchoTiming;
 
 
 Block[
@@ -997,7 +1002,6 @@ def Ripple_hp(f, f_ref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, dL, tc,iota, phi_r
     
     return result.tolist()
 
-
 "]
 
 
@@ -1061,11 +1065,11 @@ Test
 
 NGrad//Clear
 NGrad[f_, vars_, n_] := Module[
-	{h = 1. 10^-6, dummy, Point1, Point2},
+	{h = 1. 10^-6, dummy, Point1, Point2, denominator},
 	
 	Point1 = Table[
 		dummy = vars;
-		dummy[[i]] = vars[[i]] + h vars[[i]];
+		dummy[[i]] = If[vars[[i]]==0, h, vars[[i]] + h vars[[i]]];
 		dummy,
 		{i, n+1, Length@vars}
 	];
@@ -1073,13 +1077,13 @@ NGrad[f_, vars_, n_] := Module[
 	
 	Point2 = ConstantArray[vars, (Length[vars] - n)];
 	
-	
-	(f@@@Point1 - f@@@Point2)/(h vars[[n+1;;-1]])
+	denominator = Table[If[vars[[i]]==0, h, h vars[[i]]], {i, n+1, Length@vars}];
+
+	(f@@@Point1 - f@@@Point2)/denominator
 ]
 
 
 {SymRules, NRules} = DerivativeRulesLoad["IMRPhenomPv2"];
-
 
 
 (*GRAD WITH COMPILED FUNCTIONS:*)
@@ -1103,7 +1107,7 @@ DownValues[TestGrad\[CapitalPsi]] = DownValues[TestGrad\[CapitalPsi]]//.HoldForm
 
 
 
-(*Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
+Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
 	rule = MapThread[
 		Rule,
 		{{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}, ConstantArray[0,16]}
@@ -1111,10 +1115,10 @@ DownValues[TestGrad\[CapitalPsi]] = DownValues[TestGrad\[CapitalPsi]]//.HoldForm
 	
 	ClearAll[TestGrad\[CapitalPsi]];
 	
-	TestGrad\[CapitalPsi][f_,fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_] = res[[2;;-1, 2]]//.Join[rule, {G -> g}];
+	TestGrad\[CapitalPsi][f_,fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_] = res[[2;;9, 2]]//.Join[rule, {G -> g}];
 
 ]
-DownValues[TestGrad\[CapitalPsi]] = DownValues[TestGrad\[CapitalPsi]]//.HoldForm[x_]:> x;*)
+DownValues[TestGrad\[CapitalPsi]] = DownValues[TestGrad\[CapitalPsi]]//.HoldForm[x_]:> x;
 
 
 Clear@Test
@@ -1183,14 +1187,14 @@ compileThis[x_HoldForm] := Module[
 <<CompiledFunctionTools`
 
 
+compileThis[Ds[[-15, 2]]]//CompilePrint
+
+
 compiledDs = MapAt[
 	compileThis,
 	Ds, 
 	{All, 2}
 ];
-
-
-CompilePrint[compiledDs[[-1,2]]]
 
 
 <<CCompilerDriver`
@@ -2883,11 +2887,11 @@ Test := Block[
 Test
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Rosetta Stone*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Phase*)
 
 
@@ -2919,7 +2923,7 @@ SetDirectory[NotebookDirectory[]]
 
 
 Dterms =Block[
-	{ Ds},
+	{Ds},
 	
 	Ds = Import["Phase_Ds_order_0_to_1.wdx"];
 	
@@ -2952,45 +2956,11 @@ MapThread[
 phis2 = phis//.{($D[{n__}, \[CapitalPhi]IMR][x__] -> LF[y__]) :>  TagRule[\[CapitalPhi]IMR, $D[{n}, \[CapitalPhi]IMR][x],  LF[y]]};
 
 
-(*The derivative of the function with respect to any \[Delta]p (at first order) is the function with the \[Delta]p in question replaced by 1*)
-
-$D[{x__}, \[CapitalPhi]IMR][y__]/;Total[{x}[[11;;-1]]] === 1 -> Aux\[CapitalPhi]IMR1;
-
-AuxRule1 = Aux\[CapitalPhi]IMR1[x__][y__] :>  Module[
-	{pos = Position[{x}[[11;;-1]], 1], ds, args},
-	
-	ds = Join[
-		{x}[[1;;10]],
-		ConstantArray[0, 16]
-	];
-	
-	args = Join[
-		{y}[[1;;10]],
-		ReplacePart[{y}[[11;;-1]], pos -> 1]
-	];
-	
-	If[
-		DeleteDuplicates[ds] === {0}, 
-		\[CapitalPhi]IMR@@args,
-		$D[ds, \[CapitalPhi]IMR]@@args	
-	
-	]
-]
-
-
 (*more than 1 derivative in \[Delta]pi is zero because each appears linearly*)
 sym1 = $D[{x__}, \[CapitalPhi]IMR]/; Total[{x}[[11;;-1]]] > 1 -> 0
 
 
-phis3 = Join[
-	phis2,
-	{
-		TagRule[\[CapitalPhi]IMR, $D[{x__}, \[CapitalPhi]IMR]/;Total[{x}[[11;;-1]]] === 1, Aux\[CapitalPhi]IMR1[x]]
-	}
-];
-
-
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Amplitude*)
 
 
@@ -3031,16 +3001,15 @@ Dterms\[ScriptCapitalA][[1]]
 \[ScriptCapitalA]s2 = \[ScriptCapitalA]s//.{($D[{n__}, \[ScriptA]IMR][x__] -> LF[y__]) :>  TagRule[\[ScriptA]IMR, $D[{n}, \[ScriptA]IMR][x],  LF[y]]};
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Exporting files*)
 
 
 NRules = <||>;
 
 
-NRules["\[CapitalPhi]IMR"] = phis3;
+NRules["\[CapitalPhi]IMR"] = phis2;
 NRules["\[ScriptA]IMR"] = \[ScriptCapitalA]s2;
-NRules["Aux\[CapitalPhi]IMR1"] = {AuxRule1};
 
 
 ParentDirectory[NotebookDirectory[],2]
