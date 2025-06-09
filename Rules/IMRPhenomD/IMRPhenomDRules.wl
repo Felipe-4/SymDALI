@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(*SetOptions[EvaluationNotebook[], DefaultNewCellStyle->"Code"];
+SetOptions[EvaluationNotebook[], DefaultNewCellStyle->"Code"];
 SetOptions[EvaluationNotebook[], WindowElements->{"MemoryMonitor","VerticalScrollBar","MenuBar", "HorizontalScrollBar"}]
 SetDirectory[NotebookDirectory[]];
 
@@ -18,7 +18,10 @@ colors=<|
 |>;
 SetColors[colors];
 CreateStyleSheet[];
-ApplyStyleSheet[];*)
+ApplyStyleSheet[];
+
+
+Quit
 
 
 (*Basic stuff:*)
@@ -551,7 +554,7 @@ With[
 
 
 expr =  Hold[
-	{test, {\[Omega], \[Eta], \[Chi]1, \[Chi]2}, 1},
+	{test, {\[Omega], \[Eta], \[Chi]1, \[Chi]2, \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}, 1},
 	Evaluate@$blockexpr,
 	"KeepDefs" -> KeepDefs
 ]//.HoldForm[X_] :> X;
@@ -667,7 +670,7 @@ ExternalEvaluate[python, {
        }]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Ripple Functions*)
 
 
@@ -731,7 +734,7 @@ helperArg = ExternalFunction[python, "def h0(f, \[Theta]in, \[Theta]extr, coeffs
 Argument[f_, \[Theta]in_,\[Theta]ex_, coeffs_, fref_] := Arg[helperArg[f, \[Theta]in, \[Theta]ex, coeffs, fref]//Normal]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Comparison*)
 
 
@@ -811,11 +814,43 @@ Combinations[vars_List, n_Integer]/;n>0 := Module[
 ]
 
 
-vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2};
+vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2, \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4};
 
 
 (*All derivatives up to order 3*)
-derivatives = Combinations[vars, 3];
+derivatives = Combinations[vars, 2];
+
+
+derivatives//Length
+
+
+(* ::Text:: *)
+(*Bcs \[Delta]pi appears linearly, all terms with more than 1 derivative in \[Delta]pi are 0.*)
+
+
+numberOf\[Delta]p[elem_List] := Module[
+	{\[Delta]ps = {\[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}},
+	
+	Count[
+		elem, 
+		x_/; Or@@(Equal[x, #]&/@\[Delta]ps)
+	]
+]
+
+
+Filter\[Delta]ps[derivatives_List]:= Module[
+	{iL, pos},
+	
+	iL = numberOf\[Delta]p/@derivatives;
+	
+	pos = Position[iL, x_/; x<=1];
+	
+	Extract[derivatives, pos]
+	
+]
+
+
+derivatives = Filter\[Delta]ps[derivatives];
 
 
 derivatives//Length
@@ -830,7 +865,7 @@ derivatives//Length
 Clear@expr;
 
 With[{
-	vars = {\[Omega],\[Eta], \[Chi]1, \[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}
+	vars = {\[Omega], \[Eta], \[Chi]1, \[Chi]2, \[Omega]ref, \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}
 	},
 	expr =  Hold[
 	{\[CapitalPhi]IMR,  vars, derivatives},
@@ -845,17 +880,17 @@ Clear@Ds
 
 Ds = MemoryConstrained[DerivativeRules@@expr, 6 10^9];
 
-Export["Phase_Ds_order_0_to_3.wdx", Ds]
+Export["Phase_Ds_order_0_to_2.wdx", Ds]
 
 
-Ds = Import["Phase_Ds_order_0_to_3.wdx"];
+Ds = Import["Phase_Ds_order_0_to_2.wdx"];
 
 
 (* ::Subsection::Closed:: *)
 (*Compiling Phase terms:*)
 
 
-Module[{ds = Import["Phase_Ds_order_0_to_3.wdx"]}, Ds = ds;]
+Module[{ds = Import["Phase_Ds_order_0_to_2.wdx"]}, Ds = ds;]
 
 
 (*Function to take HoldForm[Block[...]] and make library functions*)
@@ -928,7 +963,7 @@ Module[
 ];
 
 
-Dterms =Module[{Ds = Import["Phase_Ds_order_0_to_3.wdx"]}, Ds[[All,1]] ];
+Dterms =Module[{Ds = Import["Phase_Ds_order_0_to_2.wdx"]}, Ds[[All,1]] ];
 
 
 phis = Block[
@@ -954,7 +989,7 @@ phis2 = phis//.{($D[{n__}, \[CapitalPhi]IMR][x__] -> LF[y__]) :>  TagRule[\[Capi
 
 (*The derivative of the function with respect to any \[Delta]p (at first order) is the function with the \[Delta]p in question replaced by 1*)
 
-$D[{x__}, \[CapitalPhi]IMR][y__]/;Total[{x}[[6;;-1]]] === 1 -> Aux\[CapitalPhi]IMR1;
+(*$D[{x__}, \[CapitalPhi]IMR][y__]/;Total[{x}[[6;;-1]]] === 1 -> Aux\[CapitalPhi]IMR1;
 
 AuxRule1 = Aux\[CapitalPhi]IMR1[x__][y__] :>  Module[
 	{pos = Position[{x}[[6;;-1]], 1], ds, args},
@@ -973,7 +1008,7 @@ AuxRule1 = Aux\[CapitalPhi]IMR1[x__][y__] :>  Module[
 		$D[ds, \[CapitalPhi]IMR]@@args	
 	
 	]
-]
+]*)
 
 
 (*more than 1 derivative in \[Delta]pi is zero because each appears linearly*)
@@ -985,7 +1020,7 @@ sym1 = $D[{x__}, \[CapitalPhi]IMR]/; Total[{x}[[6;;-1]]] > 1 -> 0
 	The derivative with respect to \[Omega]ref is minus the derivative of \[Omega] evaluated at the value of \[Omega]ref passed as a vector
 *)
 
-$D[{x__}, \[CapitalPhi]IMR][y__]/; {x}[[1]] === 0 && {x}[[5]] > 0 && Total[{x}[[6;;-1]]] === 0 -> Aux\[CapitalPhi]IMR2;
+$D[{x__}, \[CapitalPhi]IMR][y__]/; {x}[[1]] === 0 && {x}[[5]] > 0 (*&& Total[{x}[[6;;-1]]] === 0*) -> Aux\[CapitalPhi]IMR2;
 
 AuxRule2 = Aux\[CapitalPhi]IMR2[x__][y__] :>  Module[
 	{ds, args},
@@ -1014,8 +1049,8 @@ sym2 = $D[{x__}, \[CapitalPhi]IMR]/;({x}[[1]] > 0 && {x}[[5]] > 0)  ->  0
 phis3 = Join[
 	phis2,
 	{
-		TagRule[\[CapitalPhi]IMR, $D[{x__}, \[CapitalPhi]IMR]/;Total[{x}[[6;;-1]]] === 1, Aux\[CapitalPhi]IMR1[x]], 
-		TagRule[\[CapitalPhi]IMR, $D[{x__}, \[CapitalPhi]IMR]/; {x}[[1]] === 0 && {x}[[5]] > 0 && Total[{x}[[6;;-1]]] === 0, Aux\[CapitalPhi]IMR2[x]]
+		(*TagRule[\[CapitalPhi]IMR, $D[{x__}, \[CapitalPhi]IMR]/;Total[{x}[[6;;-1]]] === 1, Aux\[CapitalPhi]IMR1[x]], *)
+		TagRule[\[CapitalPhi]IMR, $D[{x__}, \[CapitalPhi]IMR]/; {x}[[1]] === 0 && {x}[[5]] > 0 (*&& Total[{x}[[6;;-1]]] === 0*), Aux\[CapitalPhi]IMR2[x]]
 	}
 ];
 
@@ -1782,7 +1817,7 @@ NRules = <||>;
 NRules["\[CapitalPhi]IMR"] = phis3;
 NRules["\[ScriptA]IMR"] = \[ScriptCapitalA]s2;
 NRules["Aux\[CapitalPhi]IMR2"] = {AuxRule2};
-NRules["Aux\[CapitalPhi]IMR1"] = {AuxRule1};
+(*NRules["Aux\[CapitalPhi]IMR1"] = {AuxRule1};*)
 
 
 ParentDirectory[NotebookDirectory[],2]
