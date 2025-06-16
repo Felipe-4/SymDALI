@@ -115,12 +115,12 @@ DerivativesExpression[parsedexpr_HoldComplete,  derivatives_List, {}, {keepDefs_
 			{last = parsedexpr[[-1,-1]], iiexpr = parsedexpr, uniquehs = parsedexpr[[1,1]], derivativesOfFunction},
 			derivativesOfFunction = d[last, Sequence@@#]&/@derivatives;
 			iiexpr[[-1,-1]] = Sequence[clear@@uniquehs, derivativesOfFunction];
-			
+			clear@@uniquehs;
 			iiexpr//.{clear->iClear, d->D}
 		]; 
 	
 	result = $Block@@iparsed;
-	
+	 
 	(*Implement the definitions, if there are any:*)
 	rules = Dispatch@(Reverse/@{keepDefs});
 	result = result//.rules;
@@ -707,6 +707,7 @@ AuxiliarFunctions[expr_, derivativeVars_List, {parallel___Integer}, {defs___Rule
 			DerivativesExpression[iexpr, derivativeVars, {parallel}, {defs}], 
 			"symbolic Derivatives:"
 		];
+
 		
 		(*all function derivatives with f'[x] -> $xn and a dictionary for $xn -> explicit expression*)
 		(*{derivatives, dictionary} = EchoTiming[AbreviatedExpressions[iexpr, derivatives, {defs}], "sym derivatives -> $x and explicit derivatives: "];*)
