@@ -426,28 +426,53 @@ AbreviatedExpressions[x___] := Throw[$Failed, failTag[AbreviatedExpressions]]
 
 (*NEW WAY OF CALCULATING DERIVATIVES OF COMPOSITE FUNCTIONS #############################################################################################################*)
 
+
+
+(*
+	FindFunctionHead[f[x, y, z]] -> f 
+	FindFunctionHead[Derivative[n__][f][x,y,z]] -> f
+
+*)
 FindFunctionHead[expr_]/; expr[[0,0]] === Symbol := expr[[0]]
 FindFunctionHead[expr_]/; expr[[0,0,0]] === Derivative := expr[[0,1]]
+
+
+(*
+	CalculateFunctionDef[expr_HoldComplete,{$h1[x,y,z], Derivative[n__][$h2][z,k], ...}, {$h1, $h2, ...}, {defs__}]->
+	-> {x+y+z, Sin[z] Cos[k], ...} (explicit expressions)
+*)
 
 CalculateFunctionDef[exprMain_HoldComplete, {}, uniquehs_List, {defs___Rule}] := {}
 
 CalculateFunctionDef[exprMain_HoldComplete, ioccurrences_List, uniquehs_List, {defs___Rule}]/;ioccurrences =!={} := Module[
 	{relevantHeads, dummy},
 	
+	(*relevant heads from implicit expressions*)
 	relevantHeads = FindFunctionHead/@ioccurrences;
 
-	
+	(*
+		function to calculate the definition of the implicit expression "normalexpr" associated to the head "function":
+		x+y+z out of $h1 or Sin[z] Cos[k] out of Derivative[n__][$h2][z,k]
+	 *)
 	dummy[normalexpr_, function_] := Module[
 		{iexpr = exprMain, clearHeads = DeleteElements[uniquehs, {function}], iclear},
 		iexpr[[-1,-1]] = Sequence[iclear@@Join[clearHeads, {defs}[[All,1]]], normalexpr];
 		iclear=iClear;
 		$Block@@iexpr
 	]; 
-
+	
+	(*all explicit expressions*)
 	dummy@@@MapThread[List, {ioccurrences, relevantHeads}]
 ]
 
 CalculateFunctionDef[x___] := Throw[$Failed, failTag[CalculateFunctionDef]]
+
+
+(*
+	uniqueVarFunction[l] -> $x1, $x2, ..., $xl if there are no $xn declared yet
+	uniqueVarFunction[l] -> $x(p+1), $x(p+2), ..., $x(p+l) if there are "p" $x aready declared 
+*)
+
 
 uniqueVarFunction[0] := {};
 
@@ -463,6 +488,15 @@ uniqueVarFunction[length_Integer]/;length > 0 := Module[
 
 uniqueVarFunction[x___] := Throw[$Failed, failTag[uniqueVarFunction]]
 
+
+
+(*
+	PoolUpdate[HoldComplete[...], {$h1[x,y,z], Derivative[n__][$h2][z,k], ...}, {pool1, pool2}, {$h1, $h2, ...}, {defs}]:
+	Updtadtes pool1 with the rules {$h1[x,y,z] ->  $x1,Derivative[n__][$h2][z,k]-> $x2, ... }
+	and 
+	Updates pool2 with the rules {$x1-> x+y+z, $x2-> Sin[z] Cos[k], ...}
+*)
+
 PoolUpdate[exprMain_HoldComplete, {}, {pool1_DataStructure, pool2_DataStructure}, uniquehs_List, {defs___Rule}] := Null
 
 PoolUpdate[exprMain_HoldComplete, occurrences_List, {pool1_DataStructure, pool2_DataStructure}, uniquehs_List, {defs___Rule}]/;occurrences =!={} := Module[
@@ -472,7 +506,10 @@ PoolUpdate[exprMain_HoldComplete, occurrences_List, {pool1_DataStructure, pool2_
 	
 	ioccurrences = Delete[occurrences, existingKeys]//DeleteDuplicates;
 	
-	(*Take the normal expressions and replace h_[x_] by existing $xj*)
+	(*
+	Take the normal expressions and replace h_[x_] by existing $xj.
+	Performance trick to calculate F[$x] instead of F[h[x]]
+	*)
 	ioccurrencescopy =  ioccurrences//.pool1["Elements"];
 	
 	functionDefs = CalculateFunctionDef[exprMain, ioccurrencescopy, uniquehs, {defs}];
@@ -500,13 +537,21 @@ PoolUpdate[exprMain_HoldComplete, occurrences_List, {pool1_DataStructure, pool2_
 	
 	$xList = uniqueVarFunction[Length[ioccurrences]];
 	
+	(*pool1 has implicity expression -> $x*)
 	pool1["Insert", #]&/@(MapThread[Rule, {ioccurrences, $xList}]);
 	
-	
+	(*pool2 has $x-> explicit expression*)
 	pool2["Insert", #]&/@(MapThread[Rule, {$xList, functionDefs}]);
 ]
 
 PoolUpdate[x___] := Throw[$Failed, failTag[PoolUpdate]]
+
+
+(*
+	iIncludeFunctionDef[HoldComplete[...], expr, N, {h1, h2,...}, {pool1, pool2}, {defs}]
+	take all implicit expressions at depth "N" in "expr" ({$h1[x,y,z], Derivative[n__][$h2][z,k], ...})
+	calculates their definitions and includes them in the pools. Along wiht rules for $h1[$x] -> $x2
+*)
 
 iIncludeFunctionDef[exprMain_HoldComplete, expr_, depth_Integer, uniquehs_List, {pool1_DataStructure, pool2_DataStructure}, {defs___Rule}] := Module[
 	{headsPattern, DPattern, occurrences},
@@ -521,6 +566,7 @@ iIncludeFunctionDef[exprMain_HoldComplete, expr_, depth_Integer, uniquehs_List, 
 
 iIncludeFunctionDef[x___] := Throw[$Failed, faiTag[iIncludeFunctionDef]]
 
+
 IncludeFunctionDef[exprMain_HoldComplete, expr_, uniquehs_List, {pool1_DataStructure, pool2_DataStructure}, {defs___Rule}] :=Module[
 	{depths = Range[Depth[expr], 0, -1]},
 	
@@ -529,16 +575,17 @@ IncludeFunctionDef[exprMain_HoldComplete, expr_, uniquehs_List, {pool1_DataStruc
 
 IncludeFunctionDef[x___] := Throw[$Failed, failTag[IncludeFunctionDef]]
 
+
 GetAllDefs[exprMain_HoldComplete, implicitDs_List, uniquehs_List, {defs___Rule}] := Module[
 	{pool1 = CreateDataStructure["HashTable"], pool2 = CreateDataStructure["HashTable"], iImplicitDs},
 	
 	(*Quiet[Remove["Global`$x*"], Remove::rmnsm];*) ClearAll["Global`$x*"];
 	
-	IncludeFunctionDef[exprMain, #, uniquehs, {pool1, pool2}, {defs}]&/@implicitDs;
+	EchoTiming[IncludeFunctionDef[exprMain, #, uniquehs, {pool1, pool2}, {defs}]&@implicitDs, "IncludeFunctionDef"];
 	
 	
 	
-	iImplicitDs = implicitDs//.pool1["Elements"]; (*Echo[pool2["Elements"]];*)
+	iImplicitDs = EchoTiming[implicitDs//.pool1["Elements"], "//.pool1[\"Elements\"]"]; (*Echo[pool2["Elements"]];*)
 	{
 		iImplicitDs,
 		pool2["Elements"]
@@ -715,7 +762,7 @@ AuxiliarFunctions[expr_, derivativeVars_List, {parallel___Integer}, {defs___Rule
 		
 		
 		(*(Get all symbols in each expression:)*)
-		symbols = DependencySearch[#, dictionary]&/@derivatives;
+		symbols = EchoTiming[DependencySearch[#, dictionary]&/@derivatives, "DependencySearch"];
 		(*Echo[{derivatives, dictionary}];*)(*Echo[{symbols, derivatives, dictionary}];*)
 		(*(make the functions:)*)
 		functions = EchoTiming[
@@ -879,7 +926,7 @@ DerivativeRules[{name_, vars_, derivatives_List}, expr_, OptionsPattern[]]/;(
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*DerivativeRulesLoad Defs*)
 
 

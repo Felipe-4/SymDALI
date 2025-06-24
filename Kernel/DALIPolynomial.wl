@@ -250,7 +250,7 @@ TaylorForm[DALIlist_List, fiducialPoint_?MatrixQ] := Module[
 	(*Put in the HornerForm:*)
 		
 		
-	HornerForm[dummyvar]//.rules
+	(*HornerForm[*)dummyvar(*]*)//.rules
 	
 ]
 

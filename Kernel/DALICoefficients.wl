@@ -105,7 +105,7 @@ GenMessage[True, mess_] := True;
 GenMessage[False, mess_] := With[{}, Message[mess]; False]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Make Gradients*)
 
 
@@ -400,7 +400,7 @@ TakeGrad[functionhead_Symbol, dummyvariables_List, -1]/;(
 TakeGrad[x___] := Throw[$Failed, failTag[TakeGrad]]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Calculate numerical gradients*)
 
 
@@ -917,6 +917,18 @@ iGenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_] := Sum[
 ]//Flatten
 
 
+CiGenDaliTerm = Compile[
+	{{gradList1, _Complex, 2}, {gradList2, _Complex, 2}, {PSD, _Real,1}},
+	Sum[
+	
+		Outer[Times, gradList1[[i]], gradList2[[i]]]/PSD[[i]],
+		{i, 1, Length@gradList1}
+	],
+	CompilationTarget->"C",
+	RuntimeOptions->"Speed"
+]
+
+
 GenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_,  \[CapitalDelta]f_, "GWs"] := Module[
     {complexSum, inv = SensitivityVector^-1},
     (*Likelihood def. eq. 42 of https://arxiv.org/pdf/1809.02293*)
@@ -925,7 +937,7 @@ GenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_,  \[CapitalDelta]f_, "GWs
     (*complexSum = Flatten[gradlist1\[ConjugateTranspose].(gradlist2*inv)];*) (*This dot product is more efficient, but makes Fisher assymetric on tc, \[Phi]c and dL because of numerical errors*)
    
     
-    complexSum = iGenDaliTerm[gradlist1, gradlist2, SensitivityVector];
+    complexSum = CiGenDaliTerm[gradlist1, gradlist2, SensitivityVector]//Flatten;
    
      4 \[CapitalDelta]f Re[complexSum]  (*I think this 4 \[CapitalDelta]f can be just absorbed in the normalization...*)
 ]
@@ -1097,7 +1109,7 @@ manualDALIlist == automaticDAliLIst*)
 (**)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*DALICoefficients*)
 
 
@@ -1152,9 +1164,11 @@ Map[TensorRank, test, {2}]
 Clear[HEADTEST, points, \[Sigma], test]*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*GWDALICoefficients*)
 
+
+Clear@iGWDALICoefficients
 
 iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, f1_, \[CapitalDelta]f_}, {PSD__}, SymRules_, NRules_]/;(
 	Length[{h}] === Length[{vars}] === (Length[{fp}] - (detecs - 1 )) &&
@@ -1163,52 +1177,72 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 	{SymRulehs, Orighs, Uniquehs, iNRules, idetecHs, dims = {vars}[[All, -1]], detectorGradients, fvec, ObsPoints, remainingGradients, result},
 	
 	(*Make iNRules with Unique heads and set up defs from SymRules and NRules:*)
+	EchoTiming[
 	SymRulehs = ToExpression/@Keys[SymRules];
 	Orighs =ToExpression/@Keys[NRules];
 	
-	Uniquehs = Unique[Orighs];
+	Uniquehs = Unique[Orighs];,
+	"pre work"];
 	
-	iNRules = NRules//.Thread@Rule[Orighs, Uniquehs];
+	EchoTiming[
+		Orighs = HoldComplete@@Orighs;
+		Uniquehs = HoldComplete@@Uniquehs;
+		
+		Set@@@Transpose[{List@@Orighs, List@@Uniquehs}];
+		
+		
+		iNRules = Association@(Normal[NRules]); (*weird bug: If I do iNRules = NRules the system does not replace the original heads in the association by the unique ones, so I have to convert to normal form and then back to association.*)
+		
+		List@@(Clear/@Orighs);
+		Orighs = List@@Orighs;
+		Uniquehs = List@@Uniquehs;
+		(*iNRules = NRules/.Thread@Rule[Orighs, Uniquehs];*)
+		,"parsing NRules"
+	];
 	
-	EchoTiming[MakeDefs[SymRules, iNRules], "MakeDefs"]; Clear[iNRules];
+	
+	EchoTiming[MakeDefs[SymRules, iNRules]; Clear[iNRules];, "MakeDefs"];
 	
 	
 	(*Define some basic quantities:*)
-	idetecHs = ConstantArray[{h}[[1]], detecs];
-	fvec = Range[f0,f1, \[CapitalDelta]f];
-	ObsPoints = Table[Join[{fp}[[i]], {fvec}], {i, Length@{fp}}];   (*Join[{#}, {fvec}]&/@{fp};*)
+	EchoTiming[
+		idetecHs = ConstantArray[{h}[[1]], detecs];
+		fvec = Range[f0,f1, \[CapitalDelta]f];
+		ObsPoints = Table[Join[{fp}[[i]], {fvec}], {i, Length@{fp}}];,  
+		"Middle work"
+	];  (*Join[{#}, {fvec}]&/@{fp};*)
 	
 
-	Unprotect[Derivative]; (*Overloading of Derivative happening in iGenGrads*)
+	EchoTiming[Unprotect[Derivative];, "pointless"]; (*Overloading of Derivative happening in iGenGrads*)
 	(*Calculate the detector and remaining gradients:*)
 	
-	detectorGradients = EchoTiming[GenGrads[idetecHs, dims[[1]]&/@Range[detecs], ObsPoints[[1;;detecs]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}], "detectors"];
+	EchoTiming[detectorGradients = GenGrads[idetecHs, dims[[1]]&/@Range[detecs], ObsPoints[[1;;detecs]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}];, "detectors"];
 
-	remainingGradients = EchoTiming[GenGrads[{h}[[2;;-1]], dims[[2;;-1]], ObsPoints[[detecs+1;;-1]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}], "Core WF"];
+	EchoTiming[remainingGradients = GenGrads[{h}[[2;;-1]], dims[[2;;-1]], ObsPoints[[detecs+1;;-1]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}];, "Core WF", Method->Timing];
 	
 
 	(*Clean definitions:*)
 	
-	Remove[Evaluate[Uniquehs]]; GCSymRules[SymRulehs]; Protect[Derivative];
+	EchoTiming[Remove[Evaluate[Uniquehs]]; GCSymRules[SymRulehs]; Protect[Derivative];, "Cleaning"];
 	
 	(*redefine remaining gradients indices {1,2} -> {3,4} and so on*)
 	
-	remainingGradients = EchoTiming[MapThread[
+	EchoTiming[remainingGradients = MapThread[
 		KeyMap[Function[{x}, If[x[[1]] >0, x + #1, x]], #2]&, 
 		{FoldList[Plus, 0, dims][[2;;-2]], remainingGradients}
-	], "Redefine labels"];
+	];, "Redefine labels"];
 	
 	(*Calculate full gradients for each detector, you have  a list of associations here*)
-	detectorGradients = EchoTiming[GradientsList[Join[{#}, remainingGradients], dims, n]&/@detectorGradients, "Gradient Recombination"];
-	Clear[remainingGradients];
+	EchoTiming[detectorGradients = GradientsList[Join[{#}, remainingGradients], dims, n]&/@detectorGradients;, "Gradient Recombination"];
+	EchoTiming[Clear[remainingGradients];, "extra cleaning"];
 	
 	(*Put the matrices in  the form for DALIList*)
 	
 	(*This will give you a list of DALIlists:*)
-	result = EchoTiming[MapThread[
+	EchoTiming[result = MapThread[
 		GenDaliList[#1, n, #2, \[CapitalDelta]f, "GW"]&,
 		{detectorGradients, {PSD}}
-	], "DALIList"];
+	];, "DALIList"];
 	
 	(*Combine all of them and return:*)
 	EchoTiming[Plus@@result, "Combine Detector DALIS"]
