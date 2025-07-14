@@ -39,7 +39,7 @@ Begin["`Private`"]
 (*Definitions*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*DerivativeRules Defs*)
 
 
@@ -926,7 +926,7 @@ DerivativeRules[{name_, vars_, derivatives_List}, expr_, OptionsPattern[]]/;(
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*DerivativeRulesLoad Defs*)
 
 
@@ -934,6 +934,7 @@ outType[Real] := RandomReal[]
 outType[Complex] := RandomComplex[]
 outType[{Real,1}] := RandomReal[{-1,1}, 2]
 outType[{Complex, 1}] := RandomComplex[{-1-I,1+I},2]
+outType[{Complex,2}] := RandomComplex[{-1-I,1+I}, {2, 2}]
 
 outType[x___] := Throw[$Failed, failTag[outType]]
 
@@ -1079,9 +1080,9 @@ Output:If the rhs is \"LF[...]\" it returns the rule with the rhs replaced by th
 CompiledFunction object. If the rhs is HoldForm[...] it just returns the rule."; 
 
 (*Def : HoldPattern[a[x__]] -> LF[...] or  HoldPattern[a[x__]] -> HoldForm[...]*)
-iLoadFunctionDef[Def_]/; Def[[-1, 0]]  =!=  Global`LF :=  Def
+iLoadFunctionDef[Def_]/; ToString[Def[[-1, 0]]]  =!=  "LF" :=  Def
 
-iLoadFunctionDef[Def_]/; Def[[-1,0]] === Global`LF := Module[
+iLoadFunctionDef[Def_]/; ToString[Def[[-1,0]]] === "LF" := Module[
 	{wvmVars, wvm, expr, simpleExpr, compiledFunction, vars},
 	
 	wvmVars = Module[{vars, LFvars = Def[[-1, 3]]},

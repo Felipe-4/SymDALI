@@ -2,7 +2,7 @@
 
 (*
 
-SetOptions[EvaluationNotebook[], WindowElements->{"MemoryMonitor","VerticalScrollBar","MenuBar", "HorizontalScrollBar"}]
+(*SetOptions[EvaluationNotebook[], WindowElements->{"MemoryMonitor","VerticalScrollBar","MenuBar", "HorizontalScrollBar"}]*)
 SetDirectory[NotebookDirectory[]];
 SetOptions[EvaluationNotebook[], DefaultNewCellStyle->"Code"]
 
@@ -117,8 +117,8 @@ Block[
 
 
 Block[
-	{v = 1 + {-1 + \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, -1 + \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4, \[Delta]\[CurlyPhi]5, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7}},
-	InsVecPhase[\[Eta]_, \[Chi]1_,\[Chi]2_, \[Delta]\[CurlyPhi]minus2_, \[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_] = (
+	{v = 1 + {-1 + \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, -1 + \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4, 0, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7}},
+	InsVecPhase[\[Eta]_, \[Chi]1_,\[Chi]2_, \[Delta]\[CurlyPhi]minus2_, \[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_] = (
 		v*insVecPhase[\[Eta], \[Chi]1, \[Chi]2]
 	)
 ];
@@ -126,19 +126,19 @@ Block[
 
 {
 	\[CapitalPhi]minus2[\[Eta]_, \[Delta]\[CurlyPhi]minus2_], \[CapitalPhi]0[\[Eta]_, \[Delta]\[CurlyPhi]0_], \[CapitalPhi]1[\[Eta]_, \[Delta]\[CurlyPhi]1_], \[CapitalPhi]2[\[Eta]_, \[Delta]\[CurlyPhi]2_], \[CapitalPhi]3[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[CurlyPhi]3_], 
-	\[CapitalPhi]4[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[CurlyPhi]4_], \[CapitalPhi]5[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[CurlyPhi]5_], \[CapitalPhi]5l[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[CurlyPhi]5l_], \[CapitalPhi]6[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[CurlyPhi]6_], 
+	\[CapitalPhi]4[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[CurlyPhi]4_], \[CapitalPhi]5[\[Eta]_, \[Chi]1_, \[Chi]2_], \[CapitalPhi]5l[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[CurlyPhi]5l_], \[CapitalPhi]6[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[CurlyPhi]6_], 
 	\[CapitalPhi]6l[\[Eta]_, \[Delta]\[CurlyPhi]6l_], \[CapitalPhi]7[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[CurlyPhi]7_]
-} = InsVecPhase[\[Eta], \[Chi]1, \[Chi]2, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7];
+} = InsVecPhase[\[Eta], \[Chi]1, \[Chi]2, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7];
 
 
 {\[CapitalSigma]1[\[Eta]_, \[Chi]1_, \[Chi]2_], \[CapitalSigma]2[\[Eta]_, \[Chi]1_, \[Chi]2_], \[CapitalSigma]3[\[Eta]_, \[Chi]1_, \[Chi]2_], \[CapitalSigma]4[\[Eta]_, \[Chi]1_, \[Chi]2_]} = \[Eta]^-1*(PhenomCoeff[\[Eta], \[Chi]PN, #]&/@FelipeBarbosa`SymDALI`IMRPhenomD`Private`PhenomDTableV[[8;;11]])//.{\[Chi]PN->Sqrt[1-4 \[Eta]] (\[Chi]1-\[Chi]2)/2 + (1-76 \[Eta]/113) (\[Chi]1+\[Chi]2)/2 };
 
 
-{\[CapitalSigma]1[\[Eta],\[Chi]1,\[Chi]2],\[CapitalSigma]2[\[Eta],\[Chi]1,\[Chi]2],\[CapitalSigma]3[\[Eta],\[Chi]1,\[Chi]2],\[CapitalSigma]4[\[Eta],\[Chi]1,\[Chi]2]} . {\[Omega], 3/4 \[Omega]^(4/3), 3/5 \[Omega]^(5/3), 1/2 \[Omega]^2}
+{\[CapitalSigma]1[\[Eta],\[Chi]1,\[Chi]2],\[CapitalSigma]2[\[Eta],\[Chi]1,\[Chi]2],\[CapitalSigma]3[\[Eta],\[Chi]1,\[Chi]2],\[CapitalSigma]4[\[Eta],\[Chi]1,\[Chi]2]} . {\[Omega], 3/4 \[Omega]^(4/3), 3/5 \[Omega]^(5/3), 1/2 \[Omega]^2};
 
 
 InsExpr = -\[Pi]/4 + {
-	U\[CapitalPhi]minus2[\[Eta],\[Delta]\[CurlyPhi]minus2],U\[CapitalPhi]0[\[Eta],\[Delta]\[CurlyPhi]0],U\[CapitalPhi]1[\[Eta],\[Delta]\[CurlyPhi]1],U\[CapitalPhi]2[\[Eta],\[Delta]\[CurlyPhi]2],U\[CapitalPhi]3[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]3],U\[CapitalPhi]4[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]4],U\[CapitalPhi]5[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]5],
+	U\[CapitalPhi]minus2[\[Eta],\[Delta]\[CurlyPhi]minus2],U\[CapitalPhi]0[\[Eta],\[Delta]\[CurlyPhi]0],U\[CapitalPhi]1[\[Eta],\[Delta]\[CurlyPhi]1],U\[CapitalPhi]2[\[Eta],\[Delta]\[CurlyPhi]2],U\[CapitalPhi]3[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]3],U\[CapitalPhi]4[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]4],U\[CapitalPhi]5[\[Eta],\[Chi]1,\[Chi]2],
 	U\[CapitalPhi]5l[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]5l],U\[CapitalPhi]6[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]6],U\[CapitalPhi]6l[\[Eta],\[Delta]\[CurlyPhi]6l],U\[CapitalPhi]7[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]7]
 } . \[Omega]InsVecPhase[\[Omega]]  + {U\[CapitalSigma]1[\[Eta],\[Chi]1,\[Chi]2],U\[CapitalSigma]2[\[Eta],\[Chi]1,\[Chi]2],U\[CapitalSigma]3[\[Eta],\[Chi]1,\[Chi]2],U\[CapitalSigma]4[\[Eta],\[Chi]1,\[Chi]2]} . {\[Omega], 3/4 \[Omega]^(4/3), 3/5 \[Omega]^(5/3), 1/2 \[Omega]^2};
 
@@ -146,6 +146,28 @@ InsExpr = InsExpr//.{\[Chi]1-> s1z, \[Chi]2->s2z};
 
 
 InsExpr
+
+
+AuxiliarDefs = <||>;
+Clear@ZeroFunction
+ZeroFunction[x__] := 0
+
+
+AuxiliarDefs["Inspiral"] = HoldForm[{
+	Unprotect[Derivative],
+	
+	Derivative[eta_, chi1_, chi2_, d_][\[CapitalPhi]3]/;chi1+chi2>1 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_, d_][\[CapitalPhi]4]/;chi1+chi2>2 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_, d_][\[CapitalPhi]5]/;chi1+chi2>1 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_, d_][\[CapitalPhi]6]/;chi1+chi2>1 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_, d_][\[CapitalPhi]7]/;chi1+chi2>1 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_, d_][\[CapitalPhi]5l]/;chi1+chi2>1 := ZeroFunction,
+	
+	Derivative[eta_, chi1_, chi2_][\[CapitalSigma]1]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_][\[CapitalSigma]2]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_][\[CapitalSigma]3]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_][\[CapitalSigma]4]/; chi1+chi2>3 := ZeroFunction
+}];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -177,6 +199,13 @@ IntVecPhase[\[Eta]_, \[Chi]1_, \[Chi]2_, \[Delta]\[Beta]2_, \[Delta]\[Beta]3_] =
 IntExpr = {U\[CapitalBeta]1[\[Eta], \[Chi]1, \[Chi]2], U\[CapitalBeta]2[\[Eta], \[Chi]1, \[Chi]2, \[Delta]\[Beta]2],U\[CapitalBeta]3[\[Eta], \[Chi]1, \[Chi]2, \[Delta]\[Beta]3]} . \[Omega]IntVecPhase[\[Omega]];
 
 IntExpr = IntExpr//.{\[Chi]1->s1z, \[Chi]2->s2z};
+
+
+AuxiliarDefs["Intermediate"] = HoldForm[{
+	Derivative[eta_, chi1_, chi2_][\[CapitalBeta]1]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_, d_][\[CapitalBeta]2]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_, d_][\[CapitalBeta]3]/; chi1+chi2>3 := ZeroFunction
+}];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -247,11 +276,20 @@ im\[Omega][\[Chi]_] :=(0.014158792290965177` -0.036989395871554566` \[Chi]+0.026
 \[Omega]RdDamping[int_, Erad_] = int/(1 - Erad);
 
 
-\[Gamma]2[\[Eta]_, \[Chi]PN_] = PhenomCoeff[\[Eta], \[Chi]PN, #]&@FelipeBarbosa`SymDALI`IMRPhenomD`Private`PhenomDTableV[[6]];
-\[Gamma]3[\[Eta]_, \[Chi]PN_] = PhenomCoeff[\[Eta], \[Chi]PN, #]&@FelipeBarbosa`SymDALI`IMRPhenomD`Private`PhenomDTableV[[7]];
+\[Gamma]2[\[Eta]_, \[Chi]1_, \[Chi]2_] = PhenomCoeff[\[Eta], \[Chi]PN, #]&@FelipeBarbosa`SymDALI`IMRPhenomD`Private`PhenomDTableV[[6]]//.\[Chi]PN->Sqrt[1-4 \[Eta]] (\[Chi]1-\[Chi]2)/2 + (1-76 \[Eta]/113) (\[Chi]1+\[Chi]2)/2 ;
+\[Gamma]3[\[Eta]_, \[Chi]1_, \[Chi]2_] = PhenomCoeff[\[Eta], \[Chi]PN, #]&@FelipeBarbosa`SymDALI`IMRPhenomD`Private`PhenomDTableV[[7]]//.\[Chi]PN->Sqrt[1-4 \[Eta]] (\[Chi]1-\[Chi]2)/2 + (1-76 \[Eta]/113) (\[Chi]1+\[Chi]2)/2 ;
 
 
 \[Omega]Peak[\[Omega]RD_, \[Omega]DAMP_, \[Gamma]2_, \[Gamma]3_] = If[\[Gamma]2<=1, \[Omega]RD +( \[Omega]DAMP \[Gamma]3 (Sqrt[1- \[Gamma]2^2]-1))/\[Gamma]2, \[Omega]RD +( - \[Omega]DAMP \[Gamma]3 )/\[Gamma]2 ];
+
+
+AuxiliarDefs["rd \[And] dp"] = HoldForm[{
+	Derivative[eta_, chi1_, chi2_][\[Gamma]2]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_,chi1_, chi2_][\[Gamma]3]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[omRD_, omDamp_, gamma2_, gamma3_][\[Omega]Peak]/;omRD + omDamp>1 := ZeroFunction,
+	Derivative[omRD_, omDamp_, gamma2_, gamma3_][\[Omega]Peak]/;gamma3 + omDamp > 2 := ZeroFunction,
+	Derivative[m1_, m2_, s1z_, s2z_][aParallel]/;s1z+s2z > 4 := ZeroFunction
+}];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -306,6 +344,17 @@ MRExpr = Block[
 
 
 MRExpr = MRExpr//.{\[Chi]1->s1z, \[Chi]2->s2z};
+
+
+AuxiliarDefs["MR"] = HoldForm[{
+	Derivative[eta_, chi1_, chi2_][\[Alpha]5]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[n_, m_][\[Omega]RdDamping]/; n>1 := ZeroFunction,
+	
+	Derivative[eta_, chi1_, chi2_][\[CapitalAlpha]1]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_, d_][\[CapitalAlpha]2]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_, d_][\[CapitalAlpha]3]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_, d_][\[CapitalAlpha]4]/; chi1+chi2>3 := ZeroFunction
+}];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -411,19 +460,6 @@ Module[
 
 \[CapitalDelta]t0[\[Omega]timesd\[Phi]MR_] = \[Omega]timesd\[Phi]MR;
 
-(*Module[
-	{d\[Phi]MR,
-	ringdownFrequency, aeff},
-	
-	
-	aeff = Uaeff[UaParallel[m1, m2, s1z, s2z], USperp[m1, m2, s1x, s1y, s2x, s2y]];
-	
-	ringdownFrequency = U\[Omega]RdDamping[Ure\[Omega][aeff], UErad[m1, m2, s1z, s2z]];
-	
-	d\[Phi]MR =D[MRExpr, \[Omega]]//.\[Omega]->ringdownFrequency;
-		
-	\[CapitalDelta]t0expr = U\[CapitalDelta]t0[\[Omega], d\[Phi]MR, \[Omega]ref]
-];*)
 
 
 Module[{
@@ -557,6 +593,16 @@ All functions of chil, q, chip, with q<=1
 \[CapitalEpsilon]5[q_, chil_] = NewDictionary["epsiloncoeff5"];
 
 
+AuxiliarDefs["\[Epsilon]PPN"] = HoldForm[{
+	
+	Derivative[q_][\[CapitalEpsilon]1]/;q>1 := ZeroFunction,
+	Derivative[q_, chil_][\[CapitalEpsilon]2]/;chil>1 := ZeroFunction,
+	Derivative[q_, chil_][\[CapitalEpsilon]4]/;chil>1 := ZeroFunction,
+	Derivative[q_, chil_][\[CapitalEpsilon]5]/;chil>2 := ZeroFunction
+	
+}];
+
+
 (* ::Subsubsection::Closed:: *)
 (*\[Chi]l*)
 
@@ -572,6 +618,15 @@ Module[
 
 Clear@\[Chi]l
 \[Chi]l[m1_, m2_, s1z_, s2z_]= s1z + m2/m1 s2z; (*q<=1*)
+
+
+AuxiliarDefs["\[Chi]l"] = HoldForm[{
+	
+	Derivative[m1_, m2_, s1z_, s2z_][\[Chi]l]/;s1z+s2z>1 := ZeroFunction,
+	Derivative[m1_, m2_, s1z_, s2z_][\[Chi]l]/;m2>1 := ZeroFunction,
+	Protect[Derivative]
+	
+}];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -592,46 +647,6 @@ Module[{\[Chi]l = U\[Chi]l[m1, m2, s1z, s2z]},
 		U\[CapitalEpsilon]4[q, \[Chi]l] Log[f/fref],
 		U\[CapitalEpsilon]5[q, \[Chi]l] (\[Omega]^(1/3) - \[Omega]ref^(1/3))
 	]//.{\[Omega]->\[Omega]p, \[Omega]ref->\[Omega]pref};
-]
-
-
-Block[
-	{
-	chil,q = m2/m1, \[Epsilon]Expression, \[Omega]p = (m1+m2) UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]] \[Pi] f, 
-	\[Omega]pref =  (m1+m2) UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]] \[Pi] fref
-	}, 
-	chil = \[Chi]l[m1, m2, s1z, s2z];
-	\[Epsilon]Expression = \[Epsilon][
-		\[CapitalEpsilon]1[q] (\[Omega]^-1-\[Omega]ref^-1),
-		\[CapitalEpsilon]2[q, chil] (\[Omega]^(-2/3)-\[Omega]ref^(-2/3)),
-		\[CapitalEpsilon]3[q] (\[Omega]^(-1/3) - \[Omega]ref^(-1/3)),
-		\[CapitalEpsilon]4[q, chil] Log[\[Omega]/\[Omega]ref],
-		\[CapitalEpsilon]5[q, chil] (\[Omega]^(1/3) - \[Omega]ref^(1/3))
-	]//.{\[Omega]->\[Omega]p, \[Omega]ref->\[Omega]pref};
-	
-	ManualGrad\[Epsilon][f_, fref_, m1_, m2_, s1z_, s2z_] = 2 D[\[Epsilon]Expression, {{m1, m2}}];
-]
-
-
-Module[
-	{f, fref, m1, m2, s1z, s2z, G=UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], derivativeTools, manual},
-	
-	{m1, m2} = ReverseSort@RandomReal[{20, 100}, 2];
-	
-	f = RandomReal[{1, 0.2/(G (m1+m2))}];
-	
-	fref = RandomReal[{1, f}];
-	
-	{s1z, s2z} = RandomReal[{-1,1},2];
-	
-	derivativeTools = TestGrad\[CapitalPsi][f, fref, m1, m2, 0, 0,s1z, 0, 0, s2z][[1;;2]];
-	manual = ManualGrad\[Epsilon][f, fref, m1, m2, s1z, s2z];
-	
-	(*Echo[{"DT:", derivativeTools}];
-	Echo[{"M:", manual}];*)
-	RelativeDiff@@{derivativeTools, manual}
-	
-	
 ]
 
 
@@ -667,7 +682,7 @@ FunctionDefs["Ins+Int"]=With[{
 		{-2,0,1,2,3,4,5,5l,6,6l,7},
 		{
 			\[CapitalPhi]minus2[\[Eta],\[Delta]\[CurlyPhi]minus2],\[CapitalPhi]0[\[Eta],\[Delta]\[CurlyPhi]0],\[CapitalPhi]1[\[Eta],\[Delta]\[CurlyPhi]1],\[CapitalPhi]2[\[Eta],\[Delta]\[CurlyPhi]2],\[CapitalPhi]3[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]3],\[CapitalPhi]4[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]4],
-			\[CapitalPhi]5[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]5],\[CapitalPhi]5l[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]5l],\[CapitalPhi]6[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]6],\[CapitalPhi]6l[\[Eta],\[Delta]\[CurlyPhi]6l],\[CapitalPhi]7[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]7]
+			\[CapitalPhi]5[\[Eta],\[Chi]1,\[Chi]2],\[CapitalPhi]5l[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]5l],\[CapitalPhi]6[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]6],\[CapitalPhi]6l[\[Eta],\[Delta]\[CurlyPhi]6l],\[CapitalPhi]7[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[CurlyPhi]7]
 		}
 	]},
 
@@ -679,7 +694,7 @@ FunctionDefs["Ins+Int"]=With[{
 	\[CapitalPhi]2[\[Eta]_,\[Delta]\[CurlyPhi]2_]:=2,
 	\[CapitalPhi]3[\[Eta]_,\[Chi]1_,\[Chi]2_,\[Delta]\[CurlyPhi]3_]:=3,
 	\[CapitalPhi]4[\[Eta]_,\[Chi]1_,\[Chi]2_,\[Delta]\[CurlyPhi]4_]:=4,
-	\[CapitalPhi]5[\[Eta]_,\[Chi]1_,\[Chi]2_,\[Delta]\[CurlyPhi]5_]:=5,
+	\[CapitalPhi]5[\[Eta]_,\[Chi]1_,\[Chi]2_]:=5,
 	\[CapitalPhi]5l[\[Eta]_,\[Chi]1_,\[Chi]2_,\[Delta]\[CurlyPhi]5l_]:=5l,
 	\[CapitalPhi]6[\[Eta]_,\[Chi]1_,\[Chi]2_,\[Delta]\[CurlyPhi]6_]:=6,
 	\[CapitalPhi]6l[\[Eta]_,\[Delta]\[CurlyPhi]6l_]:=6l,
@@ -711,8 +726,8 @@ FunctionDefs["MR"] = HoldForm[{
 	re\[Omega][\[Chi]_] := z,
 	im\[Omega][\[Chi]_] := w,
 	\[Omega]RdDamping[int_, Erad_] := \[ScriptX],
-	\[Gamma]2[\[Eta]_, \[Chi]PN_] := \[ScriptY],
-	\[Gamma]3[\[Eta]_, \[Chi]PN_] := \[ScriptZ],
+	\[Gamma]2[\[Eta]_, s1z_, s2z_] := \[ScriptY],
+	\[Gamma]3[\[Eta]_, s1z_, s2z_] := \[ScriptZ],
 	
 	\[Omega]Peak[\[Omega]RD_, \[Omega]DAMP_, \[Gamma]2_, \[Gamma]3_] := \[ScriptW],
 	\[Alpha]5[\[Eta]_, \[Chi]1_, \[Chi]2_] := \[ScriptA],
@@ -727,7 +742,7 @@ FunctionDefs["MR"] = HoldForm[{
 	y-> Erad[m1, m2, s1z, s2z], 
 	y0->Sperp[m1, m2, s1x, s1y, s2x, s2y],
 	z-> re\[Omega][\[Chi]], w-> im\[Omega][\[Chi]],
-	\[ScriptX]-> \[Omega]RdDamping[int, Erad], \[ScriptY]-> \[Gamma]2[\[Eta], \[Chi]PN], \[ScriptZ]-> \[Gamma]3[\[Eta], \[Chi]PN], \[ScriptW]-> \[Omega]Peak[\[Omega]RD, \[Omega]DAMP, \[Gamma]2, \[Gamma]3],\[ScriptA]-> \[Alpha]5[\[Eta], \[Chi]1, \[Chi]2],
+	\[ScriptX]-> \[Omega]RdDamping[int, Erad], \[ScriptY]-> \[Gamma]2[\[Eta], s1z, s2z], \[ScriptZ]-> \[Gamma]3[\[Eta], s1z, s2z], \[ScriptW]-> \[Omega]Peak[\[Omega]RD, \[Omega]DAMP, \[Gamma]2, \[Gamma]3],\[ScriptA]-> \[Alpha]5[\[Eta], \[Chi]1, \[Chi]2],
 	mr-> MRVecPhase[\[Eta], \[Chi]PN, \[Delta]\[Alpha]2, \[Delta]\[Alpha]3, \[Delta]\[Alpha]4], \[Omega]mr-> \[Omega]MRVecPhase[\[Omega], \[Omega]RD, \[Omega]DAMP, \[Alpha]5],
 	1 -> \[CapitalAlpha]1[\[Eta],\[Chi]1,\[Chi]2], 2-> \[CapitalAlpha]2[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[Alpha]2], 3 ->\[CapitalAlpha]3[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[Alpha]3], 4 -> \[CapitalAlpha]4[\[Eta],\[Chi]1,\[Chi]2,\[Delta]\[Alpha]4]
 };
@@ -868,27 +883,55 @@ Combinations[vars_List, n_Integer]/;n>0 := Module[
 
 vars = {
 	m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, 
-	\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,
+	\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,
 	\[Delta]\[Beta]2,\[Delta]\[Beta]3,
 	\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4
 };
 
 
 (*All derivatives up to order 3*)
-derivatives = Combinations[vars, 1];
+derivatives = Combinations[vars, 3];
+
+
+numberOf\[Delta]p[elem_List] := Module[
+	{\[Delta]ps = {\[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}},
+	
+	Count[
+		elem, 
+		x_/; Or@@(Equal[x, #]&/@\[Delta]ps)
+	]
+]
+
+Filter\[Delta]ps[derivatives_List]:= Module[
+	{iL, pos},
+	
+	iL = numberOf\[Delta]p/@derivatives;
+	
+	pos = Position[iL, x_/; x<=1];
+	
+	Extract[derivatives, pos]
+	
+]
+
+derivatives = Filter\[Delta]ps[derivatives];
+
+derivatives//Length
+
 PrependTo[derivatives, {}];
+
+derivatives//Length
 
 
 With[{
 	vars = {
 		f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z,
-		\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4
+		\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4
 	}
 	},
 	expr =  Hold[
 		{test, vars, derivatives},
 		Evaluate@$blockexpr,
-		"KeepDefs" -> KeepDefs,
+		(*"KeepDefs" -> KeepDefs,*)
 		"IncludeZeroDerivative"->False
 	]//.HoldForm[X_] :> X;
 ]
@@ -899,18 +942,18 @@ With[{
 
 res = MemoryConstrained[
 	DerivativeRules@@expr,
-	8 10^9]//EchoTiming;
+	4 10^9]//EchoTiming;
 
 
-Block[
+test[i_] := Block[
 	{testF,m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,f, fref,
-	\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4,
+	\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4,
 	 G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]},
 	
-	testF[f_, fref_, m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_] = res[[1,2]]; 
+	testF[f_, fref_, m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_] = Ds[[i,2]]; 
 	DownValues[testF] = DownValues[testF]//. HoldForm[x_]:> x;
 	
-	{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4} = ConstantArray[0, 16];
+	{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4} = ConstantArray[0, 15];
 	
 	{m1, m2} = ReverseSort[RandomReal[{20, 100}, 2]];
 	{s1x,s1y,s1z}  = RandomReal[{-1,1},3];
@@ -923,10 +966,17 @@ Block[
 ]
 
 
+(* ::Text:: *)
+(*There are several derivatives, involving \[Delta]\[CurlyPhi]0, \[Delta]s1z, for instance, that are automatically zero. I won't catch them right now because they won't affect Fisher matrix performance*)
+
+
+Table[test[i], {i, Length@Ds}]
+
+
 SetDirectory[NotebookDirectory[]]
 
 
-Export["Phase_Ds_order_0_to_1.wdx", res]
+Export["Phase_Ds_order_0_to_3.wdx", res]
 
 
 (* ::Section::Closed:: *)
@@ -951,12 +1001,14 @@ res = Import["Phase_Ds_order_0_to_1.wdx"];
 
 
 Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
-	rule = MapThread[
-		Rule,
-		{{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}, ConstantArray[0,16]}
-	];
+	
+	
+	
 	ClearAll[Test\[CapitalPsi]];
-	Test\[CapitalPsi][f_,fref_, m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_] = res[[1,2]]//.Join[rule, {G -> g}];
+	
+	Test\[CapitalPsi][
+		f_,fref_, m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,
+		\[Delta]\[CurlyPhi]minus2_,\[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_] = res[[1,2]]//.G -> g;
 
 ]
 DownValues[Test\[CapitalPsi]] = DownValues[Test\[CapitalPsi]]//.HoldForm[x_]:> x;
@@ -1024,7 +1076,7 @@ Test := Module[
 	
 	f = Range[10., 0.2/(G (m1+m2)), 1.];
 	
-	MMA = Test\[CapitalPsi][f, 10, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z ];
+	MMA = Test\[CapitalPsi][f, 10, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, Sequence@@ConstantArray[0, 15] ];
 	
 	Ripplehp = R\[CapitalPsi][f,10, m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,1,0,\[Iota],\[Phi]Ref];
 	
@@ -1086,36 +1138,42 @@ NGrad[f_, vars_, n_] := Module[
 {SymRules, NRules} = DerivativeRulesLoad["IMRPhenomPv2"];
 
 
-(*GRAD WITH COMPILED FUNCTIONS:*)
+(*(*GRAD WITH COMPILED FUNCTIONS:*)
 Block[{\[Delta]s, args}, 
 	
-	\[Delta]s = ConstantArray[0, 16];
+	\[Delta]s = {\[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4, 0, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7, \[Delta]\[Beta]2, \[Delta]\[Beta]3, \[Delta]\[Alpha]2, \[Delta]\[Alpha]3, \[Delta]\[Alpha]4};
 	args = Join[{f,fref,m1,m2,s1x,s1y,s1z,s2x,s2y,s2z}, \[Delta]s];
 	
 	ClearAll[TestGrad\[CapitalPsi]];
 	
-	TestGrad\[CapitalPsi][f_,fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_] = Table[
-	(NRules["\[CapitalPhi]IMR"])[[i, 3]]@@args,
-	{i, 2, 9}
-	]
+	TestGrad\[CapitalPsi][
+		f_,fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,
+		\[Delta]\[CurlyPhi]minus2_,\[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_] = Module[
+			{l1, l2},
+			l1 = Table[(NRules["\[CapitalPhi]IMR"])[[i, 3]]@@args,{i, 2, 15}]; (*\[PartialD] from \[Delta]\[CurlyPhi]minus2->\[Delta]\[CurlyPhi]4*)
+			l2 = Table[(NRules["\[CapitalPhi]IMR"])[[i, 3]]@@args,{i, 17, 25}]; (*\[PartialD] from \[Delta]\[CurlyPhi]5l->\[Delta]\[Alpha]4*)
+			Join[l1,l2]
+		];
 
 ]
-DownValues[TestGrad\[CapitalPsi]] = DownValues[TestGrad\[CapitalPsi]]//.HoldForm[x_]:> x;
+DownValues[TestGrad\[CapitalPsi]] = DownValues[TestGrad\[CapitalPsi]]//.HoldForm[x_]:> x;*)
 
 
 (*BELOW IS USEFUL FOR THE BLOCK FUNCTIONS*)
 
 
 
-Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
-	rule = MapThread[
-		Rule,
-		{{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}, ConstantArray[0,16]}
-	];
-	
+Pattern[#, Blank[]]&/@{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}
+
+
+Block[{g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
+
 	ClearAll[TestGrad\[CapitalPsi]];
 	
-	TestGrad\[CapitalPsi][f_,fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_] = res[[2;;9, 2]]//.Join[rule, {G -> g}];
+	TestGrad\[CapitalPsi][
+		f_,fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,
+		\[Delta]\[CurlyPhi]minus2_,\[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_
+	] = res[[2;;24, 2]]//.G->g;
 
 ]
 DownValues[TestGrad\[CapitalPsi]] = DownValues[TestGrad\[CapitalPsi]]//.HoldForm[x_]:> x;
@@ -1125,7 +1183,8 @@ Clear@Test
 Test := Module[
 	{
 		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, f, Symbolic,Numeric, RRe, MMARe, RIm, MMAIm, \[Chi]s, \[Chi]a,diff,fref,
-		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], vars
+		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], vars,
+		\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4
 	},
 	
 	{m1, m2} = ReverseSort[RandomReal[{20, 100},2]];
@@ -1133,11 +1192,13 @@ Test := Module[
 	{s1x, s1y, s1z} = RandomReal[{-1,1}, 3];
 	{s2x, s2y, s2z} = RandomReal[{-1,1}, 3];
 	
+	{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4} = RandomReal[{-10, 10}, 15];
+	
 	f = RandomReal[{10., 0.2/(G (m1+m2))}]//List;
 	fref = RandomReal[10];
 	
-	Symbolic = Last/@TestGrad\[CapitalPsi][f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z ];
-	vars = {f[[1]], fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z};
+	Symbolic = Last/@TestGrad\[CapitalPsi][f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4 ];
+	vars = {f[[1]], fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4};
 	Numeric = NGrad[Test\[CapitalPsi], vars, 2];
 	
 	RelativeDiff@@{Symbolic, Numeric}
@@ -1149,15 +1210,21 @@ Test := Module[
 ]
 
 
+Test
+
+
 (*Table[Test//Round, {30}]//MatrixForm*)
-Table[Round@Test, {20}]//MatrixForm
+Table[Test, {1000}]//Max//ScientificForm
 
 
 (* ::Section::Closed:: *)
 (*Compiling*)
 
 
-Module[{ds = Import["Phase_Ds_order_0_to_1.wdx"]}, Ds = ds//.G->UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]];
+SetDirectory[NotebookDirectory[]]
+
+
+Module[{ds = Import["Phase_Ds_order_0_to_3.wdx"]}, Ds = ds//.G->UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]];
 
 
 (*Function to take HoldForm[Block[...]] and make library functions*)
@@ -1165,8 +1232,8 @@ compileThis[x_HoldForm] := Module[
 	{dummy, vars},
 	vars = {
 		{f,  _Real,  1}, fref, 
-		m1,m2,s1x,s1y,s1z,s2x,s2y,s2z, 
-		\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4
+		m1, m2,s1x,s1y,s1z,s2x,s2y,s2z, 
+		\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4
 	};
 	dummy = Hold[
 		Evaluate[vars], 
@@ -1187,7 +1254,7 @@ compileThis[x_HoldForm] := Module[
 <<CompiledFunctionTools`
 
 
-compileThis[Ds[[-15, 2]]]//CompilePrint
+compileThis[Ds[[1, 2]]]//CompilePrint
 
 
 compiledDs = MapAt[
@@ -1295,8 +1362,30 @@ InsAmpExpr  = {
 	U\[ScriptCapitalA]3[\[Eta],M,\[Chi]1,\[Chi]2],U\[ScriptCapitalA]4[\[Eta],M,\[Chi]1,\[Chi]2],
 	U\[ScriptCapitalA]5[\[Eta],M,\[Chi]1,\[Chi]2],U\[ScriptCapitalA]6[\[Eta],M,\[Chi]1,\[Chi]2]} . (\[Omega]insVecAmplitude[\[Omega]]//. {\[Omega] -> f, \[Pi]->1}) + {U\[Rho]1[\[Eta],M,\[Chi]1,\[Chi]2],U\[Rho]2[\[Eta],M,\[Chi]1,\[Chi]2],U\[Rho]3[\[Eta],M,\[Chi]1,\[Chi]2]} . (\[Omega]insvec//.\[Omega]->f);
 
+InsAmpExpr = InsAmpExpr//.U\[ScriptCapitalA]1[\[Eta], M] ->0;
+
 
 InsAmpExpr = InsAmpExpr//.{\[Chi]1->s1z, \[Chi]2->s2z};
+
+
+AuxiliarDefs = <||>;
+Clear@ZeroFunction
+
+ZeroFunction[x__] := 0
+
+
+AuxiliarDefs["Inspiral"] = HoldForm[{
+	Unprotect[Derivative],
+	
+	Derivative[eta_, M_, chi1_, chi2_][\[ScriptCapitalA]3]/;chi1+chi2>1 := ZeroFunction,
+	Derivative[eta_, M_, chi1_, chi2_][\[ScriptCapitalA]4]/;chi1+chi2>2 := ZeroFunction,
+	Derivative[eta_, M_, chi1_, chi2_][\[ScriptCapitalA]5]/;chi1+chi2>1 := ZeroFunction,
+	Derivative[eta_, M_, chi1_, chi2_][\[ScriptCapitalA]6]/;chi1+chi2>2 := ZeroFunction,
+	
+	Derivative[eta_, M_, chi1_, chi2_][\[Rho]1]/;chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_, M_, chi1_, chi2_][\[Rho]2]/;chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_, M_, chi1_, chi2_][\[Rho]3]/;chi1+chi2>3 := ZeroFunction
+}];
 
 
 (* ::Subsection::Closed:: *)
@@ -1375,6 +1464,15 @@ Clear[\[Gamma]2, \[Gamma]3]
 \[Omega]Peak[\[Omega]RD_, \[Omega]DAMP_, \[Gamma]2_, \[Gamma]3_] = If[\[Gamma]2<=1, \[Omega]RD +( \[Omega]DAMP \[Gamma]3 (Sqrt[1- \[Gamma]2^2]-1))/\[Gamma]2, \[Omega]RD +( - \[Omega]DAMP \[Gamma]3 )/\[Gamma]2 ];
 
 
+AuxiliarDefs["rd \[And] dp"] = HoldForm[{
+	Derivative[eta_, chi1_, chi2_][\[Gamma]2]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[eta_,chi1_, chi2_][\[Gamma]3]/; chi1+chi2>3 := ZeroFunction,
+	Derivative[omRD_, omDamp_, gamma2_, gamma3_][\[Omega]Peak]/;omRD + omDamp>1 := ZeroFunction,
+	Derivative[omRD_, omDamp_, gamma2_, gamma3_][\[Omega]Peak]/;gamma3 + omDamp > 2 := ZeroFunction,
+	Derivative[m1_, m2_, s1z_, s2z_][aParallel]/;s1z+s2z > 4 := ZeroFunction
+}];
+
+
 (* ::Subsection::Closed:: *)
 (*MR Amplitude*)
 
@@ -1407,7 +1505,13 @@ Block[
 MRAmpExpr = MRAmpExpr//.{\[Chi]1->s1z, \[Chi]2->s2z};
 
 
-(* ::Subsection::Closed:: *)
+AuxiliarDefs["MR"] = HoldForm[{
+	Derivative[n_, m_][\[Omega]RdDamping]/; n>1 := ZeroFunction,
+	Derivative[eta_, chi1_, chi2_][\[Gamma]1]/; chi1+chi2>3 := ZeroFunction
+}];
+
+
+(* ::Subsection:: *)
 (*Intermediate*)
 
 
@@ -1449,30 +1553,34 @@ v2[\[Eta]_, M_, \[Chi]1_, \[Chi]2_] = With[
 ];
 
 
+ClearAll[\[CapitalDelta]0, \[CapitalDelta]1, \[CapitalDelta]2, \[CapitalDelta]3, \[CapitalDelta]4]
+
+
 {
-		\[CapitalDelta]0[\[Eta]_, M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_],
-		\[CapitalDelta]1[\[Eta]_, M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_],
-		\[CapitalDelta]2[\[Eta]_, M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_],
-		\[CapitalDelta]3[\[Eta]_, M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_],
-		\[CapitalDelta]4[\[Eta]_, M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_]
+		\[CapitalDelta]0[ M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_],
+		\[CapitalDelta]1[ M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_],
+		\[CapitalDelta]2[ M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_],
+		\[CapitalDelta]3[ M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_],
+		\[CapitalDelta]4[ M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_]
 	} = {
 		\[Delta]0[\[Eta],M,f2, f3,v1,v2,v3,d1,d3],\[Delta]1[\[Eta],M,f2, f3,v1,v2,v3,d1,d3],
 		\[Delta]2[\[Eta],M,f2, f3,v1,v2,v3,d1,d3],\[Delta]3[\[Eta],M,f2, f3,v1,v2,v3,d1,d3],
 		\[Delta]4[\[Eta],M,f2, f3,v1,v2,v3,d1,d3]
+		(*\[Delta]i ~ 1/Sqrt[\[Eta]] so \[CapitalDelta]i is not dependent on \[Eta]*)
 	}*((Sqrt[\[Eta]] M^2 \[Omega]^(-7/6))*{1, \[Omega], \[Omega]^2, \[Omega]^3, \[Omega]^4}//. \[Omega]-> G M)//Simplify;
 	
 {
-		\[CapitalDelta]0[\[Eta]_, M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_],
-		\[CapitalDelta]1[\[Eta]_, M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_],
-		\[CapitalDelta]2[\[Eta]_, M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_],
-		\[CapitalDelta]3[\[Eta]_, M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_],
-		\[CapitalDelta]4[\[Eta]_, M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_]
+		\[CapitalDelta]0[ M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_],
+		\[CapitalDelta]1[ M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_],
+		\[CapitalDelta]2[ M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_],
+		\[CapitalDelta]3[ M_, f2_,  f3_, v1_, v2_, v3_, d1_, d3_],
+		\[CapitalDelta]4[ M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_]
 	} = {
-		\[CapitalDelta]0[\[Eta],M,f2,f3,v1,v2,v3,d1,d3],
-		\[CapitalDelta]1[\[Eta],M,f2, f3,v1,v2,v3,d1,d3],
-		\[CapitalDelta]2[\[Eta],M,f2, f3,v1,v2,v3,d1,d3],
-		\[CapitalDelta]3[\[Eta],M,f2, f3,v1,v2,v3,d1,d3],
-		\[CapitalDelta]4[\[Eta],M,f2, f3,v1,v2,v3,d1,d3]
+		\[CapitalDelta]0[M,f2,f3,v1,v2,v3,d1,d3],
+		\[CapitalDelta]1[M,f2, f3,v1,v2,v3,d1,d3],
+		\[CapitalDelta]2[M,f2, f3,v1,v2,v3,d1,d3],
+		\[CapitalDelta]3[M,f2, f3,v1,v2,v3,d1,d3],
+		\[CapitalDelta]4[M,f2, f3,v1,v2,v3,d1,d3]
 	}//.G-> UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]//Simplify;
 
 
@@ -1502,14 +1610,28 @@ Block[
 	
 	
 	IntAmpExpr = {
-		U\[CapitalDelta]0[\[Eta],M,f2,f3,v1,v2,v3,d1,d3],U\[CapitalDelta]1[\[Eta],M,f2,f3,v1,v2,v3,d1,d3],
-		U\[CapitalDelta]2[\[Eta],M,f2,f3,v1,v2,v3,d1,d3],U\[CapitalDelta]3[\[Eta],M,f2,f3,v1,v2,v3,d1,d3],
-		U\[CapitalDelta]4[\[Eta],M,f2,f3,v1,v2,v3,d1,d3]
+		U\[CapitalDelta]0[M,f2,f3,v1,v2,v3,d1,d3],
+		U\[CapitalDelta]1[M,f2,f3,v1,v2,v3,d1,d3],
+		U\[CapitalDelta]2[M,f2,f3,v1,v2,v3,d1,d3],
+		U\[CapitalDelta]3[M,f2,f3,v1,v2,v3,d1,d3],
+		U\[CapitalDelta]4[M,f2,f3,v1,v2,v3,d1,d3]
 	} . (f^(-7/6)*{1, f, f^2, f^3, f^4});
 ]
 
 
 IntAmpExpr = IntAmpExpr//.{\[Chi]1->s1z, \[Chi]2->s2z};
+
+
+AuxiliarDefs["intermediate"] = HoldForm[{
+	Derivative[eta_, M_, chi1_, chi2_][v2]/; chi1+chi2>3 := ZeroFunction,
+	
+	
+	Derivative[M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_][\[CapitalDelta]0]/;v1+v2+v3+d1+d3>1 := ZeroFunction,
+	Derivative[M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_][\[CapitalDelta]1]/;v1+v2+v3+d1+d3>1 := ZeroFunction,
+	Derivative[M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_][\[CapitalDelta]2]/;v1+v2+v3+d1+d3>1 := ZeroFunction,
+	Derivative[M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_][\[CapitalDelta]3]/;v1+v2+v3+d1+d3>1 := ZeroFunction,
+	Derivative[M_, f2_, f3_, v1_, v2_, v3_, d1_, d3_][\[CapitalDelta]4]/;v1+v2+v3+d1+d3>1 := ZeroFunction
+}];
 
 
 (* ::Subsection::Closed:: *)
@@ -1520,7 +1642,7 @@ IntAmpExpr = IntAmpExpr//.{\[Chi]1->s1z, \[Chi]2->s2z};
 	{c = UnitConvert["SpeedOfLight", ("Gigaparsecs")/("Seconds")][[1]], 
 	G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], \[Omega]},
 	\[Omega] = f M G;
-	Sqrt[5/6] c/(2 \[Pi]^(2/3)) G^2 (
+	1/(2 Sqrt[5/(64 \[Pi])]) Sqrt[5/6] c/(2 \[Pi]^(2/3)) G^2 (
 		\[ScriptCapitalA]Ins us\[Theta][0.014 - \[Omega]] + \[ScriptCapitalA]Int us\[Theta][(\[Omega] - 0.014) (\[Omega]Peak - \[Omega])] + \[ScriptCapitalA]MR us\[Theta][(0.2 - \[Omega]) (\[Omega]- \[Omega]Peak)]
 	)
 ];
@@ -1624,12 +1746,23 @@ S\[Beta]Expression = USin\[Beta][
 ]
 
 
+AuxiliarDefs["L2PNR"] = HoldForm[{
+	Derivative[omgp_, eta_][L2PNR]/; eta>3 := ZeroFunction
+}];
+
+
 (* ::Subsection::Closed:: *)
 (*\[Alpha]*)
 
 
 Clear@\[Chi]l
 \[Chi]l[q_, s1z_, s2z_]= s1z + q s2z; (*q<=1*)
+
+
+AuxiliarDefs["chil"] = HoldForm[{
+	Derivative[q_, s1z_, s2z_][\[Chi]l]/; q>1 := ZeroFunction,
+	Derivative[q_, s1z_, s2z_][\[Chi]l]/; s1z+s2z>1 := ZeroFunction
+}];
 
 
 (* ::Subsubsection::Closed:: *)
@@ -1648,7 +1781,7 @@ Clear[Cos\[Theta]Jsf, \[Phi]Jsf]
 
 Cos\[Theta]Jsf[J0x_, J0y_, J0z_] := 1/Sqrt[1 + ((J0x^2 + J0y^2)/(J0z^2)) ];
 
-\[Phi]Jsf[J0x_, J0y_] := ArcTan[J0x, J0y];
+\[Phi]Jsf[J0x_, J0y_, \[Phi]ref_] := If[J0x==0&&J0y==0, \[Pi]/2 - \[Phi]ref, ArcTan[J0x, J0y]];
 
 
 cos\[Theta]JExpression = UCos\[Theta]Jsf[
@@ -1660,11 +1793,12 @@ cos\[Theta]JExpression = UCos\[Theta]Jsf[
 
 \[Phi]JExpression = U\[Phi]Jsf[
 	m1^2 s1x + m2^2 s2x,
-	m1^2 s1y + m2^2 s2y
+	m1^2 s1y + m2^2 s2y,
+	\[Phi]ref
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*\[Alpha]0 \[And] Cos\[Theta]JN*)
 
 
@@ -1707,6 +1841,7 @@ Block[
 	{tmpX, tmpY, tmpZ} = ROTATEY[-thetaJSf, tmpX, tmpY, tmpZ];
 	{tmpX, tmpY, tmpZ} = ROTATEZ[kappa, tmpX, tmpY, tmpZ];
 	(*change y<-> x with respect to Ripple because ArcTan syntax is inverse of jnp.arctan2*)
+	
 	alpha0 = ArcTan[tmpX, tmpY];
 	
 	
@@ -1734,7 +1869,7 @@ Block[{res},
 	
 	Cases[res, x_Symbol, Infinity]//DeleteDuplicates//Echo;
 	
-	\[Alpha]0[Cos\[Theta]JSf_, phiJSf_, phiRef_, incl_] = res;
+	\[Alpha]0[Cos\[Theta]JSf_, phiJSf_, phiRef_, incl_] = If[Abs[res[[1]]]==0. && Abs[res[[2]]]==0., \[Pi], Evaluate@res];
 ]//QuietEcho
 
 
@@ -1816,6 +1951,15 @@ All functions of chil, q, chip, with q<=1
 \[CapitalAlpha]5[q_,chil_, chip_] = NewDictionary["alphacoeff5"];
 
 
+AuxiliarDefs["\[CapitalAlpha]"] = HoldForm[{
+	Derivative[q_][\[CapitalAlpha]1]/; q>1 := ZeroFunction,
+	Derivative[q_, chil_][\[CapitalAlpha]2]/; chil>1 := ZeroFunction,
+	Derivative[q_, chip_][\[CapitalAlpha]3]/; chip>2 := ZeroFunction,
+	Derivative[q_, chil_, chip_][\[CapitalAlpha]4]/; chil>1|| chip>2 := ZeroFunction,
+	Derivative[q_, chil_, chip_][\[CapitalAlpha]5]/; chil>2 || chip>4 := ZeroFunction 
+}];
+
+
 (* ::Subsubsection::Closed:: *)
 (*\[Alpha] expr*)
 
@@ -1867,6 +2011,12 @@ Tm2mExpression = UT2m[
 	-S\[Beta]Expression,
 	-Cos\[Theta]JNExpression
 ];
+
+
+AuxiliarDefs["T2m"] = HoldForm[{
+	Derivative[alpha_, cos\[Beta]_, sin\[Beta]_, cos\[Theta]_][T2m]/; cos\[Beta] + sin\[Beta] > 4 := ZeroFunction,
+	Protect[Derivative];
+}];
 
 
 (* ::Subsection::Closed:: *)
@@ -1963,66 +2113,6 @@ Block[
 
 
 (* ::Section::Closed:: *)
-(*Detector Pattern Functions*)
-
-
-f1[\[Theta]_, \[Phi]_, D11_, D12_, D13_, D22_, D23_, D33_] = Module[
-	{expr},
-	expr = (
-		(D22 - D11 Cos[\[Theta]]^2) Cos[\[Phi]]^2
-		- D33 Sin[\[Theta]]^2
-		+ Sin[2 \[Theta]] (D13 Cos[\[Phi]] + D23 Sin[\[Phi]])
-		+ (D11 - D22 Cos[\[Theta]]^2) Sin[\[Phi]]^2
-		- D12 Sin[2 \[Phi]] (1+Cos[\[Theta]]^2)
-	);
-	
-	expr = (expr)//.{Cos[d_]^2 :> (1+ Cos[2 d])/2, Sin[d_]^2 :> (1- Cos[2 d])/2 };
-	
-	
-	expr//Simplify
-] 
-
-
-f2[\[Theta]_, \[Phi]_, D11_, D12_, D13_, D22_, D23_] = (
-	2 Sin[\[Theta]] (D13 Sin[\[Phi]] - D23 Cos[\[Phi]]) +
-	Cos[\[Theta]] (2 D12 Cos[2 \[Phi]] + (D22-D11) Sin[2 \[Phi]])
-)//Simplify
-
-
-Fplus[\[Theta]_, \[Phi]_,\[Psi]_, D11_, D12_, D13_, D22_, D23_, D33_] = (
-	Cos[2 \[Psi]] f1[\[Theta], \[Phi], D11, D12, D13, D22, D23, D33] + 
-	Sin[2 \[Psi]] f2[\[Theta], \[Phi], D11, D12, D13, D22, D23]
-);
-
-Fx[\[Theta]_, \[Phi]_,\[Psi]_, D11_, D12_, D13_, D22_, D23_, D33_] = (
-	- Sin[2 \[Psi]] f1[\[Theta], \[Phi], D11, D12, D13, D22, D23, D33] +
-	Cos[2 \[Psi]] f2[\[Theta], \[Phi], D11, D12, D13, D22, D23]
-);
-
-
-FpPlusFc[\[Theta]_, \[Phi]_,\[Psi]_, D11_, D12_, D13_, D22_, D23_, D33_] = (
-	Fplus[\[Theta],\[Phi],\[Psi],D11,D12,D13,D22,D23,D33] + 
-	I Fx[\[Theta],\[Phi],\[Psi],D11,D12,D13,D22,D23,D33]
-)//FullSimplify;
-
-FpMinusFc[\[Theta]_, \[Phi]_, \[Psi]_, D11_, D12_, D13_, D22_, D23_, D33_] = (
-	Fplus[\[Theta],\[Phi],\[Psi],D11,D12,D13,D22,D23,D33] -
-	I Fx[\[Theta],\[Phi],\[Psi],D11,D12,D13,D22,D23,D33]
-)//FullSimplify;
-
-
-\[CapitalDelta]t2[p1_, p2_, p3_, \[Theta]_, \[Phi]_] = Module[
-	{\[Delta], r, c = UnitConvert["SpeedOfLight"][[1]], detectorposition},
-	
-	r = FromSphericalCoordinates[{1, \[Theta], \[Phi]}];
-	
-	detectorposition = {p1,p2,p3};
-	
-	(detectorposition . r/c)
-]
-
-
-(* ::Section::Closed:: *)
 (*Making Block Function*)
 
 
@@ -2065,7 +2155,6 @@ AmpDefs["Ins"] = Block[
 	
 	HoldForm[{
 		\[ScriptCapitalA]0[\[Eta]_,  M_] := a0, 
-		\[ScriptCapitalA]1[\[Eta]_, M_] := a1, 
 		\[ScriptCapitalA]2[\[Eta]_, M_] := a2, 
 		\[ScriptCapitalA]3[\[Eta]_, M_, s1z_, s2z_] := a3, 
 		\[ScriptCapitalA]4[\[Eta]_, M_, s1z_, s2z_] := a4, 
@@ -2093,7 +2182,7 @@ AmpDefs["MR"] = HoldForm[{
 	
 	re\[Omega][\[Chi]_] := r,
 	im\[Omega][\[Chi]_] := i,
-	(*Erad[\[Eta]_, \[Chi]1_, \[Chi]2_] = erad,*)
+	
 	\[Omega]RdDamping[int_, Erad_] := s,
 	\[Omega]Peak[\[Omega]RD_, \[Omega]DAMP_, \[Gamma]2_, \[Gamma]3_] := If[\[Gamma]2<=1, \[Omega]RD +( \[Omega]DAMP \[Gamma]3 (Sqrt[1- \[Gamma]2^2]-1))/\[Gamma]2, \[Omega]RD +( - \[Omega]DAMP \[Gamma]3 )/\[Gamma]2 ]
 }]/.{
@@ -2106,10 +2195,11 @@ AmpDefs["MR"] = HoldForm[{
 AmpDefs["Int"] = Block[
 	{rule, defs},
 	defs = {
-		\[CapitalDelta]0[\[Eta],M,f2,f3,v1,v2,v3,d1,d3],\[CapitalDelta]1[\[Eta],M,f2,f3,v1,v2,v3,d1,d3],
-		\[CapitalDelta]2[\[Eta],M,f2,f3,v1,v2,v3,d1,d3],
-		\[CapitalDelta]3[\[Eta],M,f2,f3,v1,v2,v3,d1,d3],
-		\[CapitalDelta]4[\[Eta],M,f2,f3,v1,v2,v3,d1,d3],
+		\[CapitalDelta]0[M,f2,f3,v1,v2,v3,d1,d3],
+		\[CapitalDelta]1[M,f2,f3,v1,v2,v3,d1,d3],
+		\[CapitalDelta]2[M,f2,f3,v1,v2,v3,d1,d3],
+		\[CapitalDelta]3[M,f2,f3,v1,v2,v3,d1,d3],
+		\[CapitalDelta]4[M,f2,f3,v1,v2,v3,d1,d3],
 		v2[\[Eta], M, \[Chi]1, \[Chi]2]
 	};
 	
@@ -2119,11 +2209,11 @@ AmpDefs["Int"] = Block[
 	];
 
 	HoldForm[{
-		\[CapitalDelta]0[\[Eta]_, M_,f2_, f3_, v1_, v2_, v3_, d1_, d3_] := D0,
-		\[CapitalDelta]1[\[Eta]_, M_,f2_, f3_, v1_, v2_, v3_, d1_, d3_] :=D1,
-		\[CapitalDelta]2[\[Eta]_, M_,f2_, f3_, v1_, v2_, v3_, d1_, d3_] := D2,
-		\[CapitalDelta]3[\[Eta]_, M_,f2_, f3_, v1_, v2_, v3_, d1_, d3_] := D3,
-		\[CapitalDelta]4[\[Eta]_, M_,f2_,f3_, v1_, v2_, v3_, d1_, d3_] := D4,
+		\[CapitalDelta]0[M_,f2_, f3_, v1_, v2_, v3_, d1_, d3_] := D0,
+		\[CapitalDelta]1[ M_,f2_, f3_, v1_, v2_, v3_, d1_, d3_] :=D1,
+		\[CapitalDelta]2[ M_,f2_, f3_, v1_, v2_, v3_, d1_, d3_] := D2,
+		\[CapitalDelta]3[ M_,f2_, f3_, v1_, v2_, v3_, d1_, d3_] := D3,
+		\[CapitalDelta]4[ M_,f2_,f3_, v1_, v2_, v3_, d1_, d3_] := D4,
 		v2[\[Eta]_, M_, \[Chi]1_, \[Chi]2_] := V2
 	}]/.rule
 
@@ -2141,7 +2231,7 @@ AmpDefs["PV2Exclusive"] = HoldForm[{
 	Cos\[Beta][L0_, Sp_, SL_] := cbeta,
 	Sin\[Beta][L0_, Sp_, SL_] := sbeta,
 	Cos\[Theta]Jsf[J0x_, J0y_, J0z_] := 1/Sqrt[1 + ((J0x^2 + J0y^2)/(J0z^2)) ],
-	\[Phi]Jsf[J0x_, J0y_] := ArcTan[J0x, J0y],
+	\[Phi]Jsf[J0x_, J0y_, \[Phi]ref_] := If[J0x==0&&J0y==0, \[Pi]/2 - \[Phi]ref, ArcTan[J0x, J0y]],
 	Cos\[Theta]JN[incl_,Cos\[Theta]JSf_, phiJSf_, phiRef_] := c\[Theta],
 	\[Alpha]0[Cos\[Theta]JSf_, phiJSf_, phiRef_, incl_] := res,
 	\[CapitalAlpha]1[q_] := a1,
@@ -2161,26 +2251,6 @@ AmpDefs["PV2Exclusive"] = HoldForm[{
 };
 
 
-AmpDefs["FpFc"] = HoldForm[{
-	FpPlusFc[\[Theta]_, \[Phi]_,\[Psi]_, D11_, D12_, D13_, D22_, D23_, D33_] := FPPLUSFC,
-	FpMinusFc[\[Theta]_, \[Phi]_,\[Psi]_, D11_, D12_, D13_, D22_, D23_, D33_] := FPMINUSFC,
-	\[CapitalDelta]t2[p1_, p2_, p3_, \[Theta]_, \[Phi]_] := timeDelay
-}]/.{
-	FPPLUSFC -> FpPlusFc[\[Theta],\[Phi],\[Psi],D11,D12,D13,D22,D23,D33],
-	FPMINUSFC->FpMinusFc[\[Theta],\[Phi],\[Psi],D11,D12,D13,D22,D23,D33],
-	timeDelay-> \[CapitalDelta]t2[p1,p2, p3, \[Theta], \[Phi]]
-};
-
-
-(*AmpDefs["Commute D"] = HoldForm[{
-	(*Commute D with \[Phi]IMR*)
-	\[ScriptCapitalA]IMR/: D[\[ScriptCapitalA]IMR[x__], n___] := With[
-		{args = D[#, n]&/@({x}[[1;;3]])},
-		\[ScriptCapitalA]IMR@@(Join[args, {x}[[4;;6]]])
-	]
-}];*)
-
-
 (*Make rules to eliminate U*)
 AllFunctionHeads = (AmpDefs//Values)[[All, 1, All, 1,0]]//Flatten//DeleteDuplicates;
 AllFunctionHeads = DeleteElements[AllFunctionHeads, {Symbol}];
@@ -2197,11 +2267,16 @@ Module[{undefined =  ("U" <> #)&/@(ToString/@AllFunctionHeads)},
 FinalExpr = Module[
 	{dummy},
 	dummy = HoldForm[{
-		aIMR/2 (Exp[2 I zeta] FplusPlusFcross t2m  + Exp[-2 I zeta] FplusMinusFcross tm2m) Exp[-I 2 \[Pi] f \[Delta]t]
+		aIMR/2 {(*hp*)
+			Exp[2 I zeta] t2m  + Exp[-2 I zeta] tm2m,
+			(*hc*)
+			I Exp[2 I zeta] t2m - I Exp[-2 I zeta] tm2m
+		}
 	}]/.{
-		aIMR->\[ScriptCapitalA]IMRExpr, zeta-> \[Zeta]Expression, FplusPlusFcross-> UFpPlusFc[\[Theta],\[Phi],\[Psi],D11,D12,D13,D22,D23,D33],t2m ->T2mExpression,
-		FplusMinusFcross-> UFpMinusFc[\[Theta],\[Phi],\[Psi],D11,D12,D13,D22,D23,D33], tm2m-> Tm2mExpression, \[Delta]t-> U\[CapitalDelta]t2[p1,p2,p3,\[Theta],\[Phi]],
-		alpha->\[Alpha]Expression, aMR-> MRAmpExpr
+		aIMR->\[ScriptCapitalA]IMRExpr, 
+		zeta-> \[Zeta]Expression,
+		t2m ->T2mExpression,
+		tm2m-> Tm2mExpression
 	};
 
 	dummy//.Headrules
@@ -2210,6 +2285,9 @@ FinalExpr = Module[
 
 defs = Module[
 	{functionDefs = AmpDefs//Values, orderedDefs},
+	
+	functionDefs = Join[functionDefs, Values[AuxiliarDefs]];
+	
 	functionDefs = HoldForm@@@#&/@functionDefs; (*{HoldForm[HoldForm[]], HoldForm[HoldForm[]],...}*)
 	orderedDefs = {HoldForm@@@varsDefs, functionDefs, HoldForm@@@FinalExpr}//Flatten; (*{HoldForm[HoldForm[]], HoldForm[HoldForm[]],...}*)
 	orderedDefs = Flatten[HoldForm@@orderedDefs]; (*HoldForm[allDefs]*)
@@ -2238,24 +2316,21 @@ Combinations[vars_List, n_Integer]/;n>0 := Module[
 ]
 
 
-vars = {m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota], \[Theta], \[Phi], \[Psi]};
+vars = {m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota]};
 
 
 (*All derivatives up to order 3*)
-derivatives = Combinations[vars, 1];
+derivatives = Combinations[vars, 2];
 PrependTo[derivatives, {}];
 
 
-derivatives
-
-
 With[{
-	vars = {f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota], \[Theta], \[Phi], \[Psi], p1, p2, p3, D11, D12, D13, D22, D23, D33}
+	vars = {f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota]}
 	},
 	expr =  Hold[
 		{test, vars, derivatives},
 		Evaluate@$blockexpr,
-		"KeepDefs" -> KeepDefs,
+		(*"KeepDefs" -> KeepDefs,*)
 		"IncludeZeroDerivative"->False
 	]//.HoldForm[X_] :> X;
 ]
@@ -2264,22 +2339,25 @@ With[{
 <<FelipeBarbosa`SymDALI`
 
 
+Remove["$x*"]//Quiet
+
 Ds = MemoryConstrained[
 	DerivativeRules@@expr,
-	8 10^9]//EchoTiming;
+	4 10^9]//EchoTiming;
 
 
-Block[
+Clear@test
+test[i_]:=Block[
 	{testF,
-	m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota], \[Theta], \[Phi], \[Psi],
-	f, fref,p1, p2, p3, D11, D12, D13, D22, D23, D33,
+	m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota], 
+	f, fref,
 	 M, G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]
 	},
 	
-	{p1, p2, p3, D11, D12, D13, D22, D23, D33} = ConstantArray[0, 9];
-	D22 = 1;
 	
-	testF[f_, fref_, m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_,\[Theta]_,\[Phi]_,\[Psi]_] = Ds[[1,2]]; 
+	
+	
+	testF[f_, fref_, m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_] = Ds[[i,2]]; 
 	DownValues[testF] = DownValues[testF]//. HoldForm[x_] :> x;
 	
 	
@@ -2287,21 +2365,24 @@ Block[
 	{s1x,s1y,s1z}  = RandomReal[{-1,1},3];
 	{s2x,s2y,s2z}  = RandomReal[{-1,1},3];
 	
-	{\[Phi]ref, \[Phi]}= RandomReal[{0, 2 \[Pi]}, 2];
-	{\[Theta], \[Iota], \[Psi]} = RandomReal[{0, \[Pi]}, 3];
+	{\[Phi]ref}= RandomReal[{0, 2 \[Pi]}, 1];
+	{\[Iota]} = RandomReal[{0, \[Pi]}, 1];
 	
 	f = RandomReal[{10, 0.2/(G (m1+m2))}];
 	fref=10;
 
 	
-	testF[f,fref,m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Phi]ref,\[Iota],\[Theta],\[Phi],\[Psi]]
+	testF[f,fref,m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Phi]ref,\[Iota]]
 ](*//Cases[#, x_Symbol, Infinity]&//DeleteDuplicates*)
+
+
+Table[test[i], {i, Length@Ds}]
 
 
 SetDirectory[NotebookDirectory[]]
 
 
-Export["Amp_Ds_order_0_to_1.wdx", Ds]
+Export["Amp_Ds_order_0_to_2.wdx", Ds]
 
 
 (* ::Section::Closed:: *)
@@ -2328,7 +2409,7 @@ Ds = Import["Amp_Ds_order_0_to_1.wdx"];
 Block[{g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
 	
 	ClearAll[Test\[ScriptCapitalA]];
-	Test\[ScriptCapitalA][f_, fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_,\[Theta]_,\[Phi]_,\[Psi]_] = Ds[[1,2]]//.G -> g;
+	Test\[ScriptCapitalA][f_, fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_] = Ds[[1,2]]//.G -> g;
 
 ]
 DownValues[Test\[ScriptCapitalA]] = DownValues[Test\[ScriptCapitalA]]//.HoldForm[x_]:> x;
@@ -2382,10 +2463,6 @@ def Ripple_hp(f, f_ref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, dL, tc,iota, phi_r
 (*Note that *)
 
 
-Fplus[0,0,0,0,0,0,1,0,0]
-Fx[0,0,0,0,0,0,1,0,0]
-
-
 Clear@Test
 
 Test := Block[
@@ -2409,10 +2486,12 @@ Test := Block[
 	\[Iota] = RandomReal[{0, \[Pi]}];
 	
 	f = Range[10., 0.2/(G (m1+m2)), 1.];
-	
-	MMA = 10^3/(2 Sqrt[5/(64 \[Pi])] ) Test\[ScriptCapitalA][f, 10, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref,\[Iota], \[Theta], \[Phi],\[Psi]];
+		(*10^3 bcs I use Gpc and Ripple Mpc*)
+	MMA = 10^3 Test\[ScriptCapitalA][f, 10, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref,\[Iota]][[1]];
 	
 	Ripplehp = R\[ScriptCapitalA][f,10, m1,m2,s1x,s1y,s1z,s2x,s2y,s2z, 1, 0, \[Iota],\[Phi]Ref];
+	
+	
 	
 	ReMMA = Re[MMA];
 	ReRipple = Re[Ripplehp];
@@ -2474,6 +2553,10 @@ Test := Block[
 ]
 
 
+(* ::Text:: *)
+(*As usual the relative difference is small, with peaks where the function cross zero*)
+
+
 Test
 
 
@@ -2500,13 +2583,13 @@ NGrad[f_, vars_, n_] := Module[
 ]
 
 
-{SymRules, NRules} =  DerivativeRulesLoad["IMRPhenomPv2"];
+(*{SymRules, NRules} =  DerivativeRulesLoad["IMRPhenomPv2"];*)
 
 
-NRules["\[ScriptA]IMR"][[1]]
+(*NRules["\[ScriptA]IMR"][[1]]*)
 
 
-(*Symbolic grad from compiled functions*)
+(*(*Symbolic grad from compiled functions*)
 
 Block[
 	{p1, p2, p3, D11, D12, D13, D22, D23, D33, args},
@@ -2526,21 +2609,21 @@ Block[
 	]
 ];
 DownValues[TestGrad\[ScriptCapitalA]] = DownValues[TestGrad\[ScriptCapitalA]]//.HoldForm[x_]:> x;
-
+*)
 
 
 (*BELOW IS THE DEFINITION FOR BLOCK FUNCTIONS*)
 
 
-(*Block[{g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
+Block[{g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
 	
 	
 	ClearAll[TestGrad\[ScriptCapitalA]];
 	
-	TestGrad\[ScriptCapitalA][f_, fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_,\[Theta]_,\[Phi]_,\[Psi]_] = Ds[[2;;-1, 2]]//.G->g;
+	TestGrad\[ScriptCapitalA][f_, fref_,m1_,m2_,s1x_,s1y_,s1z_,s2x_,s2y_,s2z_,\[Phi]ref_,\[Iota]_] = Ds[[2;;-1, 2]]//.G->g;
 
 ]
-DownValues[TestGrad\[ScriptCapitalA]] = DownValues[TestGrad\[ScriptCapitalA]]//.HoldForm[x_]:> x;*)
+DownValues[TestGrad\[ScriptCapitalA]] = DownValues[TestGrad\[ScriptCapitalA]]//.HoldForm[x_]:> x;
 
 
 RandomSpin[] := Module[
@@ -2553,40 +2636,34 @@ RandomSpin[] := Module[
 Clear@Test
 Test := Block[
 	{
-		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, f, Symbolic,Numeric, RRe, MMARe, RIm, MMAIm, \[Chi]s, \[Chi]a,diff,fref,\[Phi]ref, \[Iota],
-		\[Theta], \[Phi], \[Psi], G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], vars,
-		D12, D13, D23, D11, D22, D33, p1, p2, p3, Rediff, Imdiff
+		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, f, Symbolic,Numeric, RRe, MMARe, RIm, MMAIm, \[Chi]s, \[Chi]a,diff,fref,\[Phi]ref, 
+		\[Iota], G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]],
+		vars, Rediff, Imdiff, r1, r2, r3, r4
 	},
-	
-	
-	
-	{D12, D13, D23} = {0,0,0};
-	{D11, D22, D33} = {1,0,1};
-	{p1, p2, p3} = {1,1,1};
-	
 	
 	{m1, m2} = ReverseSort[RandomReal[{20, 100},2]];
 	
 	{s1x, s1y, s1z} = RandomSpin[];
 	{s2x, s2y, s2z} = RandomSpin[];
 	
-	f = RandomReal[{10., 0.2/(G (m1+m2))}]//List;
+	f = RandomReal[{10., 0.2/(G (m1+m2))}];
 	fref = RandomReal[10];
-	{\[Phi]ref, \[Phi]} = RandomReal[{0, 2 \[Pi]},2];
-	{\[Theta], \[Iota], \[Psi]}  = RandomReal[{0, \[Pi]}, 3];
+	\[Phi]ref = RandomReal[{0, 2 \[Pi]}];
+	\[Iota]  = RandomReal[{0, \[Pi]}];
 	
 	
-	Symbolic = Last/@TestGrad\[ScriptCapitalA][f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota], \[Theta], \[Phi], \[Psi]];
-	vars = {f[[1]], fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota], \[Theta], \[Phi], \[Psi]};
+	Symbolic = TestGrad\[ScriptCapitalA][f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota]];
+	vars = {f, fref, m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]ref, \[Iota]};
 	Numeric = NGrad[Test\[ScriptCapitalA], vars, 2];
+	(*r1: diff between the Ap gradient*)
+	r1 = RelativeDiff@@{Symbolic[[All,1]], Numeric[[All,1]]};
+	(*r2 = diff between the Ac gradient*)
+	r2 = RelativeDiff@@{Symbolic[[All, 2]], Numeric[[All,2]]};
 	
-	Rediff = RelativeDiff@@{Abs@Symbolic, Abs@Numeric};
-	Imdiff = RelativeDiff@@{Arg@Symbolic, Arg@Numeric};
-	
-	{
-		Rediff,
-		Imdiff
-	}//Transpose//Round//MatrixForm
+	Max/@{
+		r1,
+		r2
+	}
 
 	
 	
@@ -2595,14 +2672,24 @@ Test := Block[
 ]
 
 
-Table[Test, {50}]
+Test//ScientificForm
+
+
+(* ::Text:: *)
+(*This takes some time*)
+
+
+Table[Test, {500}]//Max
 
 
 (* ::Section:: *)
 (*Compiling*)
 
 
-Module[{ds = Import["Amp_Ds_order_0_to_1.wdx"]}, Ds = ds//.G->UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]];
+SetDirectory[NotebookDirectory[]]
+
+
+Module[{ds = Import["Amp_Ds_order_0_to_2.wdx"]}, Ds = ds//.G->UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]];
 
 
 compileThis[x_HoldForm] := Module[
@@ -2610,9 +2697,7 @@ compileThis[x_HoldForm] := Module[
 	dummy = Hold[
 		{
 			{f, _Real, 1}, fref,
-			m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Phi]ref,\[Iota],
-			\[Theta],\[Phi],\[Psi],
-			p1,p2,p3,D11,D12,D13,D22,D23,D33
+			m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Phi]ref,\[Iota]
 		
 		}, 
 		Evaluate[x],
@@ -2630,7 +2715,8 @@ compileThis[x_HoldForm] := Module[
 
 
 <<CompiledFunctionTools`
-compileThis[Ds[[-1, 2]]]//CompilePrint
+(*ctrl +f for MainEvaluate, there shoudn't be any*)
+compileThis[Ds[[5, 2]]]//CompilePrint
 
 
 compiledDs = MapAt[
@@ -2887,7 +2973,7 @@ Test := Block[
 Test
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Rosetta Stone*)
 
 
@@ -2925,7 +3011,7 @@ SetDirectory[NotebookDirectory[]]
 Dterms =Block[
 	{Ds},
 	
-	Ds = Import["Phase_Ds_order_0_to_1.wdx"];
+	Ds = Import["Phase_Ds_order_0_to_3.wdx"];
 	
 	Ds[[All,1]]
 ];
@@ -2936,7 +3022,7 @@ Dterms = Dterms//.test->\[CapitalPhi]IMR;
 phis = Block[
 	{Cvariables},
 	
-	Cvariables= ConstantArray[{Real, 0},25];
+	Cvariables= ConstantArray[{Real, 0},24];
 	
 	Cvariables = Join[{{Real,1}}, Cvariables];
 
@@ -2977,21 +3063,21 @@ Module[
 ];
 
 
-Dterms\[ScriptCapitalA] =Module[ {Ds = Import["Amp_Ds_order_0_to_1.wdx"]}, Ds[[All,1]]];
+Dterms\[ScriptCapitalA] =Module[ {Ds = Import["Amp_Ds_order_0_to_2.wdx"]}, Ds[[All,1]]];
 
 
 Dterms\[ScriptCapitalA] = Dterms\[ScriptCapitalA]//.test->\[ScriptA]IMR;
 
 
-Dterms\[ScriptCapitalA][[1]]
+Dterms\[ScriptCapitalA][[2]]
 
 
 \[ScriptCapitalA]s = MapThread[
 	(#1 -> LF[
 		#2, 
 		FileBaseName[#2], 
-		Join[{{Real, 1}}, ConstantArray[{Real,0}, 23]],
-		{Complex, 1}
+		Join[{{Real, 1}}, ConstantArray[{Real,0}, 11]],
+		{Complex, 2}
 	])&,
 	
 	{Dterms\[ScriptCapitalA], list\[ScriptCapitalA]}
@@ -3001,7 +3087,7 @@ Dterms\[ScriptCapitalA][[1]]
 \[ScriptCapitalA]s2 = \[ScriptCapitalA]s//.{($D[{n__}, \[ScriptA]IMR][x__] -> LF[y__]) :>  TagRule[\[ScriptA]IMR, $D[{n}, \[ScriptA]IMR][x],  LF[y]]};
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Exporting files*)
 
 
