@@ -21,7 +21,8 @@ PacletObject[
             {"FelipeBarbosa`SymDALI`Detectors`", "Detectors.wl"}, 
             {"FelipeBarbosa`SymDALI`DerivativeTools`", "DerivativeTools.wl"}, 
             {"FelipeBarbosa`SymDALI`DALIPolynomial`", "DALIPolynomial.wl"},
-            {"FelipeBarbosa`SymDALI`Likelihood`", "Likelihood.wl"}
+            {"FelipeBarbosa`SymDALI`Population`", "Population.wl"},
+            {"FelipeBarbosa`SymDALI`Utils`", "Utils.wl"}
         }
       },
       {

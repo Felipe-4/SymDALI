@@ -1,88 +1,35 @@
 (* ::Package:: *)
 
-(*SetOptions[EvaluationNotebook[], DefaultNewCellStyle->"Code"]
-Needs["maTHEMEatica`"]
-colors=<|
-	"background"->RGBColor["#000000"],
-	"fontcolor"->RGBColor["#eeeeee"],
-	"primary"->RGBColor["#B87333"],
-	"variable"->RGBColor["#55f7df"],
-	"module"->RGBColor["#e638e9"],
-	"block"->RGBColor["#FFFF00"],
-	"error"->RGBColor["#FF0000"],
-	"headhighlight"->RGBColor["#02584c"]
-|>;
-SetColors[colors]
-CreateStyleSheet[]
-ApplyStyleSheet[]*)
-
-
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Package Header*)
 
 
-BeginPackage["FelipeBarbosa`SymDALI`DALICoefficients`"];
+BeginPackage["FelipeBarbosa`SymDALI`DALICoefficients`", {"FelipeBarbosa`SymDALI`DerivativeTools`"}];
 
 
-DALICoefficients::usage="DALICoefficients[h_, {vars_List, fp_List, n_Integer}, {Cov_, Diag_?BooleanQ}, SymRules_:<||>, NRules_:<||>]";
-
-
-GWDALICoefficients::usage="
-Assuming
-                      ln(\[ScriptCapitalL]) = - \!\(\*FractionBox[\(1\), \(2\)]\)(g-h, g-h)   and  (u,\[Nu]) \[Congruent] 4 \[ScriptCapitalR] \!\(\*SubsuperscriptBox[\(\[Integral]\), \(0\), \(\[Infinity]\)]\)  \!\(\*FractionBox[\(\*OverscriptBox[\(u\), \(~\)]\[Conjugate]  \((\[ScriptF])\)\\\ \*OverscriptBox[\(\[Nu]\), \(~\)] \((\[ScriptF])\)\), \(\*SubscriptBox[\(S\), \(n\)] \((\[ScriptF])\)\)]\) d\[ScriptF],
-the \!\(\*
-StyleBox[\"call\", \"Code\"]\)
-             GWDALICoefficients[\!\(\*OverscriptBox[\(h\), \(~\)]\), {{\!\(\*SubscriptBox[\(p\), \(1\)]\),\!\(\*SubscriptBox[\(p\), \(2\)]\),...}, {\!\(\*SubscriptBox[\(p0\), \(1\)]\), \!\(\*SubscriptBox[\(p0\), \(2\)]\),...}, n}, Sn, {fmin, fmax, \[CapitalDelta]f}],
-generates the list of coefficients for the DALI expansion with respect to {\!\(\*SubscriptBox[\(p\), \(1\)]\),\!\(\*SubscriptBox[\(p\), \(2\)]\),...}, around {\!\(\*SubscriptBox[\(p0\), \(1\)]\),\!\(\*SubscriptBox[\(p0\), \(2\)]\),..}
-to order n in derivatives, where Sn = {\!\(\*SubscriptBox[\(S\), \(n\)]\)(\!\(\*SubscriptBox[\(f\), \(1\)]\)), \!\(\*SubscriptBox[\(S\), \(n\)]\)(\!\(\*SubscriptBox[\(f\), \(2\)]\)), ...} and \!\(\*OverscriptBox[\(h\), \(~\)]\) = \!\(\*OverscriptBox[\(h\), \(~\)]\)(\!\(\*SubscriptBox[\(p\), \(\[Alpha]\)]\),f).
-";
-
-iGWDALICoefficients::usage="iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, f1_, \[CapitalDelta]f_}, PSD_, SymRules_, NRules_]";
-
-
-CalculateGrads::usage="iCalculateGrads[head_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List,tensorRank_Integer, dim]
-
-head: function head, such that head[p1,...,pn, X1,...,Xm] gives the array.
-Orighs: heads that appear in the explicit expression head[p1,...,pn, X1,...,Xm].
-uniquehs: uniqueHeads for which UpValues were defined from NRules. 
-OpsPoints: set of values to pass to the function in the form of {pf1,pf2,..., XV1, XV2, ...}
-tensorRank: tensorRank of head[p1,...,pn, X1,...,Xm].
-dim: dimension of the square array
-
-Output: LI components of the gradient. 
-
-* \"tensorRank===0\" evaluates the scalar at ObsPoints {...}.
-*\"iCalculateGrads\" assumes that Attributes[h] = {Listable}, i.e., if any of the XVi happen to be a vector the \"head[..., XVi,...]\"automatically
-distributes over the values of XVi, implying that the result is a matrix where each row represents 1 LI component
-evaluated at several different points.
-
-
-Example1:
->>>Block[
-	{h, obs = {2,3,4,Range[1,5]}},
-	h[x_,y_,z_,w_] = {{(x+y+z) w, (x+y+z) Power[w,2]}, {0, (x+y+z) Sqrt[w]}};
-	Print[2+3+4];
-	CalculateGrads[h, {},{}, obs, 2, 2]
-]
->>>9
->>>\[LeftAssociation]{1,1}\[Rule]{9,18,27,36,45},{1,2}\[Rule]{9,36,81,144,225},{2,2}\[Rule]{9,9 \!\(\*SqrtBox[\(2\)]\),9 \!\(\*SqrtBox[\(3\)]\),18,9 \!\(\*SqrtBox[\(5\)]\)}\[RightAssociation]
-
-Example2:
->>>Block[
-	{h, obs = {2,3,4, Range[0,5]}},
-	h[x_,y_,z_,w_] = (x+y+z) w;
-	Print[2+3+4];
-	CalculateGrads[h, {},{}, obs,0, 3]
-]
->>>9
->>>\[LeftAssociation]{0}\[Rule]{0,9,18,27,36,45}\[RightAssociation]";
+Unprotect@DALITensors;
+ClearAll@DALITensors
 
 
 Begin["`Private`"];
 
 
+(*Get["/Users/felipe/Documents/GitHub/SymDALI/Kernel/DerivativeTools.wl"]
+PacletDirectoryLoad["/Users/felipe/Documents/GitHub"];*)
+
+
 (* ::Section:: *)
 (*Definitions*)
+
+
+Unprotect[
+	SymRules, NRules,iFpFc,ihphcIMRPhenomD, ihphcIMRPhenomPv2, \[ScriptA]IMR, \[CapitalPhi]IMR, FpFc
+];
+
+
+ClearAll[
+	SymRules, NRules,iFpFc, ihphcIMRPhenomD, ihphcIMRPhenomPv2, \[ScriptA]IMR, \[CapitalPhi]IMR, FpFc
+]
 
 
 <<Developer`
@@ -99,7 +46,7 @@ GenMessage[True, mess_] := True;
 GenMessage[False, mess_] := With[{}, Message[mess]; False]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Make Gradients*)
 
 
@@ -137,14 +84,19 @@ CreateHeads[{SymRules___Rule}] := Module[
 CreateHeads[x___] := Throw[$Failed, failTag[CreateHeads]]
 
 
-(*Assuming the lhs is either Condition[$D[{n__}, h], cond] -> something or $D[{n__}, h]-> something*)
+(*
+Assuming the lhs is either Condition[$D[{n__}, h], cond] -> something or $D[{n__}, h]-> something
+it returns "h"
+*)
+GetSymRuleHead//ClearAll
 GetSymRuleHead[def_Rule]/;def[[1,0]] === Condition := def[[1, 1,-1]]
 GetSymRuleHead[def_Rule]/; def[[1,0]] === $D := def[[1,-1]]
 GetSymRuleHead[x___] :=Throw[$Failed, failTag[GetSymRuleHead]]
 
 
+ClearAll@SymUpValues
 SymUpValues::usage="SymUpValues[{SymRules___Rule}, AuxHead_]
-{SymRules}: Flat SymRules List, i.e. Flatten[Values@SymRules]
+{SymRules}: Flat SymRules List, where all the rules belong to the same head.
 AuxHead: head such that AuxHead[xi] = headi, where xi and headi are corresponding head-number pairs from \"CreateHeads\".
 Output: None. It defines the following kind of UpValues  f/: $D[n__, f] = hi, for all expressions in SymRules.
 
@@ -170,7 +122,6 @@ Example:
 	{}
 }";
 
-SymUpValues[{}, AuxHead_Symbol] := Null
 
 SymUpValues[{SymRules__Rule}, AuxHead_Symbol] := Module[
 	{iList, dummyFunction,  head = GetSymRuleHead[{SymRules}[[1]]]},
@@ -189,17 +140,25 @@ SymUpValues[{SymRules__Rule}, AuxHead_Symbol] := Module[
 SymUpValues[x___] := Throw[$Failed, failTag[SymUpValues]]
 
 
+ProcessSymRules//ClearAll
+
 ProcessSymRules::usage="ProcessSymRules[SymRules_Association]
 SymRules: Association with SymRules for all heads
 Output: list of all heads such that head[x___] = number_i, for some number_i in the SymRules";
 
-ProcessSymRules[SymRules_Association] := Module[
+
+ProcessSymRules[<||>] := 1
+
+
+ProcessSymRules[SymRules_Association]/;Length[SymRules]>0 := Module[
 	{headNumberPair, aux},
 	
 	(*Make all the head-value pairs*)
 	headNumberPair = CreateHeads[Flatten[Values@SymRules]];
+	
 	(*Make the heads evaluate to corresponding numbers*)
 	MapThread[(#1[x___] := #2)&, headNumberPair];
+	
 	(*Just so you can replace numbers by heads in order to define UpValues*)
 	MapThread[
 		(aux[#2] = #1)&,
@@ -207,7 +166,10 @@ ProcessSymRules[SymRules_Association] := Module[
 	];
 	
 	(*Make the UpValues for each key in the association*)	
-	SymUpValues[#1, aux]&/@SymRules;
+	SymUpValues[#, aux]&/@Values[SymRules];
+	
+	ClearAll@aux; Remove[aux];
+	
 	headNumberPair[[1]]
 ]
 
@@ -232,8 +194,8 @@ newHead[x___] := Throw[$Failed, failTag[newHead]]
 
 
 ChangeNRulesHead::usage="ChangingNRulesHead[{rules__}]
-{rules}: list of rules of a particular head. The elements are either Rule[Condition[], rhs] or 
-TagRule[tag, Condition[], rhs]
+{rules}: list of rules of a particular head. The elements are either Rule[Condition[...], rhs] or 
+TagRule[tag, Condition[...], rhs]
 Output: none, it changes Rule -> SetDelayed and TagRule -> TagSetDelayed";
 
 ChangeNRulesHead[{rules__}] := Module[
@@ -334,7 +296,7 @@ MakeDefs[SymRules_Association, NRules_Association] := Module[
 MakeDefs[x___] := Throw[$Failed, failTag[MakeDefs]]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Calculate symbolic gradient*)
 
 
@@ -369,11 +331,13 @@ Example:
 	{{\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(x + y\)]\) z,\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(x + y\)]\) z},{0,\!\(\*FractionBox[\(Cos[\*FractionBox[\(x\), \(y\)] + z]\), \(y\)]\)}}
 }";
 
-TakeGrad[functionhead_Symbol,  dummyvariables_List, tensorRank_Integer]/;(
-	functionhead[[0]] === Symbol && Positive[tensorRank] && DeleteDuplicates[Flatten[dummyvariables][[All,0]]] === {Symbol}
-) := MapIndexed[
+TakeGrad//Clear
+TakeGrad[functionhead_Symbol,  dummyvariables_List, tensorRank_Integer]/; Positive[tensorRank] := MapIndexed[
+		
 		D[#1, {dummyvariables[[#2//Last]]}]&,
+		
 		functionhead@@(dummyvariables//Last),
+		
 		{tensorRank}
 ]
 
@@ -394,18 +358,21 @@ TakeGrad[functionhead_Symbol, dummyvariables_List, -1]/;(
 TakeGrad[x___] := Throw[$Failed, failTag[TakeGrad]]
 
 
-(* ::Subsubsection:: *)
-(*Calculate numerical gradients*)
+(* ::Subsubsection::Closed:: *)
+(*iCalculateGrads*)
 
 
-iCalculateGrads::usage="iCalculateGrads[head_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List,tensorRank_Integer, dim]
+iCalculateGrads//ClearAll
+
+
+iCalculateGrads::usage="iCalculateGrads[head_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List,tensorRank_Integer, n]
 
 head: function head, such that head[p1,...,pn, X1,...,Xm] gives the array.
 Orighs: heads that appear in the explicit expression head[p1,...,pn, X1,...,Xm].
 uniquehs: uniqueHeads for which UpValues were defined from NRules. 
 OpsPoints: set of values to pass to the function in the form of {pf1,pf2,..., XV1, XV2, ...}
 tensorRank: tensorRank of head[p1,...,pn, X1,...,Xm].
-dim: dimension of the square array
+n: number of pi's with repect to which you take the gradients
 
 Output: LI components of the gradient. 
 
@@ -436,7 +403,7 @@ Example2:
 >>>{0,9,18,27,36,45}";
 
 
-iCalculateGrads[head_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List,tensorRank_Integer, dim_, rule_]/;(
+iCalculateGrads[head_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List, tensorRank_Integer, dim_, rule_, string_]/;(
 	Length[{Orighs}] === Length[{uniquehs}] && Positive@tensorRank && 
 	Length[ObsPoints] === Length@FunctionVariables[head]
 ) := Module[
@@ -447,17 +414,34 @@ iCalculateGrads[head_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_L
     
     LIComponents = SymmetrizedIndependentComponents[ConstantArray[dim, tensorRank], Symmetric[All]];
     
-    Inactive[Set][(*make dummyhead[x1_, x2_,..., head1_, head2_,...]*)
+    
+    (*
+        make dummyhead[x1_, x2_,..., head1_, head2_,...] = head@@[x1, x2, ...,xf],
+        (for higher dimension gradients you need only LI components of "head@@[x1, x2, ...,xf]" )
+    *)
+    Set@@(set[
 		dummyhead@@(Pattern[#,_]&/@Join[dummyvariables, {Orighs}]),
-		Extract[head@@dummyvariables, LIComponents]//. rule
-	]//Activate;
+		Block[
+			{FelipeBarbosa`GWFORECAST`Private`\[CapitalPhi]IMR},
+			FelipeBarbosa`GWFORECAST`Private`\[CapitalPhi]IMR[x__] = 0; (*Optimization that works for PhenomD only at first*)
+			Extract[head@@dummyvariables, LIComponents]
+		]
+	]);
     
     
     result = dummyhead@@Join[ObsPoints, {uniquehs}];
     
-    
+   (*
+   If head===hphc then each component of the gradient is a matrix with dimension {Length[fvec], 2} (bcs of the auxiliar rule for \[ScriptA]imr)
+   then Dimension[result]==={LI, Length[fvec], 2}.
+   For the other functions it is convenient that 
+   Dimension[result] === {LI,  2, Length[fvec]}
+   *)
+   If[string==="hphc", result = Transpose/@result];
+   
+   
     (*Clean the dummy variables and return result:*)
-    Remove[Evaluate[dummyvariables]];
+    ClearAll[Evaluate[dummyvariables]]; Remove[Evaluate[dummyvariables]];
     
     Association@MapThread[
 		Rule,
@@ -466,7 +450,8 @@ iCalculateGrads[head_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_L
     
 ]//Check[#, Throw["TakeGradFail at order" <> ToString[tensorRank]]]&
 
-iCalculateGrads[h_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List, 0, dim_, rule_]/;(
+
+iCalculateGrads[h_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List, 0, dim_, rule_, string_]/;(
 	Length[{Orighs}] === Length[{uniquehs}]
 ) := Module[
 	{dummyhead, dummyvariables, result,x},
@@ -474,20 +459,38 @@ iCalculateGrads[h_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List
     (*Construct pattern variables including {Orighs}*)
     dummyvariables = Unique@ConstantArray[x, Length[ObsPoints]];
     
-    Inactive[Set][(*make dummyhead[x1_, x2_,..., head1_, head2_,...]*)
+    (*
+        make dummyhead[x1_, x2_,..., head1_, head2_,...] = head@@[x1, x2, ...,xf],
+        note the absence of Extract now, bcs the function is not a gradient
+    *)
+    Set@@(set[
 		dummyhead@@(Pattern[#,_]&/@Join[dummyvariables, {Orighs}]),
-		h@@dummyvariables//. rule
-	]//Activate;
+		Block[
+			{FelipeBarbosa`GWFORECAST`Private`\[CapitalPhi]IMR},
+			FelipeBarbosa`GWFORECAST`Private`\[CapitalPhi]IMR[x__] = 0; (*Optimization that works for PhenomD only at first*)
+			h@@dummyvariables
+		]
+	]);
     
    result = dummyhead@@Join[ObsPoints, {uniquehs}];
+   (*again we want the dimensions {2, Length[fvec]} in the output*)
+   If[string==="hphc", result = Transpose[result]];
    
    (*Clean the dummy variables and return result:*)
-    Remove[Evaluate[dummyvariables]];
+    ClearAll[Evaluate[dummyvariables]]; Remove[Evaluate[dummyvariables]];
    
    <|{0} -> result|>
+   
 ]//Check[#, Throw["TakeGradFail at order" <> ToString[tensorRank]]]&
 
 iCalculateGrads[x___] := Throw[$Failed, failTag[iCalculateGrads]]
+
+
+(* ::Subsubsection::Closed:: *)
+(*iGenGrads*)
+
+
+iGenGrads//ClearAll
 
 
 iGenGrads::usage="iGenGrads[head, dim, obspoints, {Orighs___}, {uniquehs___}, n_, ni_]
@@ -519,12 +522,13 @@ Example:
 		{37.413512887965325`,74.82702577593065`,112.24053866389598`}}
 }";
 
+
 iGenGrads::negativeOrder="Requested derivative order is not positive";
 iGenGrads::UniqueHeads="Length[{Orighs}] does not match Length[{Uniquehs}]";
 iGenGrads::obsPoints = "Length of obsPoints is not bigger than parameter space dimension";
-	
-iGenGrads[head_Symbol, dim_Integer, obspoints_List, {Orighs___Symbol}, {uniquehs___Symbol}, order_Integer, ni_, rule_]/;(
-	GenMessage[Positive[order],iGenGrads::negativeOrder ] &&
+
+
+iGenGrads[head_Symbol, dim_Integer, obspoints_List, {Orighs___Symbol}, {uniquehs___Symbol}, order_Integer, ni_, rule_, string_]/;(
 	GenMessage[Length[{Orighs}] === Length[{uniquehs}], iGenGrads::UniqueHeads ]&& 
 	GenMessage[Length[obspoints] > dim, iGenGrads::obsPoints]
  ) := Module[
@@ -550,7 +554,7 @@ iGenGrads[head_Symbol, dim_Integer, obspoints_List, {Orighs___Symbol}, {uniquehs
     Auxh[x_?OddQ] := h1;
     Auxh[x_?EvenQ] := h2;
     
-    (*Define a function of the form f[p1,...,pn,X1, ...,Xm] to act on:*)
+    (*Define a function of the form f[p1,...,pn,X1, ...,Xm], which evaluates to head@@ivars*)
     Inactive[Set][
         Auxh[ni]@@(Pattern[#, _]&/@ivars),
         head@@ivars
@@ -558,106 +562,74 @@ iGenGrads[head_Symbol, dim_Integer, obspoints_List, {Orighs___Symbol}, {uniquehs
     
     (*Implementing the loop:*)
     iiresult = Table[
-    (*implelent rule for Derivative:*)
-    Derivative[x__][y_Symbol][k__] := $D[{x},y][k]; Derivative[x__][$D[y_List, s_Symbol]][k__] := $D[{x} + y, s][k];
-    
-        Inactive[Set][
+		(*implelent rule for Derivative:*)
+		Derivative[x__][y_Symbol][k__] := $D[{x},y][k]; 
+		Derivative[x__][$D[y_List, s_Symbol]][k__] := $D[{x} + y, s][k];
+		
+		(*alternate between the heads with the gadient definition*)
+		Inactive[Set][
 			Auxh[i+1]@@(Pattern[#,_]&/@ivars),
 			TakeGrad[Auxh[i], dummyvariables, i-1]
 		]//Activate;
       
-       Clear[Evaluate[Auxh[i]]]; SubValues[Derivative] = (SubValues[Derivative])[[1]];
+      (*clear the previous head and the Derivative subValues.*)
+       Clear[Evaluate[Auxh[i]]]; 
+       SubValues[Derivative] = (SubValues[Derivative])[[1]];
        
-       iCalculateGrads[Auxh[i+1], {Orighs}, {uniquehs}, obspoints, i, dim, rule],
+       (*calculate the numberical value of the gradients in the form of associations*)
+       iCalculateGrads[Auxh[i+1], {Orighs}, {uniquehs}, obspoints, i, dim, rule, string],
        {i, ni, order} 
-    ];
+	
+	]; (*note that the output format:  { <|{0}->{...}|>,  <|{1}->..., {2}->...|>,  <|{1,1}->...|>, ...}*)
     
     (*Clean vars and hs and return result*)
-    Remove[Evaluate[Flatten[dummyvariables]//DeleteDuplicates]];
-    Remove[h1,h2];
+    ClearAll[Evaluate[Flatten[dummyvariables]//DeleteDuplicates]];
+    ClearAll[h1,h2]; ClearAll[Evaluate@ivars];
     
-    iiresult
+    Remove[Evaluate[Flatten[dummyvariables]//DeleteDuplicates]]; Remove[h1,h2];
+    
+    (*I want 1 big association in the form <|{0}-> {...}, {1}->{...}, ...|>*)
+    Join@@iiresult
 ]
 
 iGenGrads[x___] := Throw[$Failed, failTag[iGenGrads]]
 
 
-GenGrads::usage="GenGrads[head, dim, obspoints, {Orighs___}, {uniquehs___}, n_]
-Output: iGenGrads[head, dim, obspoints, {Orighs___}, {uniquehs___}, n_, 1]
+(* ::Subsubsection::Closed:: *)
+(*GenGrads*)
 
 
-GenGrads[{heads__}, {dims__}, {obspoints__}, {Orighs___}, {uniquehs___}, n_]
-Evaluates iGenGrads for the sequence of heads, dimensions and obspoints provided, including the \"0\" order derivative.
-Output: List of \"Length[{heads__}]\" associations where each one contains all the gradients of \"{head}[[i]]\".
-
-Example:
->>>Block[
-	{h1, h2, l1 = {1,2, Range[5]}, l2 = {1,2,3,Range[5]}},
-	
-	h1[x_, y_, z_] = Cosh[x]+Sin[y] - \!\(\*SuperscriptBox[\(\[ExponentialE]\), \(z\)]\);
-	h2[x_,y_,z_, w_] = \!\(\*SuperscriptBox[\(\[ExponentialE]\), \(w + x\)]\) - Tan[y + z];
-	
-	GenGrads[{h1,h2}, {2,3}, {l1,l2}, {}, {}, 2]
-]
-
->>>{
-	\[LeftAssociation]
-		{0}\[Rule]-1+Cosh[1]+Sin[2],
-		{1}\[Rule]Sinh[1],
-		{2}\[Rule]Cos[2],
-		{1,1}\[Rule]Cosh[1],
-		{1,2}\[Rule]0,
-		{2,2}\[Rule]-Sin[2]
-	\[RightAssociation],
-	\[LeftAssociation]
-		{0}\[Rule]1-Tan[5],
-		{1}\[Rule]{\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(2\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(3\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(4\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(5\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(6\)]\)},
-		{2}\[Rule]-Sec[5\!\(\*SuperscriptBox[\(]\), \(2\)]\),
-		{3}\[Rule]-Sec[5\!\(\*SuperscriptBox[\(]\), \(2\)]\),
-		{1,1}\[Rule]{\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(2\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(3\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(4\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(5\)]\),\!\(\*SuperscriptBox[\(\[ExponentialE]\), \(6\)]\)},
-		{1,2}\[Rule]0,
-		{1,3}\[Rule]0,
-		{2,2}\[Rule]-2 Sec[5\!\(\*SuperscriptBox[\(]\), \(2\)]\) Tan[5],
-		{2,3}\[Rule]-2 Sec[5\!\(\*SuperscriptBox[\(]\), \(2\)]\) Tan[5],
-		{3,3}\[Rule]-2 Sec[5\!\(\*SuperscriptBox[\(]\), \(2\)]\) Tan[5]
-	\[RightAssociation]
-}";
+GenGrads//ClearAll
 
 
-GenGrads[head_Symbol, dim_Integer, obspoints_List, {Orighs___Symbol}, {uniquehs___Symbol}, order_Integer, rule_] := Module[
-	{result, labels},
-	
-	result = iGenGrads[head, dim, obspoints, {Orighs}, {uniquehs}, order, 1, rule];
-	
-	(*Transform the list of associations { <|{1} -> ...,{2} -> ...,  ...|>, <|{1,1} -> ..., {1,2} -> ..., ... |>},
-	into 1 association of matrices with dimensions {number of obs points, number of LIComponents}*)
-	
-	result = Transpose[Values[#]]&/@result;
-	labels = ("or" <> ToString[#])&/@Range[order];
-	
-	Association@MapThread[
-		Rule,
-		{labels, result}
-	]
-		
-]
+(*iGenGrads[head_, dim_, obspoints_, {Orighs___}, {uniquehs___}, order_, ni_, rule_, string_]*)
 
-GenGrads[{heads__Symbol}, {dims__Integer}, {obspoints__List}, {Orighs___Symbol}, {uniquehs___Symbol}, order_Integer, rule_]/;(
-	Length[{heads}] === Length[{dims}] === Length[{obspoints}] && Length[{heads}]> 1
-) := With[
-	{},
-	
-	Table[
-		Association@@iGenGrads[{heads}[[i]], {dims}[[i]], {obspoints}[[i]], {Orighs}, {uniquehs}, order, 0, rule],
-		{i, 1, Length@{heads}}
-	]
+
+GenGrads[head_Symbol, dim_Integer, obspoints_List, {Orighs___Symbol}, {uniquehs___Symbol}, order_Integer, rule_] := (
+	(*1 flat <|{0}-> {...}, {1}->{...}, ...|>*)
+	iGenGrads[head, dim, obspoints, {Orighs}, {uniquehs},order, 0, rule, "hphc"]
+)
+
+
+GenGrads[head_, {dims__Integer}, {obspoints__List}, {Orighs___Symbol}, {uniquehs___Symbol}, order_Integer, rule_,  "Detectors"]/;(
+	Length[{dims}] === Length[{obspoints}] && Length[{dims}]>= 1
+) := Table[ (*A list of flat associations, 1 for each detector.*)
+	iGenGrads[head, {dims}[[i]], {obspoints}[[i]], {Orighs}, {uniquehs}, order, 0, rule, "FpFc"],
+	{i, 1, Length@{dims}}
 ]
 
 GenGrads[x___] := Throw[$Failed, failTag[GenGrads]]
 
 
+(* ::Subsubsection::Closed:: *)
+(*PartitionLIComponents*)
+
+
 FillEmpty[{}] := {0}; FillEmpty[x_List]/; (Length@x >= 1) := x;
 FillEmpty[x___] := Throw[$Failed, failTag[FillEmpty]]
+
+
+ClearAll@PartitionLIComponents
 
 
 PartitionLIComponents::usage="PartitionLIComponents[LIcomponents_List, {varnumbers__}]
@@ -684,6 +656,7 @@ PartitionLIComponents[LIcomponents_List, {varnumbers__}]/;(MatrixQ[LIcomponents,
 	
 	(*create a list of ranges of vars { {1,..., n1}, {1,...,n2}, ... }*)
 	iList = Range/@{varnumbers};
+	
 	(*displace the variables  {0, n1, n1+n2, ...} + { {1,..., n1}, {1,...,n2}, ... } *)
 	iList = (FoldList[Plus, 0, {varnumbers}])[[1;;-2]] + iList;
 	
@@ -700,6 +673,9 @@ PartitionLIComponents[LIcomponents_List, {varnumbers__}]/;(MatrixQ[LIcomponents,
 PartitionLIComponents[x___] := Throw[$Failed]
 
 
+ClearAll@MakeGradient
+
+
 MakeGradient::usage="MakeGradient[{gradients__Association}, {varnumbers__Integer}, LIComponents_]
 
 {gradients}: List of associations with all components of all gradients of a function (the Values of the 
@@ -711,123 +687,52 @@ Output: list with the values of LIComponents, tipically a matrix where each row 
 for all frequency points fi";
 
 
-MakeGradient[{gradients__Association}, {varnumbers__Integer}, LIComponents_] := Module[
-	{partitionedList, result},
+Clear@idot
+idot[v1_List, v2_List] := v1[[1]]*v2[[1]] + v1[[2]] v2[[2]]
+
+
+(*to fix the problem of zero symbolic derivatives*)
+FixZeroDerivative[x_, l_]/; (x === Transpose[0]&&l>0) := ConstantArray[0, {2, l}]
+FixZeroDerivative[x_List, l_] := x
+
+
+MakeGradient[{gradients__Association}, {varnumbers__Integer}, LIComponents_]/;(
+	Length[{gradients}] === 2 (*assuming one is the FpFc gradients and the other the hphc*)
+) := Module[
+	{partitionedList, result, dFpFc, dhphc, Lengthfvec = {gradients}[[1]][[1]][[1]]//Length, igradients2},
+	
+	igradients2 = FixZeroDerivative[#, Lengthfvec]&/@{gradients}[[2]];
 	
 	
 	partitionedList = PartitionLIComponents[LIComponents, {varnumbers}];
 	
-	result = MapThread[
-		#1/@#2&,
-		{{gradients}, partitionedList}
-	]; (*{
-			{Ass1comps__}, {Ass2comps__}, ...
-		} if Assi came from hi that depend on freq. {Assicomps__} is a matrix. Changing the overall head by Times,
-			we can do {Ass1comps__}*{Ass2comps__}*... which will return the list of LI components of the full gradient
-			evaluated at all frequency points for each component.
-		*)
 	
-	Times@@result	
+	(*Create a symbolic structure that pairs the derivatives of FpFc and hphc to get the full gradient*)
+	result = idot@@@(MapThread[
+		#1/@#2&,
+		{{dFpFc, dhphc}, partitionedList}
+	]//Transpose);
+	
+	(*Transpose to get an structure like {
+		{dFpFc[{1}], dhphc[{0}]},
+		{dFpFc[{2}], dhphc[{0}]},
+		{dFpFc[{0}], dhphc[{1}]},
+		...
+	}
+	and then MapApply idot.
+	*)
+	
+	(*change the symbolic constructs by the actual associations and return the result*)
+	dFpFc = {gradients}[[1]];
+	dhphc = igradients2;
+	
+	result (*note that Dimensions[result] === {LI, Length[fvec]}*)
 ]
 
 MakeGradient[x___] := Throw[$Failed, failTag[MakeGradient]]
 
 
-FillEmpty[{}] := {0}; FillEmpty[x_List]/; (Length@x >= 1) := x;
-FillEmpty[x___] := Throw[$Failed, failTag[FillEmpty]]
-
-
-PartitionLIComponents::usage="
-PartitionLIComponents[LIcomponents_List, {varnumbers__}]
-
-LIComponents: list of LIComponents to subdivide
-varnumbers: numbers of variables of each function in sequence
-	
-Output: List of lists of corresponding derivatives in each coordinate for each LIcomponent.
-
-Example:
-With[
-	{
-		li = {{1,1},{1,2},{1,3},{1,4},{2,2},{2,3},{2,4},{3,3},{3,4},{4,4}}
-	},
-	PartitionLIComponents[li, {2,2}]
-]
-Returns:	
-	{
-		{{1,1},{1,2},{1},{1},{2,2},{2},{2},{0},{0},{0}},
-		{{0},{0},{3},{4},{0},{3},{4},{3,3},{3,4},{4,4}}
-	}";
-
-
-PartitionLIComponents[LIcomponents_List, {varnumbers__}]/;(MatrixQ[LIcomponents, NumberQ]):= Module[
-	{iList, set, cases},
-	
-	(*create a list of ranges of vars { {1,..., n1}, {1,...,n2}, ... }*)
-	iList = Range/@{varnumbers};
-	(*displace the variables  {0, n1, n1+n2, ...} + { {1,..., n1}, {1,...,n2}, ... } *)
-	iList = (FoldList[Plus, 0, {varnumbers}])[[1;;-2]] + iList;
-	
-	(*split the sets of variables into set[1], set[2], ...*)
-	(set[#] = iList[[#]])&/@Range[Length@iList];
-	
-	(*apply cases to isolate different sets:*)	
-	(cases[#] = Cases[Alternatives@@set[#]]/@LIcomponents)&/@Range[Length@iList];
-	
-	(*Replace {} -> {0}: *)
-	(FillEmpty/@cases[#])&/@Range[Length@iList]
-]
-
-
-MakeGradient::usage="MakeGradient[{gradients__Association}, {varnumbers__Integer}, LIComponents_]
-{gradients}: List of associations with all components of all gradients of a function (the Values of the 
-association are either numbers or vectors)
-{varnumbers}: corresponding list of how many vars each function has
-LIComponents: LIComponents of the target gradient
-Output: list with the values of LIComponents.
-
-Example:
->>>Block[
-	{h1, h2, LI},
-	Head[h1] ^= Association; Head[h2] ^= Association; 
-	LI = Echo[SymmetrizedIndependentComponents[{4,4}, Symmetric[All]]];
-	MakeGradient[{h1,h2}, {2,2}, LI]
-]
->>>{{1,1},{1,2},{1,3},{1,4},{2,2},{2,3},{2,4},{3,3},{3,4},{4,4}}
->>>{
-	h1[{1,1}] h2[{0}],
-	h1[{1,2}] h2[{0}],
-	h1[{1}] h2[{3}],
-	h1[{1}] h2[{4}],
-	h1[{2,2}] h2[{0}],
-	h1[{2}] h2[{3}],
-	h1[{2}] h2[{4}],
-	h1[{0}] h2[{3,3}],
-	h1[{0}] h2[{3,4}],
-	h1[{0}] h2[{4,4}]
-}";
-
-MakeGradient[{gradients__}, {varnumbers__Integer}, LIComponents_]/;(
-	DeleteDuplicates@(Head/@{gradients}) === {Association}
-):= Module[
-	{partitionedList, result},
-	
-	
-	partitionedList = PartitionLIComponents[LIComponents, {varnumbers}];
-	
-	result = MapThread[
-		#1/@#2&,
-		{{gradients}, partitionedList}
-	]; (*{
-			{Ass1comps__}, {Ass2comps__}, ...
-		} if Assi came from hi that depend on freq. {Assicomps__} is a matrix. Changing the overall head by Times,
-			we can do {Ass1comps__}*{Ass2comps__}*... which will return the list of LI components of the full gradient
-			evaluated at all frequency points for each component.
-		*)
-	
-	Times@@result	
-]
-
-MakeGradient[x___] := Throw[$Failed, failTag[MakeGradient]]
+GradientsList//Clear
 
 
 GradientsList::usage="GradientsList[{gradients__}, {varnumbers__Integer}, n_Integer]
@@ -863,24 +768,36 @@ Example:
 	}
 }";
 
-GradientsList[{gradients__}, {varnumbers__Integer}, n_Integer]/;(
-	DeleteDuplicates[Head/@{gradients}] === {Association}
-) :=Module[
+
+
+GradientsList[{gradients__Association}, {varnumbers__Integer}, n_Integer] :=Module[
+	
 	{dim = Plus@@{varnumbers}, LIComponents, result},
 	
 	(LIComponents[#] = SymmetrizedIndependentComponents[
 		ConstantArray[dim, #], Symmetric[All]
 	])&/@Range[n];
 	
+	(*Note that Dimensions[result] === {n, LI_i, Length[fvec]}, where LI_i -> number of LI comps. of the order i gradient*)
 	result = MakeGradient[{gradients}, {varnumbers}, LIComponents[#]]&/@Range[n];
 	
-	(*Transpose the matrices representing gradients and make an association:*)
+	(*we want Dimensions[result] === {n, Length[fvec], LI_i} for the making of DALI tensors*)
 	result = Transpose/@result;
 	
+	
+	
+	(*one final association: 
+		<|"or1"-> m1, "or2"->m2, ...|>;
+		where 
+		Dimensions[m1] === {Length[fvec], dim}
+		Dimensions[m2] === {Length[fvec], dim*(dim+1)/2 },
+		...
+	*)
 	Association@MapThread[
 		Rule,
 		{("or" <> ToString[#])&/@Range[n], result}
-	]	
+	]
+	
 	
 ]
 
@@ -895,45 +812,33 @@ GradientsList[x___] := Throw[$Failed, failTag[GradientsList]]
 (*GenDaliTerm*)
 
 
-GenDaliTerm[grads1_List, grads2_List, matrix_List, True]/;(
-	MatrixQ[grads1, NumberQ] &&MatrixQ[grads2, NumberQ]
-) := Flatten[Transpose[grads1] . grads2]
-
-
-GenDaliTerm[grads1_, grads2_, matrix_, False]/;(
-	MatrixQ[grads1, NumberQ] &&MatrixQ[grads2, NumberQ]
-) := Flatten[Transpose[grads1] . matrix . grads2]
-
-
-iGenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_] := Sum[
-	KroneckerProduct[Conjugate[gradlist1[[i]]],gradlist2[[i]]]/SensitivityVector[[i]],
-	{i, 1, Length@gradlist1}
-]//Flatten
-
-
+(*
+it is way faster to use 
+	Flatten[Transpose[grads1\[ConjugateTranspose]] . grads2]
+but this can return non-symmetrical Fisher matrices. I think it is some numerical error.
+*)
 CiGenDaliTerm = Compile[
-	{{gradList1, _Complex, 2}, {gradList2, _Complex, 2}, {PSD, _Real,1}},
+	{{gradList1, _Complex, 2}, {gradList2, _Complex, 2}, {PSD, _Real, 1}},
 	Sum[
-	
-		Outer[Times, gradList1[[i]], gradList2[[i]]]/PSD[[i]],
+		
+		Outer[Times, Conjugate[gradList1[[i]]], gradList2[[i]]]/PSD[[i]],
+		
 		{i, 1, Length@gradList1}
 	],
+	
 	CompilationTarget->"C",
 	RuntimeOptions->"Speed"
 ]
 
 
-GenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_,  \[CapitalDelta]f_, "GWs"] := Module[
+GenDaliTerm[gradlist1_, gradlist2_, SensitivityVector_,  \[CapitalDelta]f_] := Module[
     {complexSum, inv = SensitivityVector^-1},
-    (*Likelihood def. eq. 42 of https://arxiv.org/pdf/1809.02293*)
-    (*maybe it would still be faster to do this part with high work precision...*)
     
-    (*complexSum = Flatten[gradlist1\[ConjugateTranspose].(gradlist2*inv)];*) (*This dot product is more efficient, but makes Fisher assymetric on tc, \[Phi]c and dL because of numerical errors*)
-   
+    (*Likelihood def. eq. 42 of https://arxiv.org/pdf/1809.02293*)
     
     complexSum = CiGenDaliTerm[gradlist1, gradlist2, SensitivityVector]//Flatten;
-   
-     4 \[CapitalDelta]f Re[complexSum]  (*I think this 4 \[CapitalDelta]f can be just absorbed in the normalization...*)
+
+	4 \[CapitalDelta]f Re[complexSum]
 ]
 
 GenDaliTerm[x___] := Throw[$Failed, failTag[GenDaliTerm]];
@@ -989,8 +894,8 @@ Clear[list1, list2, a, aValues, values1, values2, values3, matrix,  termValues]*
 (*GenDaliList*)
 
 
-GenDaliList[list_Association, order_Integer, diag_?TrueQ, matrix_List, dim_] := Module[
-    {dummy, DaliList},
+(*GenDaliList[list_Association, diag_?TrueQ, matrix_List, dim_] := Module[
+    {dummy, DaliList, order = Length@list},
     
     DaliList = Do[
         dummy = Divide[list["or" <> ToString[i]], matrix^2]; 
@@ -1002,10 +907,10 @@ GenDaliList[list_Association, order_Integer, diag_?TrueQ, matrix_List, dim_] := 
     ]//Reap//Last;
     
     DaliList
-]
+]*)
 
 
-GenDaliList[list_Association, order_Integer, diag_/;(diag==False), matrix_List, dim_] := Module[
+(*GenDaliList[list_Association, order_Integer, diag_/;(diag==False), matrix_List, dim_] := Module[
     {DaliList},
     
     DaliList = Do[
@@ -1015,15 +920,16 @@ GenDaliList[list_Association, order_Integer, diag_/;(diag==False), matrix_List, 
     
     DaliList
     
-]
+]*)
 
 
-GenDaliList[list_Association, order_Integer, Sn_List, \[CapitalDelta]f_, "GW"] := Module[
-    {DaliList},
+GenDaliList[list_Association, Sn_List, \[CapitalDelta]f_] := Module[
+    {DaliList, order = Length@list},
     
     DaliList = Do[
-        Sow[#,k]&@GenDaliTerm[list["or" <>ToString[k]], list["or" <> ToString[i]],Sn, \[CapitalDelta]f, "GWs"],
-        {i, 1, order}, {k, i, order}
+        Sow[#,k]&@GenDaliTerm[list["or" <>ToString[k]], list["or" <> ToString[i]],Sn, \[CapitalDelta]f],
+        {i, 1, order}, 
+        {k, i, order}
     ]//Reap//Last;
     
     DaliList
@@ -1107,7 +1013,7 @@ manualDALIlist == automaticDAliLIst*)
 (*DALICoefficients*)
 
 
-DALICoefficients[h_, {vars_List, fp_List, n_Integer}, {Cov_, Diag_?BooleanQ}, SymRules_:<||>, NRules_:<||>]/;(
+(*DALICoefficients[h_, {vars_List, fp_List, n_Integer}, {Cov_, Diag_?BooleanQ}, SymRules_:<||>, NRules_:<||>]/;(
 	(MatrixQ[Cov, NumericQ] && Diag===False) || (VectorQ[Cov, NumericQ] && Diag===True) &&
 	VectorQ[vars] && Positive[n]
 ) := Module[
@@ -1134,7 +1040,7 @@ DALICoefficients[h_, {vars_List, fp_List, n_Integer}, {Cov_, Diag_?BooleanQ}, Sy
 	(*This will give you a list of DALIlists:*)
 	
 	GenDaliList[gradients, n, Diag, Cov, dim] 
-]
+]*)
 
 
 (*Block[
@@ -1164,22 +1070,23 @@ Clear[HEADTEST, points, \[Sigma], test]*)
 
 Clear@iGWDALICoefficients
 
-iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, f1_, \[CapitalDelta]f_}, {PSD__}, SymRules_, NRules_]/;(
+iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, f1_, \[CapitalDelta]f_}, {PSD__}, SymRules_, NRules_, returnAll_?BooleanQ]/;(
 	Length[{h}] === Length[{vars}] === (Length[{fp}] - (detecs - 1 )) &&
 	f1>f0 && MatrixQ[{PSD}, NumericQ] && {SymRules, NRules}[[All,0]] === {Association,Association} && Length[{PSD}] === detecs
 ) := Module[
+
 	{SymRulehs, Orighs, Uniquehs, iNRules, idetecHs, dims = {vars}[[All, -1]], detectorGradients, fvec, ObsPoints, remainingGradients, result},
 	
 	(*Make iNRules with Unique heads and set up defs from SymRules and NRules:*)
 	EchoTiming[
-	SymRulehs = ToExpression/@Keys[SymRules];
-	Orighs =ToExpression/@Keys[NRules];
-	
-	Uniquehs = Unique[Orighs];,
-	"pre work"];
+		SymRulehs = ToExpression/@Keys[SymRules];
+		Orighs = ToExpression/@Keys[NRules];
+		Uniquehs = Unique[Orighs];,
+		"pre work"
+	];
 	
 	EchoTiming[
-		Orighs = HoldComplete@@Orighs;
+		(*Orighs = HoldComplete@@Orighs;
 		Uniquehs = HoldComplete@@Uniquehs;
 		
 		Set@@@Transpose[{List@@Orighs, List@@Uniquehs}];
@@ -1189,9 +1096,9 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 		
 		List@@(Clear/@Orighs);
 		Orighs = List@@Orighs;
-		Uniquehs = List@@Uniquehs;
-		(*iNRules = NRules/.Thread@Rule[Orighs, Uniquehs];*)
-		,"parsing NRules"
+		Uniquehs = List@@Uniquehs;*)
+		iNRules = NRules/.Thread@Rule[Orighs, Uniquehs];,
+		"parsing NRules"
 	];
 	
 	
@@ -1200,47 +1107,560 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 	
 	(*Define some basic quantities:*)
 	EchoTiming[
-		idetecHs = ConstantArray[{h}[[1]], detecs];
 		fvec = Range[f0,f1, \[CapitalDelta]f];
-		ObsPoints = Table[Join[{fp}[[i]], {fvec}], {i, Length@{fp}}];,  
+		ObsPoints = Join[#, {fvec}]&/@{fp};
 		"Middle work"
-	];  (*Join[{#}, {fvec}]&/@{fp};*)
+	];
 	
 
-	EchoTiming[Unprotect[Derivative];, "pointless"]; (*Overloading of Derivative happening in iGenGrads*)
+	Unprotect[Derivative]; (*Overloading of Derivative happening in iGenGrads*)
+	
+	
 	(*Calculate the detector and remaining gradients:*)
 	
-	EchoTiming[detectorGradients = GenGrads[idetecHs, dims[[1]]&/@Range[detecs], ObsPoints[[1;;detecs]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}];, "detectors"];
-
-	EchoTiming[remainingGradients = GenGrads[{h}[[2;;-1]], dims[[2;;-1]], ObsPoints[[detecs+1;;-1]], Orighs, Uniquehs, n, {Exp[I anything_]-> 1}];, "Core WF", Method->Timing];
+			
+	EchoTiming[
+		detectorGradients = GenGrads[
+			{h}[[1]], 
+			dims[[1]]&/@Range[detecs], 
+			ObsPoints[[1;;-2]], 
+			Orighs, 
+			Uniquehs, 
+			n, 
+			{Exp[I anything_]-> 1}, 
+			"Detectors"
+		];,
+		"FpFc"
+	];
+	
+	
+	EchoTiming[
+		remainingGradients = GenGrads[
+			{h}[[2]], 
+			dims[[2]], 
+			ObsPoints[[-1]], 
+			Orighs,
+			Uniquehs,
+			n, 
+			{Exp[I anything_]-> 1}
+		];,
+		"hphc",
+		Method->Timing
+	];
+	
+	
 	
 
 	(*Clean definitions:*)
 	
-	EchoTiming[Remove[Evaluate[Uniquehs]]; GCSymRules[SymRulehs]; Protect[Derivative];, "Cleaning"];
+	Remove[Evaluate[Uniquehs]]; GCSymRules[SymRulehs]; Protect[Derivative];
 	
-	(*redefine remaining gradients indices {1,2} -> {3,4} and so on*)
+	(*redefine "remainingGradients" indices {1,2} -> {3,4} and so on*)
+	EchoTiming[
+		remainingGradients = With[
+			{d = dims[[1]]},
+			KeyMap[Function[{x}, If[x[[1]] > 0, x + d, x]], remainingGradients]
+		];, 
+		"Redefine labels"
+	];
 	
-	EchoTiming[remainingGradients = MapThread[
-		KeyMap[Function[{x}, If[x[[1]] >0, x + #1, x]], #2]&, 
-		{FoldList[Plus, 0, dims][[2;;-2]], remainingGradients}
-	];, "Redefine labels"];
+	
 	
 	(*Calculate full gradients for each detector, you have  a list of associations here*)
-	EchoTiming[detectorGradients = GradientsList[Join[{#}, remainingGradients], dims, n]&/@detectorGradients;, "Gradient Recombination"];
-	EchoTiming[Clear[remainingGradients];, "extra cleaning"];
+	EchoTiming[
+		detectorGradients = GradientsList[
+			{#, remainingGradients}, dims, n
+		]&/@detectorGradients;, 
+		"Gradient Recombination"
+	];
+	
+	
+	EchoTiming[ClearAll[remainingGradients];, "extra cleaning"];
 	
 	(*Put the matrices in  the form for DALIList*)
 	
 	(*This will give you a list of DALIlists:*)
-	EchoTiming[result = MapThread[
-		GenDaliList[#1, n, #2, \[CapitalDelta]f, "GW"]&,
-		{detectorGradients, {PSD}}
-	];, "DALIList"];
+	EchoTiming[
+		result = MapThread[
+			GenDaliList[#1, #2, \[CapitalDelta]f]&,
+			{detectorGradients, {PSD}}
+		];,
+		"DALIList"
+	];
 	
-	(*Combine all of them and return:*)
-	EchoTiming[Plus@@result, "Combine Detector DALIS"]
+	If[
+		returnAll === True,
+		result,
+		Total[result]
+	]
 ]
+
+
+(* ::Section:: *)
+(*DALITensors*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*SymRules and NRules*)
+
+
+SymRules = <||>;
+NRules = <||>;
+
+
+Module[
+	{symPv2, symD, symFpFc, nPv2, nD, nFpFc, m},
+	m = Quiet[
+		DerivativeRulesLoad/@{(*"IMRPhenomPv2",*) "IMRPhenomD", "Detectors"},
+		{Part::partw, Part::take}
+	];
+	
+	{(*SymRules["IMRPhenomPv2"],*) SymRules["IMRPhenomD"], SymRules["FpFc"]} = m[[All,1]];
+	{(*NRules["IMRPhenomPv2"],*) NRules["IMRPhenomD"], NRules["FpFc"]} = m[[All,2]];
+];
+
+
+NRules[ii\[ScriptA]IMR] = <|
+	ii\[ScriptA]IMR -> {
+		ii\[ScriptA]IMR[x__] :> Aux\[ScriptA]IMR1[x],
+		TagRule[ii\[ScriptA]IMR, $D[{n__}, ii\[ScriptA]IMR], Aux\[ScriptA]IMR2[n]]
+	}
+|>;
+
+
+NRules[Aux\[ScriptA]IMR1] = <|
+	Aux\[ScriptA]IMR1 -> {
+		Aux\[ScriptA]IMR1[x__] :> Module[
+			{},
+			Transpose[\[ScriptA]IMR[x]]
+		]
+	}
+|>;
+
+NRules[Aux\[ScriptA]IMR2] = <|
+	Aux\[ScriptA]IMR2 -> {
+		Aux\[ScriptA]IMR2[n__][y__] :> Module[
+			{},
+			Transpose[$D[{n}, \[ScriptA]IMR][y]]
+		]
+	}|>
+
+
+NRules2 = Join[
+	NRules["FpFc"], 
+	NRules[ii\[ScriptA]IMR], 
+	NRules[Aux\[ScriptA]IMR1], 
+	NRules[Aux\[ScriptA]IMR2]
+];
+
+
+Protect[SymRules, NRules];
+
+
+(* ::Subsubsection:: *)
+(*ihphc, iFpFc*)
+
+
+(* ::Text:: *)
+(*Mc  = M \[Eta]^(3/5);*)
+(*M = Mc \[Eta]^(-3/5);*)
+
+
+ihphcIMRPhenomD[
+	\[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_,
+	\[Iota]_, invdL_, tc_, \[Phi]ref_,
+	\[Delta]\[CurlyPhi]minus2_,\[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_,
+	fref_, f_ 
+] = Module[
+	{G = 4.9254664969309`3.6105383994801805*^-6 (*G/c^3 [s/solarMass]*), \[Omega], \[Omega]ref, M = \[ScriptCapitalM]c ((1-\[Delta]^2)/4)^(-3/5)},
+	
+	\[Omega] = f M G; 
+	\[Omega]ref = fref M G;
+	
+	ii\[ScriptA]IMR[f,\[ScriptCapitalM]c,\[Delta],\[Chi]s,\[Chi]a,\[Iota]] Exp[
+		-I \[CapitalPhi]IMR[\[Omega],\[Omega]ref,\[Delta],\[Chi]s, \[Chi]a,\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4]
+	]*Exp[-I (2 \[Pi] f tc - 2 \[Phi]ref)]*invdL
+];
+
+
+ihphcIMRPhenomPv2[
+	m1_, m2_, 
+	s1x_, s1y_, s1z_,
+	s2x_, s2y_, s2z_,
+	\[Iota]_, dL_, tc_, \[Phi]ref_,
+	\[Delta]\[CurlyPhi]minus2_,\[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_,
+	fref_, f_
+] = ii\[ScriptA]IMR[f, fref, m1, m2, s1x,s1y,s1z,s2x,s2y,s2z,\[Phi]ref,\[Iota]]*Exp[
+	-I \[CapitalPhi]IMR[f,fref,m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4]
+]*Exp[-I (2 \[Pi] f tc)]/dL;
+
+
+iFpFc[
+	\[Theta]_, \[Phi]_, \[Psi]_,
+	pi_, Dij_,
+	f_
+] = FpFc[f,\[Theta],\[Phi],\[Psi],pi,Dij];
+
+
+Protect[ihphcIMRPhenomD, ihphcIMRPhenomPv2, iFpFc(*, \[CapitalPhi]IMR, \[ScriptA]IMR, FpFc*)];
+
+
+(* ::Subsubsection:: *)
+(*Utils for Fisher Matrix*)
+
+
+Clear@order\[Delta]
+
+MapThread[
+	(order\[Delta][#1] = #2)&,
+	{
+		{"\[Delta]\[CurlyPhi]-2","\[Delta]\[CurlyPhi]0","\[Delta]\[CurlyPhi]1","\[Delta]\[CurlyPhi]2","\[Delta]\[CurlyPhi]3","\[Delta]\[CurlyPhi]4","\[Delta]\[CurlyPhi]5l","\[Delta]\[CurlyPhi]6","\[Delta]\[CurlyPhi]6l","\[Delta]\[CurlyPhi]7","\[Delta]\[Beta]2","\[Delta]\[Beta]3","\[Delta]\[Alpha]2","\[Delta]\[Alpha]3","\[Delta]\[Alpha]4"},
+		Range[15]
+	}
+]; 
+
+
+vars["Aligned"] = {
+	"\[ScriptCapitalM]c", "\[Delta]", "\[Chi]s", "\[Chi]a",
+	"\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "1/dL", 
+	"tc", "\[Phi]ref",
+	"\[Delta]\[CurlyPhi]-2","\[Delta]\[CurlyPhi]0","\[Delta]\[CurlyPhi]1","\[Delta]\[CurlyPhi]2","\[Delta]\[CurlyPhi]3","\[Delta]\[CurlyPhi]4","\[Delta]\[CurlyPhi]5l","\[Delta]\[CurlyPhi]6","\[Delta]\[CurlyPhi]6l","\[Delta]\[CurlyPhi]7","\[Delta]\[Beta]2","\[Delta]\[Beta]3","\[Delta]\[Alpha]2","\[Delta]\[Alpha]3","\[Delta]\[Alpha]4"
+};
+
+
+vars["Precessing"] = {
+	"m1", "m2", "s1x","s1y","s1z","s2x", "s2y", "s2z",
+	"\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "dL",
+	"tc", "\[Phi]ref",
+	"\[Delta]\[CurlyPhi]-2","\[Delta]\[CurlyPhi]0","\[Delta]\[CurlyPhi]1","\[Delta]\[CurlyPhi]2","\[Delta]\[CurlyPhi]3","\[Delta]\[CurlyPhi]4","\[Delta]\[CurlyPhi]5l","\[Delta]\[CurlyPhi]6","\[Delta]\[CurlyPhi]6l","\[Delta]\[CurlyPhi]7","\[Delta]\[Beta]2","\[Delta]\[Beta]3","\[Delta]\[Alpha]2","\[Delta]\[Alpha]3","\[Delta]\[Alpha]4"
+};
+
+
+GenErrorMessage["Aligned", True] := Null;
+
+GenErrorMessage["Aligned", False] := Throw[
+"\n
+PhenomD variables should satisfy the following conditions: \n
+1\[LessEqual]M\[LessEqual]\[Infinity] && \!\(\*SuperscriptBox[\(10\), \(-4\)]\)\[LessEqual]\[Eta]\[LessEqual]0.25`&& -1\[LessEqual]s1z\[LessEqual]1 && -1\[LessEqual]s2z\[LessEqual]1 && 0\[LessEqual]\[Iota]\[LessEqual]\[Pi] && 0\[LessEqual]\[Theta]\[LessEqual]\[Pi] && \n
+0\[LessEqual]\[Phi]\[LessEqual]2\[Pi] && 0\[LessEqual]\[Psi]\[LessEqual]\[Pi] && \!\(\*SuperscriptBox[\(10\), \(-11\)]\)\[LessEqual]dL\[LessEqual]\[Infinity] && -\[Infinity]\[LessEqual]tc\[LessEqual]\[Infinity] && 0\[LessEqual]\[Phi]ref\[LessEqual]2 \[Pi]
+\n"
+];
+
+GenErrorMessage["Precessing", True] := Null;
+
+GenErrorMessage["Precessing", False] := Throw[
+"
+\n
+PhenomPv2 variables should satisfy the following conditions: \n
+m1 >= m2 && Norm[{s1x, s1y,s1z}]<=1  && Norm[{s2x,s2y, s2z}]<=1 \n
+1\[LessEqual] M \[LessEqual]\[Infinity] && \!\(\*SuperscriptBox[\(10\), \(-4\)]\)\[LessEqual]\[Eta]\[LessEqual] 0.25`&& -1\[LessEqual]s1x\[LessEqual]1 && -1\[LessEqual]s1y\[LessEqual]1 && -1\[LessEqual]s1z\[LessEqual]1 &&\n
+-1\[LessEqual]s2x\[LessEqual]1 && -1\[LessEqual]s2y\[LessEqual]1 && -1\[LessEqual]s2z\[LessEqual]1 && 0\[LessEqual]\[Iota]\[LessEqual]\[Pi] && 0\[LessEqual]\[Theta]\[LessEqual]\[Pi] &&\n
+0\[LessEqual]\[Phi]\[LessEqual]2\[Pi] && 0\[LessEqual]\[Psi]\[LessEqual]\[Pi] && \!\(\*SuperscriptBox[\(10\), \(-11\)]\)\[LessEqual]dL\[LessEqual]\[Infinity] && -\[Infinity]\[LessEqual]tc\[LessEqual]\[Infinity] && 0\[LessEqual]\[Phi]ref\[LessEqual]2 \[Pi] \n"
+];
+
+
+RetrieveFiducial[aligned_String, fp_Association]/;(
+	(*there should not be more than 12 variables*)
+	Length@Keys[fp] <= 26 && 
+	(*the keys must be contained in vars["Aligned"]*)
+	ContainsAll[vars["Aligned"],Keys[fp]] &&
+	
+	aligned == "IMRPhenomD"
+) := Module[
+	{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref, \[Delta]p, test, res},
+	
+	{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref} = fp/@{
+		"\[ScriptCapitalM]c", "\[Delta]", "\[Chi]s", "\[Chi]a",
+		"\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "1/dL",
+		"tc", "\[Phi]ref"
+	};
+	
+	
+	(*Test variables:*)
+	test = Thread@LessEqual[
+		{10^-3, 0, -1, -1, 0, 0, 0,0, 10^-11, -Infinity, 0},
+		{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref},
+		{Infinity, 0.9999, 1,1, \[Pi], \[Pi], 2 \[Pi], \[Pi], 10^20,  Infinity, 2 \[Pi]}
+	];
+	
+	(*this collapses to True or False*)
+	test = (And@@test)//TrueQ;
+	
+	GenErrorMessage["Aligned", test];
+	
+	If[
+		Length[Keys[fp]] === 11,
+		res = {{\[Theta], \[Phi], \[Psi]}, {\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref}},
+		
+		\[Delta]p = DeleteElements[Keys[fp], vars["Aligned"][[1;;11]]];(*check for real value*)
+		\[Delta]p = fp/@SortBy[\[Delta]p, order\[Delta]];
+		
+		If[VectorQ[\[Delta]p, RealValuedNumberQ] === False, Throw["\[Delta]pi values should be in the range -\[Infinity]< \[Delta]pi <\[Infinity]"]];
+		
+		res = {{\[Theta], \[Phi], \[Psi]}, {\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref, Sequence@@\[Delta]p}}
+	]
+	
+]
+
+
+RetrieveFiducial[precessing_String, fp_Association]/;(
+	Length@Keys[fp] <= 30 && 
+	
+	ContainsAll[vars["Precessing"],Keys[fp]] &&
+	
+	precessing === "IMRPhenomPv2"
+) := Module[
+	{m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Iota], \[Theta], \[Phi], \[Psi], dL, tc, \[Phi]ref, \[Delta]p, test, test2},
+	
+	{
+	m1,m2, 
+	s1x, s1y, s1z, 
+	s2x, s2y, s2z, 
+	\[Iota], \[Theta], \[Phi], \[Psi], dL, tc, \[Phi]ref} = fp/@{
+		"m1", "m2", 
+		"s1x", "s1y","s1z", 
+		"s2x", "s2y", "s2z", 
+		"\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "dL", 
+		"tc", "\[Phi]ref"
+	};
+	
+	If[m1==m2, m2 = (0.9999) m1];
+	
+	test = Thread@LessEqual[
+		{1, 1, Sequence@@ConstantArray[-1,6], 0,0,0,0, 10^-11, -Infinity, 0},
+		{m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Iota], \[Theta], \[Phi], \[Psi], dL, tc, \[Phi]ref},
+		{Infinity, Infinity, Sequence@@ConstantArray[1, 6], \[Pi],\[Pi], 2 \[Pi], \[Pi], Infinity, Infinity, 2 \[Pi]}
+	];
+	
+	test = (And@@test)//TrueQ;
+	
+	test2 = (m1 >= m2 && Norm[{s1x, s1y, s1z}] <= 1 && Norm[{s2x, s2y, s2z}] <= 1)//TrueQ;
+	
+	GenErrorMessage["Precessing", TrueQ[test&&test2]];
+	
+	
+	If[
+		Length[Keys[fp]] === 15,
+		{{\[Theta], \[Phi], \[Psi]}, {m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Iota],dL, tc, \[Phi]ref}},
+		\[Delta]p = DeleteElements[Keys[fp], vars["Precessing"][[1;;15]]]; 
+		\[Delta]p = fp/@SortBy[\[Delta]p, order\[Delta]];
+		If[VectorQ[\[Delta]p, RealValuedNumberQ]===False, Throw["\[Delta]pi value should be in the range -\[Infinity] < \[Delta]pi <\[Infinity]"]];
+		{{\[Theta], \[Phi], \[Psi]}, {m1,m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Iota],dL, tc, \[Phi]ref, Sequence@@\[Delta]p}}
+	]
+]
+
+RetrieveFiducial[x___] := Throw[$Failed, failTag[RetrieveFiducial]]
+
+
+\[Delta]pi = {\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4};
+
+
+(* ::Text:: *)
+(*I don' t know why, but there is a bug in which ```ToExpression``` converts to Global context not the *)
+(*private one from the package, so I need to set manually*)
+
+
+MapThread[
+	(iToExpression[#1] =#2)&, 
+	{
+		{"\[Delta]\[CurlyPhi]-2","\[Delta]\[CurlyPhi]0","\[Delta]\[CurlyPhi]1","\[Delta]\[CurlyPhi]2","\[Delta]\[CurlyPhi]3","\[Delta]\[CurlyPhi]4","\[Delta]\[CurlyPhi]5l","\[Delta]\[CurlyPhi]6","\[Delta]\[CurlyPhi]6l","\[Delta]\[CurlyPhi]7","\[Delta]\[Beta]2","\[Delta]\[Beta]3","\[Delta]\[Alpha]2","\[Delta]\[Alpha]3","\[Delta]\[Alpha]4"},
+		\[Delta]pi
+	}
+]
+
+
+
+\[Delta]pRules = Thread@Rule[
+	\[Delta]pi,
+	ConstantArray[0, 15]
+];
+
+
+hphcVarNumber["Aligned"] = 8;
+hphcVarNumber["Precessing"] = 12;
+
+
+LIDij = SymmetrizedIndependentComponents[{3,3}, Symmetric[All]];
+
+
+Clear@headhphc
+headhphc["IMRPhenomD"] = ihphcIMRPhenomD;
+headhphc["IMRPhenomPv2"] = ihphcIMRPhenomPv2;
+
+
+iihphcvars["IMRPhenomPv2", fref_] = Join[
+	{m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Iota], dL,tc, \[Phi]ref},
+	\[Delta]pi,
+	{fref, f}
+]
+
+
+iihphcvars["IMRPhenomD", fref_] = Join[
+	{\[ScriptCapitalM]c,\[Delta],\[Chi]s,\[Chi]a,\[Iota],invdL,tc,\[Phi]ref},
+	\[Delta]pi,
+	{fref, f}
+]
+
+
+isAligned["IMRPhenomD"] = True
+isAligned["IMRPhenomPv2"] = False
+
+
+(* ::Subsubsection:: *)
+(*Fisher Matrix*)
+
+
+ClearAll[DALITensors]
+
+
+make1[0] := 0;
+make1[n_]/; n>0 := 1
+
+
+iconvert["IMRPhenomD"] = "Aligned"
+iconvert["IMRPhenomPv2"] = "Precessing"
+
+
+iDALITensors[
+	approximant_String, 
+	fiducialPoint_Association, 
+	{detectors__Association},
+	n_,
+	fmin_, fmax_, res_, AllFisherMatrices_
+]/;(
+	approximant === "IMRPhenomD" ||approximant ===  "IMRPhenomPv2" 
+) := Module[
+	{
+		FiducialFpFc,  Fiducialhphc,
+		varsFpFc, ivarshphc, varshphc, iL, \[Delta]pKey, i\[Delta]pRules, ihphc,
+		 \[CapitalDelta]f, fvec, PSDs, keysFP = Keys[fiducialPoint], fpDetectors,IFMAX, totalM, alignedOrPrecessing
+	},
+	(*set the extra keys in order:*)
+	
+	alignedOrPrecessing = iconvert[approximant];
+	
+	
+	(*get fiducial points*)
+	{FiducialFpFc,  Fiducialhphc} = With[
+	
+		{l = RetrieveFiducial[approximant, fiducialPoint]},
+		If[
+			Cases[l, Missing, Infinity, Heads->True]==={},
+			l,
+			Throw["Wrong variables for the fiducial point"]
+		]
+	];
+	
+	
+	
+	varsFpFc = {\[Theta], \[Phi], \[Psi], pi, Dij, f, 3};
+	
+	ivarshphc = If[
+		approximant==="IMRPhenomD",
+		iL = DeleteElements[keysFP, vars["Aligned"][[1;;11]]];
+		iL = iToExpression/@SortBy[iL, order\[Delta]];
+		{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref},
+		iL = DeleteElements[keysFP, vars["Precessing"][[1;;15]]]; 
+		iL = iToExpression/@SortBy[iL, order\[Delta]];
+		{m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Iota], dL, tc, \[Phi]ref}
+	];
+	
+	(*Extra \[Delta]p var if it exists*)
+	Quiet[\[Delta]pKeys = iL, Set::shape];
+	
+	(*this will set the variables in case Length[iL] = 0 || Length[iL] =1*)
+	
+	varshphc[0] = Join[ivarshphc, {f}, {hphcVarNumber[alignedOrPrecessing]}];
+	varshphc[1] = Join[ivarshphc, iL, {f}, {hphcVarNumber[alignedOrPrecessing]+Length[iL]}];
+	
+	
+	(*only modifies the rules associated to requested \[Delta]ps*)
+	i\[Delta]pRules = DeleteElements[\[Delta]pRules, Thread@Rule[iL, ConstantArray[0, Length[iL]]]];
+	
+	
+	Module[
+		{il},
+		If[Length[iL]==0, il=0, il=1];
+		
+		Set@@(set[
+			ihphc@@(
+				Pattern[#,  Blank[]]&/@varshphc[il][[1;;-2]]
+			),
+			(headhphc[approximant]@@iihphcvars[approximant, fmin])/.i\[Delta]pRules
+		])	
+	];
+	
+	(*Check detector keys*)
+	If[
+		Cases[{#["Position"], #["DetectorTensor"], #["ASD"]}&/@{detectors}, Missing, Infinity, Heads->True]==={},
+		0,
+		Throw["Wrong Detector Keys"]
+	];
+	
+	fpDetectors = Join[
+		FiducialFpFc, 
+		{#["Position"], Extract[#["DetectorTensor"], LIDij]}
+	]&/@{detectors};
+	
+	
+	(*this should be an array of real numbers*)
+	If[
+		VectorQ[Flatten[fpDetectors],RealValuedNumberQ]===False,
+		Throw["DetectorTensor and Position should contain only real numbers"]
+	];
+	
+	
+	totalM = If[
+		isAligned[approximant], 
+		Fiducialhphc[[1]] ((1-Fiducialhphc[[2]]^2)/4)^(-3/5),  (*M  = \[ScriptCapitalM]c \[Eta]^(-3/5)*)
+		Fiducialhphc[[1]]+Fiducialhphc[[2]]
+	];
+	
+	IFMAX = Min@{fmax, 0.2/(4.9254664969309`3.6105383994801805*^-6 totalM)}//Round;
+	
+	\[CapitalDelta]f = (IFMAX-fmin)/(res-1);
+	
+	fvec = Range[fmin, IFMAX, \[CapitalDelta]f];
+	
+	PSDs = (#["ASD"][fvec])&/@{detectors}; 
+	PSDs = PSDs^2;
+	
+	(*iGWDALICoefficients[{h__}, detecs_, {{vars__}, {fp__}, n_}, {f0_, f1_, \[CapitalDelta]f_}, {PSD__}, SymRules, NRules, returnAll]*)
+	
+	
+	iGWDALICoefficients[
+		{iFpFc, ihphc}, 
+		Length[{detectors}],
+		{
+			{varsFpFc, varshphc[make1[Length[iL]]]},
+			Join[fpDetectors, {Fiducialhphc}],
+			n
+		},
+		{fmin, IFMAX, \[CapitalDelta]f},
+		PSDs,
+		SymRules[approximant],
+		Join[NRules2, NRules[approximant]],
+		AllFisherMatrices
+	]
+]
+
+
+Options[DALITensors] = {
+	"res" -> 1000,
+	"fmin" -> 10,
+	"fmax" -> 1024,
+	"AllFisherMatrices" -> False
+};
+
+
+DALITensors[x__, OptionsPattern[]] := Module[
+	{fmin, fmax, res, AllFisherMatrices},
+	{fmin, fmax, res, AllFisherMatrices} = OptionValue[DALITensors, #]&/@{"fmin", "fmax", "res", "AllFisherMatrices"};
+	Catch[iDALITensors[x, fmin, fmax, res, AllFisherMatrices]]
+]
+
+
+Protect[DALITensors]
 
 
 (* ::Section::Closed:: *)

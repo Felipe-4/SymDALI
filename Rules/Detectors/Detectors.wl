@@ -10,7 +10,7 @@ PacletDirectoryLoad[ParentDirectory[NotebookDirectory[], 3]];
 <<FelipeBarbosa`SymDALI`
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Defs*)
 
 
@@ -62,23 +62,7 @@ Fx[\[Theta]_, \[Phi]_,\[Psi]_, D11_, D12_, D13_, D22_, D23_, D33_] = (
 ]
 
 
-FpFc[\[Theta]_, \[Phi]_, \[Psi]_,  cos\[Iota]_, f_ , Dij_, pi_] := Module[
-	{\[Delta]t, D11, D12,D13,D22,D23,D33, comps, p1, p2, p3},
-	
-	{p1, p2, p3} = pi;
-	
-	{D11,D12,D13,D22,D23,D33} = Dij;
-	
-	\[Delta]t = \[CapitalDelta]t2[p1,p2,p3, \[Theta], \[Phi]];
-	
-	{
-		Fplus[\[Theta], \[Phi],\[Psi],D11,D12,D13,D22,D23,D33],
-		Fx[\[Theta],\[Phi],\[Psi],D11,D12,D13,D22,D23,D33]
-	} Exp[- I 2 \[Pi] f \[Delta]t]
-]
-
-
-DetectorTensor["H1"] = Module[
+iDetectorTensor["H1"] = Module[
     {nx= {-0.2239, 0.7998, 0.5569}, ny = {-0.9140, 0.0261, -0.4049}, d},
     d= (nx\[TensorProduct]nx - ny\[TensorProduct]ny)/2;
     Extract[d, SymmetrizedIndependentComponents[{3,3}, Symmetric[All]]]
@@ -136,21 +120,14 @@ vars = {f, \[Theta], \[Phi], \[Psi], pi, Dij};
 Clear[FpFc]
 
 
-expr2 = HoldForm[Evaluate[{FpFc, vars, derivatives}], Evaluate@expr, "IncludeZeroDerivative"->False]//.HoldForm[x_] :> x;
-
-
-expr2
+expr2 = HoldForm[Evaluate[{name, vars, derivatives}], Evaluate@expr, "IncludeZeroDerivative"->False]//.HoldForm[x_] :> x;
 
 
 Remove["$x*"]
 res = DerivativeRules@@expr2;
-(*Export["Detector_Ds_order_0_to_3.wdx", Ds];*)
 
 
-SetDirectory[NotebookDirectory[]]
-
-
-Export["Detector_Ds_order_0_to_3.wdx", res];
+Export["Detector_Ds_order_0_to_3.mx", res];
 
 
 (* ::Section::Closed:: *)
@@ -291,6 +268,9 @@ list[[All,1]]//Sort//ListPlot[#, PlotRange->All, ScalingFunctions->"Log10"]&
 list[[All,2]]//Sort//ListPlot[#, PlotRange->All, ScalingFunctions->"Log10"]&
 
 
+Clear@list
+
+
 (* ::Subsection::Closed:: *)
 (*Comparing numerical x Symbolic derivatives*)
 
@@ -346,7 +326,7 @@ Block[{},
 	
 	TestGradFpFc[
 		f_, \[Theta]_, \[Phi]_, \[Psi]_,
-		p1_, p2_, p3_, D11_,D12_,D13_,D22_,D23_,D33_
+		p1_, p2_, p3_, D11_,D12_,D13_,D22_, D23_, D33_
 	] = res[[2;;4, 2]];
 
 ]
@@ -366,9 +346,9 @@ Test := Module[
 	Symbolic = TestGradFpFc[
 		f, \[Theta], \[Phi], \[Psi],
 		Sequence@@Vertex["H1"],
-		Sequence@@DetectorTensor["H1"]
+		Sequence@@iDetectorTensor["H1"]
 	];
-	vars = {f, \[Theta], \[Phi], \[Psi],Sequence@@Vertex["H1"],Sequence@@DetectorTensor["H1"]};
+	vars = {f, \[Theta], \[Phi], \[Psi], Sequence@@Vertex["H1"], Sequence@@iDetectorTensor["H1"]};
 	
 	Numeric = NGrad[TestFpFc, vars, 2, 4];
 	
@@ -385,9 +365,6 @@ Test := Module[
 Test//ScientificForm
 
 
-(*there are errors at \[Eta] = 0.25 bcs numerical derivative will try evaluation at 0.25 + 10^-6 0.25*)
-
-
 l = Table[Test, {5 10^4}];
 
 
@@ -395,14 +372,14 @@ ListPlot[l[[All,1]]//Sort, PlotRange->All, ScalingFunctions->"Log10"]
 ListPlot[l[[All,2]]//Sort, PlotRange->All, ScalingFunctions->"Log10"]
 
 
-(* ::Section:: *)
+Clear@l
+
+
+(* ::Section::Closed:: *)
 (*Compiling*)
 
 
-Ds = Import["Detector_Ds_order_0_to_3.wdx"];
-
-
-Ds[[1]]
+Ds = Import["Detector_Ds_order_0_to_3.mx"];
 
 
 compileThis[x_HoldForm] := Module[
@@ -446,15 +423,6 @@ compiledDs = MapAt[
 <<CCompilerDriver`
 
 
-FileNameJoin[{
-	ParentDirectory[NotebookDirectory[], 2],
-	"/LibraryResources/",
-	$SystemID, 
-	"/DerivativeRules/Detectors/NRules/"
-
-}]
-
-
 $CCompilerDefaultDirectory = FileNameJoin[{
 	ParentDirectory[NotebookDirectory[], 2],
 	"/LibraryResources/",
@@ -474,7 +442,7 @@ MapIndexed[
 ];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*SymRules and NRules*)
 
 
@@ -490,7 +458,10 @@ Module[
 ]
 
 
-Dterms =Module[ {Ds = Import["Detector_Ds_order_0_to_3.wdx"]}, Ds[[All,1]] ];
+Dterms =Module[ {Ds = Import["Detector_Ds_order_0_to_3.mx"]}, Ds[[All,1]] ];
+
+
+Dterms = Dterms/.name->FpFc;
 
 
 {{f,  _Real,  1}, \[Theta], \[Phi], \[Psi], {pi, _Real, 1}, {Dij, _Real, 1}};
@@ -513,15 +484,26 @@ MapThread[
 ];
 
 
-Detectors2 = Detectors//.{($D[{n__}, S][x__] -> LF[z__]):> TagRule[S, $D[{n}, S][x], LF[z]]};
+Detectors2 = Detectors//.{($D[{n__}, S_Symbol][x__] -> LF[z__]) :> TagRule[S, $D[{n}, S][x], LF[z]]};
 
 
-NRules = <||>;
-NRules["FpFc"] = Detectors2;
+Detectors2
+
+
+iNRules = <||>;
+iNRules[FpFc] = Detectors2;
 
 Module[
 	{name = ParentDirectory[NotebookDirectory[], 2]},
 	
 	name = FileNameJoin[{name, "/LibraryResources",$SystemID, "DerivativeRules/Detectors/NRules/RosettaStone.wdx"}];
-	Export[name, NRules]
+	Export[name, iNRules]
+]
+
+
+Module[
+	{name = ParentDirectory[NotebookDirectory[], 2]},
+	
+	name = FileNameJoin[{name, "/LibraryResources",$SystemID, "DerivativeRules/Detectors/SymRules/file.wdx"}];
+	Export[name, <||>]
 ]

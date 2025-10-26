@@ -1,22 +1,5 @@
 (* ::Package:: *)
 
-(*<<maTHEMEatica`
-SetOptions[EvaluationNotebook[], DefaultNewCellStyle->"Code"];
-colors = <|
-	"background"->RGBColor["#000000"],
-	"fontcolor"->RGBColor["#eeeeee"],
-	"primary"->RGBColor["#B87333"],
-	"variable"->RGBColor["#55f7df"],
-	"module"->RGBColor["#e638e9"],
-	"block"->RGBColor["#FFFF00"],
-	"error"->RGBColor["#FF0000"],
-	"headhighlight"->RGBColor["#02584c"]
-|>;
-SetColors[colors]
-CreateStyleSheet[]
-ApplyStyleSheet[]*)
-
-
 (* ::Section:: *)
 (*Package Header*)
 
@@ -39,7 +22,7 @@ Begin["`Private`"]
 (*Definitions*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*DerivativeRules Defs*)
 
 
@@ -462,7 +445,7 @@ CalculateFunctionDef[exprMain_HoldComplete, ioccurrences_List, uniquehs_List, {d
 	]; 
 	
 	(*all explicit expressions*)
-	dummy@@@MapThread[List, {ioccurrences, relevantHeads}]
+	(dummy@@@MapThread[List, {ioccurrences, relevantHeads}])
 ]
 
 CalculateFunctionDef[x___] := Throw[$Failed, failTag[CalculateFunctionDef]]
@@ -585,11 +568,13 @@ GetAllDefs[exprMain_HoldComplete, implicitDs_List, uniquehs_List, {defs___Rule}]
 	
 	
 	
-	iImplicitDs = EchoTiming[implicitDs//.pool1["Elements"], "//.pool1[\"Elements\"]"]; (*Echo[pool2["Elements"]];*)
+	iImplicitDs = EchoTiming[implicitDs//.pool1["Elements"], "//.pool1[\"Elements\"]"]; (*MapAt[
+		FindFunctionHead, pool1["Elements"], {All,1}]//Echo;*)
 	{
 		iImplicitDs,
 		pool2["Elements"]
 	}
+	
 ]
 
 GetAllDefs[x___] := Throw[$Failed, failTag[GetAllDefs]]
@@ -766,9 +751,13 @@ AuxiliarFunctions[expr_, derivativeVars_List, {parallel___Integer}, {defs___Rule
 		(*Echo[{derivatives, dictionary}];*)(*Echo[{symbols, derivatives, dictionary}];*)
 		(*(make the functions:)*)
 		functions = EchoTiming[
-			MapThread[
-				DFunction[#1, #2, Association@dictionary, {defs}]&,
-				{derivatives, symbols}
+			Module[
+				{iass = Association@dictionary},
+				(*iass = Quiet[Simplify[#, TimeConstraint->1]&/@iass, Simplify::time];*)
+				MapThread[
+					DFunction[#1, #2, iass(*Association@dictionary*), {defs}]&,
+					{derivatives, symbols}
+				]
 			], 
 			"Make Block functions: "
 		];
