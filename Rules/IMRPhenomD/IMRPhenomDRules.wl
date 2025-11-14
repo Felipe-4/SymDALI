@@ -67,7 +67,7 @@ RelativeDiff[x_, y_]/; x!=0 &&y!=0 := With[
 (*Phase*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*PPN-parameters:*)
 
 
@@ -116,7 +116,7 @@ Clear[\[Phi]0, \[Phi]1, \[Phi]2, \[Phi]3, \[Phi]4, \[Phi]5, \[Phi]6, \[Phi]7]
 }//Simplify;
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Ins-Phase*)
 
 
@@ -163,11 +163,14 @@ Block[
 (*note that \[CurlyPhi]NS == \[Phi][\[Delta], 0,0] \[And] \[CurlyPhi]S == \[Phi][\[Delta], \[Chi]s, \[Chi]a] - \[Phi][\[Delta],0,0].*)
 
 
+Length@{\[Delta]\[CurlyPhi]minus2_, \[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_}
+
+
 Clear@InsVecPhase
 
 
 Block[
-	{v = 1 + {-1 + \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, -1 + \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4, 0, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7}},
+	{v = 1 + {-1 + \[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, (-1 + \[Delta]\[CurlyPhi]1), \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4, 0, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7}},
 	
 	
 	Clear@InsVecPhase;
@@ -818,7 +821,7 @@ Export["Phase_Ds_order_0_to_3.mx", res1]
 	"SystemCompileOptions"->" -fPIC -O2"};*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing the function*)
 
 
@@ -829,12 +832,15 @@ res = Import["Phase_Ds_order_0_to_3.mx"];
 Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
 	
 	ClearAll[Test\[CapitalPsi]];
+	
 	Test\[CapitalPsi][
 		\[Omega]ref_, \[Omega]_, \[Delta]_, \[Chi]s_, \[Chi]a_, 
 		\[Delta]\[CurlyPhi]minus2_,\[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_
 	] = res[[1,2]]//.Join[{G -> g}];
 
 ]
+
+
 DownValues[Test\[CapitalPsi]] = DownValues[Test\[CapitalPsi]]//.HoldForm[x_]:> x;
 
 
@@ -944,8 +950,12 @@ Test := Module[
 Test
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Comparing numerical x Symbolic derivatives*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*First Order*)
 
 
 NGrad//Clear
@@ -1033,6 +1043,197 @@ Test := Module[
 	
 
 	
+]
+
+
+Test//ScientificForm
+
+
+Table[Test, {100}]//MinMax
+
+
+(* ::Subsubsection::Closed:: *)
+(*Second Order*)
+
+
+(* ::Text:: *)
+(*Since First order checks out we can Use the symbolic gradient of first order and compare its numerical derivatives against the symbolic *)
+(*gradients of order 2.*)
+
+
+Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
+	
+	rule = Join[
+		{G -> g}, Thread@Rule[
+			{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}, ConstantArray[0, 15]
+		]
+	];
+	
+	ClearAll[TestGrad\[CapitalPsi]O1];
+	
+	TestGrad\[CapitalPsi]O1[\[Omega]ref_, \[Omega]_, \[Delta]_, \[Chi]s_, \[Chi]a_] = res[[2;;5, 2]]//.rule;
+
+]
+DownValues[TestGrad\[CapitalPsi]O1] = DownValues[TestGrad\[CapitalPsi]O1]//.HoldForm[x_]:> x;
+
+
+Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
+	
+	rule = Join[
+		{G -> g}, Thread@Rule[
+			{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}, ConstantArray[0, 15]
+		]
+	];
+	
+	ClearAll[TestGrad\[CapitalPsi]O2];
+	
+	TestGrad\[CapitalPsi]O2[\[Omega]ref_, \[Omega]_, \[Delta]_, \[Chi]s_, \[Chi]a_
+		] = Join[ (*these give the order: 
+				{{\[Omega],\[Omega]},{\[Delta],\[Omega]},{\[Chi]s,\[Omega]},{\[Chi]a,\[Omega]},{\[Delta],\[Delta]},{\[Delta],\[Chi]s},{\[Delta],\[Chi]a},{\[Chi]s,\[Chi]s},{\[Chi]a,\[Chi]s},{\[Chi]a,\[Chi]a}}
+			*)
+			res[[21;;24, 2]],
+			res[[40;;42, 2]],
+			res[[58;;59, 2]],
+			{res[[65, 2]]}
+		]//.rule;
+
+]
+DownValues[TestGrad\[CapitalPsi]O2] = DownValues[TestGrad\[CapitalPsi]O2]//.HoldForm[x_]:> x;
+
+
+Clear@Test
+
+Test := Module[
+	{
+		\[Delta], \[Omega]ref, m1, m2, \[Chi]1, \[Chi]2, f,\[Omega], \[Eta], Symbolic,Numeric, RRe, MMARe, RIm, MMAIm, \[Chi]s, \[Chi]a,diff,fref,
+		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], vars,
+		li = SymmetrizedIndependentComponents[{4,4}, Symmetric[All]]
+	},
+	
+	{m1, m2} = ReverseSort[RandomReal[{20, 100}, 2]];
+	\[Eta] = (m1 m2)/(m1+m2)^2;
+	\[Delta] = Sqrt[1 - 4 \[Eta]];
+	{\[Chi]s,\[Chi]a} = RandomReal[{-1,1}, 2];
+	
+	
+	f = RandomReal[{10., 0.2/(G (m1+m2))}];
+	\[Omega] = (m1+m2) G f;
+	\[Omega]ref = 10 (m1+m2) G;
+	
+	Symbolic = TestGrad\[CapitalPsi]O2[\[Omega]ref, \[Omega], \[Delta], \[Chi]s, \[Chi]a];
+	
+	vars = {\[Omega]ref, \[Omega], \[Delta], \[Chi]s, \[Chi]a};
+	
+	Numeric = Extract[NGrad[TestGrad\[CapitalPsi]O1, vars, 1], li];
+	
+	RelativeDiff@@{Symbolic, Numeric}
+	
+
+	
+]
+
+
+Test//ScientificForm
+
+
+Table[Test, {100}]//MinMax
+
+
+(* ::Subsubsection::Closed:: *)
+(*Third Order*)
+
+
+(* ::Text:: *)
+(*Second order checks out so we can use the symbolic gradient of second order and compare its numerical derivatives against the symbolic gradients of order 3.*)
+
+
+Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
+	
+	rule = Join[
+		{G -> g}, Thread@Rule[
+			{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}, ConstantArray[0, 15]
+		]
+	];
+	
+	ClearAll[TestGrad\[CapitalPsi]O2];
+	
+	TestGrad\[CapitalPsi]O2[\[Omega]ref_, \[Omega]_, \[Delta]_, \[Chi]s_, \[Chi]a_
+		] = Join[ (*these give the order: 
+				{{\[Omega],\[Omega]},{\[Delta],\[Omega]},{\[Chi]s,\[Omega]},{\[Chi]a,\[Omega]},{\[Delta],\[Delta]},{\[Delta],\[Chi]s},{\[Delta],\[Chi]a},{\[Chi]s,\[Chi]s},{\[Chi]a,\[Chi]s},{\[Chi]a,\[Chi]a}}
+			*)
+			res[[21;;24, 2]],
+			res[[40;;42, 2]],
+			res[[58;;59, 2]],
+			{res[[65, 2]]}
+	]//.rule;
+
+]
+DownValues[TestGrad\[CapitalPsi]O2] = DownValues[TestGrad\[CapitalPsi]O2]//.HoldForm[x_]:> x;
+
+
+SymmetricTestGradOrder2[x__] := Module[
+	{li = SymmetrizedIndependentComponents[{4, 4}, Symmetric[All]],rule, values = TestGrad\[CapitalPsi]O2[x], rules},
+	
+	rules = MapThread[Rule, {li, values}];
+	
+	SymmetrizedArray[rules, {4,4},Symmetric[All]]
+]
+
+
+Module[
+	{allTerms = res[[2;;-1, 1, 0, 1]]},
+	
+	positions = Position[
+		allTerms, x_/;Total[x[[{1, 3, 4, 5}]] ] === 3, 
+		{1},
+		Heads->False
+	];
+	positions = positions+1//Flatten; (*+1 bcs you start with 1 beeing no derivative*)
+]
+
+
+Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
+	
+	rule = Join[
+		{G -> g}, Thread@Rule[
+			{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}, ConstantArray[0, 15]
+		]
+	];
+	
+	ClearAll[TestGrad\[CapitalPsi]O3];
+	
+	TestGrad\[CapitalPsi]O3[\[Omega]ref_, \[Omega]_, \[Delta]_, \[Chi]s_, \[Chi]a_] = res[[positions, 2]]//.rule;
+
+]
+DownValues[TestGrad\[CapitalPsi]O3] = DownValues[TestGrad\[CapitalPsi]O3]//.HoldForm[x_]:> x;
+
+
+Clear@Test
+
+Test := Module[
+	{
+		\[Delta], \[Omega]ref, m1, m2, \[Chi]1, \[Chi]2, f,\[Omega], \[Eta], Symbolic,Numeric, RRe, MMARe, RIm, MMAIm, \[Chi]s, \[Chi]a,diff,fref,
+		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], vars,
+		li = SymmetrizedIndependentComponents[{4, 4, 4}, Symmetric[All]]
+	},
+	
+	{m1, m2} = ReverseSort[RandomReal[{20, 100}, 2]];
+	\[Eta] = (m1 m2)/(m1+m2)^2;
+	\[Delta] = Sqrt[1 - 4 \[Eta]];
+	{\[Chi]s,\[Chi]a} = RandomReal[{-1,1}, 2];
+	
+	
+	f = RandomReal[{10., 0.2/(G (m1+m2))}];
+	\[Omega] = (m1+m2) G f;
+	\[Omega]ref = 10 (m1+m2) G;
+	
+	Symbolic = TestGrad\[CapitalPsi]O3[\[Omega]ref, \[Omega], \[Delta], \[Chi]s, \[Chi]a];
+	
+	vars = {\[Omega]ref, \[Omega], \[Delta], \[Chi]s, \[Chi]a};
+	
+	Numeric = Extract[NGrad[SymmetricTestGradOrder2, vars, 1], li];
+	
+	RelativeDiff@@{Symbolic, Numeric}
 ]
 
 
@@ -1750,7 +1951,7 @@ itest[i_] := Block[
 	"CleanIntermediate"->True};*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing the function*)
 
 
@@ -1877,6 +2078,10 @@ test\[ScriptCapitalA]
 (*Comparing numerical x Symbolic derivatives*)
 
 
+(* ::Subsubsection::Closed:: *)
+(*First Order*)
+
+
 NGrad//Clear
 
 NGrad[f_, vars_, n_] := Module[
@@ -1963,7 +2168,152 @@ Test//ScientificForm
 Table[Round@Test, {100}]//DeleteDuplicates
 
 
-(* ::Section:: *)
+(* ::Subsubsection::Closed:: *)
+(*Second Order*)
+
+
+(* ::Text:: *)
+(*Since First order checks out we can Use the symbolic gradient of first order and compare its numerical derivatives against the symbolic *)
+(*gradients of order 2.*)
+
+
+Module[
+	{all = res[[2;;-1,1, 0, 1]]},
+	
+	positions = Position[all, x_/; Total[x]== 2, {1}, Heads->False];
+	positions = positions+1//Flatten
+]
+
+
+Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
+	
+	rule = {G -> g};
+	
+	ClearAll[TestGrad\[ScriptCapitalA]O2];
+	
+	TestGrad\[ScriptCapitalA]O2[f_, \[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_, \[Iota]_] = res[[positions, 2]]//.rule;
+
+]
+DownValues[TestGrad\[ScriptCapitalA]O2] = DownValues[TestGrad\[ScriptCapitalA]O2]//.HoldForm[x_]:> x;
+
+
+Clear@Test
+
+Test := Module[
+	{
+		 M, m1, m2, \[ScriptCapitalM]c, \[Delta], f, \[Eta],\[Iota], Symbolic,Numeric, RRe, MMARe, RIm, MMAIm, \[Chi]s, \[Chi]a,diff,fref,
+		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], vars,
+		li = SymmetrizedIndependentComponents[{5,5}, Symmetric[All]]
+	},
+	
+	{m1, m2} = ReverseSort[RandomReal[{20, 100}, 2]]; M = m1+m2;
+	\[Eta] = (m1 m2)/(m1+m2)^2;
+	M = m1+m2;
+	\[ScriptCapitalM]c = M \[Eta]^(3/5); \[Delta] = Sqrt[1-4 \[Eta]];
+	{\[Chi]s,\[Chi]a} = RandomReal[{-1,1}, 2];
+	
+	f = RandomReal[{10., 0.2/(G (m1+m2))}];
+	\[Iota] = RandomReal[{0,\[Pi]}];
+	
+	Symbolic = TestGrad\[ScriptCapitalA]O2[f, \[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota]][[All,1]];
+	
+	vars = {f, \[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota]};
+	
+	Numeric = Extract[NGrad[TestGrad\[ScriptCapitalA], vars, 1][[All,All,1]], li];
+	
+	RelativeDiff@@{Symbolic, Numeric}
+	
+	
+]
+
+
+Test//ScientificForm
+
+
+Table[Round@Test, {100}]//DeleteDuplicates
+
+
+(* ::Subsubsection:: *)
+(*Third Order*)
+
+
+(* ::Text:: *)
+(*Second order checks out so we can use the symbolic gradient of second order and compare its numerical derivatives against the symbolic gradients of order 3.*)
+
+
+SymmetricTestGradOrder2[x__] := Module[
+	{li = SymmetrizedIndependentComponents[{5,5}, Symmetric[All]], rule, values = TestGrad\[ScriptCapitalA]O2[x][[All, 1]], rules},
+	
+	rules = MapThread[Rule, {li, values}];
+	
+	SymmetrizedArray[rules, {5,5},Symmetric[All]]
+]
+
+
+Module[
+	{allTerms = res[[2;;-1, 1, 0, 1]]},
+	
+	positions = Position[
+		allTerms, x_/;Total[x] === 3, 
+		{1},
+		Heads->False
+	];
+	positions = positions+1//Flatten; (*+1 bcs you start with 1 beeing no derivative*)
+]
+
+
+Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
+	
+	rule = G->g;
+	
+	ClearAll[TestGrad\[ScriptCapitalA]O3];
+	
+	TestGrad\[ScriptCapitalA]O3[f_, \[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_, \[Iota]_] = res[[positions, 2]]//.rule;
+
+]
+DownValues[TestGrad\[ScriptCapitalA]O3] = DownValues[TestGrad\[ScriptCapitalA]O3]//.HoldForm[x_]:> x;
+
+
+Clear@Test
+
+Test := Module[
+	{
+		\[Delta], \[Omega]ref, m1, m2, \[Chi]1, \[Chi]2, f,\[Omega], \[Eta], Symbolic,Numeric, RRe, MMARe, RIm, MMAIm, \[Chi]s, \[Chi]a,diff,fref,
+		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], vars,
+		li = SymmetrizedIndependentComponents[{5,5,5}, Symmetric[All]], M, \[ScriptCapitalM]c, \[Iota]
+	},
+	
+	{m1, m2} = ReverseSort[RandomReal[{20, 100}, 2]];
+	\[Eta] = (m1 m2)/(m1+m2)^2;
+	
+	M  = m1+m2; \[ScriptCapitalM]c = M \[Eta]^(3/5);
+	
+	\[Delta] = Sqrt[1 - 4 \[Eta]];
+	{\[Chi]s,\[Chi]a} = RandomReal[{-1,1}, 2];
+	\[Iota] = RandomReal[{0,\[Pi]}];
+	
+	
+	f = RandomReal[{10., 0.2/(G (m1+m2))}];
+	\[Omega] = (m1+m2) G f;
+	\[Omega]ref = 10 (m1+m2) G;
+	
+	Symbolic = TestGrad\[ScriptCapitalA]O3[f, \[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota]][[All,1]];
+	
+	vars = {f, \[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota]};
+	
+	Numeric = Extract[NGrad[SymmetricTestGradOrder2, vars, 1], li];
+	
+	RelativeDiff@@{Symbolic, Numeric}
+]
+
+
+Test//ScientificForm
+
+
+Table[Test, {10}]//MinMax
+
+
+(* ::Section::Closed:: *)
 (*Compiling*)
 
 

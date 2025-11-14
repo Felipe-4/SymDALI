@@ -6,6 +6,9 @@ Quit
 $HistoryLength=1;
 
 
+SetOptions[EvaluationNotebook[], LightDark->"Light"]
+
+
 PacletDirectoryLoad[NotebookDirectory[]//ParentDirectory[#,2]&];
 
 
@@ -520,7 +523,7 @@ def lal_hp(m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, dL, iota, phiRef, deltaF, f_min
 "]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test hp and hc*)
 
 
@@ -623,7 +626,7 @@ testhc := Module[
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*check plots: *)
 
 
@@ -1203,11 +1206,11 @@ ListPlot[Sort[rd], PlotRange->All, ScalingFunctions->"Log10"]
 (*Testing SNRs against GWFAST:*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*SNR defs: *)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*GWFAST*)
 
 
@@ -1338,7 +1341,7 @@ def SNR(vec):
 (*Order of elements in the Fisher matrix of IMRPhenomD: *)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*MMA: *)
 
 
@@ -1387,7 +1390,7 @@ fp  = Thread@Rule[
 ]//Association
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test*)
 
 
@@ -1441,7 +1444,7 @@ test
 Table[test, 1000]//MinMax
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing Population functionality*)
 
 
@@ -1733,3 +1736,269 @@ Plot[
 	
 	PlotLegends->{"da", "dphi"}
 ], {f, 11, 1024}, {M, 10, 100}, {\[Chi]1, -1, 1}, {\[Chi]2, -1, 1}]
+
+
+(* ::Section::Closed:: *)
+(*Testing ProcessDALITensors:*)
+
+
+vars = {"\[ScriptCapitalM]c", "\[Delta]", "\[Chi]s", "\[Chi]a","\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "1/dL", "tc", "\[Phi]ref"};
+
+fp = MapThread[
+	Rule,
+	{
+		vars,
+		{2.3, 0.2, 0.9, -0.9, 2.3, 3.1, 2.1, 2.9, 1/3., 0.1, 6.}
+	}
+]//Association;
+
+
+H1 = <|
+"Position"->DetectorVertex["H1"],
+"DetectorTensor"->DetectorTensor["H1"],
+"ASD"-> ASD["L1H1-O5"]
+|>;
+L1 = <|
+"Position"->DetectorVertex["L1"],
+"DetectorTensor"->DetectorTensor["L1"],
+"ASD"-> ASD["L1H1-O5"]
+|>;
+V1 = <|
+"Position"->DetectorVertex["V1"],
+"DetectorTensor"->DetectorTensor["V1"],
+"ASD"-> ASD["V1-O5"]
+|>;
+
+
+(* ::Input:: *)
+(*dali = DALITensors["IMRPhenomD", fp, {H1, L1, V1}, 3, "res"->8000, "fmin"->10, "fmax"->1024];*)
+
+
+(* ::Subsection:: *)
+(*Test Function*)
+
+
+LITensorProduct[vec1_?VectorQ, vec2_?VectorQ] := Module[
+	{l1 = Length@vec1, l2 = Length@vec2},
+	If[
+		l1===l2, 
+		Table[vec1[[i]]*vec2[[j]], {i,l1}, {j,i,l1}]//Flatten,
+		vec1\[TensorProduct]vec2
+	]
+]
+
+
+MAKEDALI\[CapitalDelta]p[vec_] := Module[
+	{dim = Length@vec, \[CapitalDelta]p, DALIorder},
+	
+	\[CapitalDelta]p[1] = vec;
+	\[CapitalDelta]p[2] = Extract[vec\[TensorProduct]vec, SymmetrizedIndependentComponents[{dim, dim}, Symmetric[All]]];
+	\[CapitalDelta]p[3] = Extract[vec\[TensorProduct]vec\[TensorProduct]vec, SymmetrizedIndependentComponents[{dim, dim, dim}, Symmetric[All]]];
+	
+	DALIorder = Do[
+		Sow[#, j]&@(LITensorProduct[\[CapitalDelta]p[j], \[CapitalDelta]p[i]]),
+		{i, 3},
+		{j, i, 3}
+	]//Reap//Last;
+	
+	DALIorder//Flatten
+]
+
+
+Clear@Test
+
+
+Test[dim_] := Module[
+	{LIComponents, LIValues, SymmetricGradients, rules, \[CapitalDelta]p, DALIscheme1, DALIscheme2, scalar1, dali\[CapitalDelta]p, scalar2},
+	
+	(LIComponents[#] = SymmetrizedIndependentComponents[ConstantArray[dim, #],Symmetric[All]])&/@Range[3];
+	
+	(LIValues[#] = RandomReal[{1,10}, Length[LIComponents[#]]])&/@Range[3];
+	
+	(rules[#] = MapThread[Rule, {LIComponents[#], LIValues[#]}])&/@Range[3];
+	
+	(SymmetricGradients[#] = SymmetrizedArray[rules[#], ConstantArray[dim, #], Symmetric[All]])&/@Range[3];
+	
+	DALIscheme1 = Do[
+		Sow[#, j]&@(Flatten[LIValues[j]\[TensorProduct]LIValues[i]]),
+		{i, 3},
+		{j, i, 3}
+	]//Reap//Last;
+	
+	
+	DALIscheme2 = Do[
+		Sow[#, j]&@(SymmetricGradients[j]\[TensorProduct]SymmetricGradients[i]),
+		{i, 3},
+		{j, i, 3}
+	]//Reap//Last;
+	
+	scalar1 = Table[
+		Dot[c[i,j]*DALIscheme2[[i,j]], Sequence@@ConstantArray[\[CapitalDelta]p, i+j]],
+		{i,3},
+		{j,1,i}
+	]//Flatten[#, 1]&;
+	
+	\[CapitalDelta]p = RandomReal[{1,2}, dim];
+	
+	dali\[CapitalDelta]p = MAKEDALI\[CapitalDelta]p[\[CapitalDelta]p];
+	
+	scalar2 = Flatten[ProcessDALITensors[DALIscheme1]] . dali\[CapitalDelta]p;
+	
+	((Plus@@scalar1) -  scalar2)/Min[{scalar1, scalar2}]//Abs
+	
+]
+
+
+(* ::Subsection:: *)
+(*Calculate*)
+
+
+MaxMemoryUsed[Test[9]]
+
+
+(*hard to go beyond dim=9 in my computer, too much ram to run this.*)
+
+
+(* ::Text:: *)
+(*I am finding agreement to numerical precision pretty much*)
+
+
+Table[Test[9], 5]
+
+
+<<FelipeBarbosa`SymDALI`
+
+
+(* ::Section::Closed:: *)
+(*Test \[Delta]\[CurlyPhi] against modified RippleGW: *)
+
+
+(* ::Subsection::Closed:: *)
+(*Ripple Phase: *)
+
+
+DeleteObject/@ExternalSessions[];
+Clear@python
+python = StartExternalSession[{
+	"Python",
+	"Evaluator"-> "/Users/felipe/anaconda3/envs/modified_ripplegw/bin/python"
+}];
+
+ExternalEvaluate[python,"
+import numpy as np
+
+from ripplegw.waveforms import IMRPhenomD as IMRD
+from ripplegw.waveforms import IMRPhenomD_utils as IMRD_utils
+"]
+
+
+Clear[helperCoeffs, RippleCoeffs]
+
+
+helperCoeffs = ExternalFunction[python, "def Coeffs(theta):
+	a = IMRD_utils.get_coeffs(theta)
+	return np.array(a)"
+];
+
+RippleCoeffs[\[Theta]_] := helperCoeffs[\[Theta]]//Normal
+
+
+Clear[helperTransitionFrequencies, RippleTransitionFrequencies]
+helperTransitionFrequencies = ExternalFunction[python, "def transitionfrequencies(theta, gamma2, gamma3):
+	a = IMRD_utils.get_transition_frequencies(theta, gamma2, gamma3)
+	return np.array(a)
+"];
+
+RippleTransitionFrequencies[\[Theta]_, \[Gamma]2_, \[Gamma]3_] := helperTransitionFrequencies[\[Theta], \[Gamma]2, \[Gamma]3]//Normal
+
+
+Clear[helperArg, Argument]
+helperArg = ExternalFunction[python, "def h0(f, \[Theta]in, \[Theta]extr, coeffs,  fref):
+	b = np.array(f)
+	h0, Psi = IMRD._gen_IMRPhenomD(b, \[Theta]in, \[Theta]extr, coeffs,  fref)
+	return np.array(Psi)"
+];
+
+(*the function takes the arguments: Mc, eta, chi1, chi2, dist_mpc, tc, phic, inclination*)
+Argument[f_, \[Theta]in_, \[Theta]ex_, coeffs_, fref_] := helperArg[f, \[Theta]in, \[Theta]ex, coeffs, fref]//Normal
+
+
+(* ::Text:: *)
+(* Phase (f : Array, theta : Array, coeffs : Array, transition_freqs : Array) -> Array :*)
+(*  *)
+
+
+(* ::Subsection::Closed:: *)
+(*MMA def*)
+
+
+Private`D\[CapitalPhi]IMR
+
+
+(* ::Subsection::Closed:: *)
+(*Test*)
+
+
+Test := Module[
+	{f, M, \[Chi]1, \[Chi]2,pos, m1, m2,\[Eta],tc, \[Phi]c, Ripple, MMA, \[Omega], \[Theta]in, \[Theta]ex, coeffs,  \[Delta], \[Chi]s, \[Chi]a,
+	G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]],diff, transition,
+	ringdown,\[Omega]ref,\[Delta]\[CurlyPhi]s},
+	
+	\[Delta]\[CurlyPhi]s = RandomReal[{-1,1}, 10];
+	
+	f = Range[20, 2048, 1.];
+	{m1, m2} = ReverseSort@RandomReal[{10,120},2];
+	
+	M = (m1+m2);
+	
+	\[Eta] = (m1 m2)/M^2;
+	tc =0;  
+	\[Phi]c = 0; 
+	{\[Chi]1, \[Chi]2} = RandomReal[{-1,1}, 2];
+	
+	\[Delta] = Sqrt[1-4 \[Eta]];
+	\[Chi]s = (\[Chi]1+\[Chi]2)/2; \[Chi]a = (\[Chi]1-\[Chi]2)/2;
+	\[Omega] = G M f;
+	\[Omega]ref = 20 G M;
+	
+	
+
+	\[Theta]ex = {1, tc, \[Phi]c}//N;
+	\[Theta]in = {m1, m2, \[Chi]1, \[Chi]2};
+	coeffs = RippleCoeffs[\[Theta]in];
+	transition = RippleTransitionFrequencies[\[Theta]in,  Sequence@@coeffs[[6;;7]] ];
+
+	Ripple = Argument[f, Join[\[Theta]in, \[Delta]\[CurlyPhi]s], \[Theta]ex, coeffs, 20.];
+	
+	
+	MMA = Private`D\[CapitalPhi]IMR[\[Omega],\[Omega]ref, \[Delta], \[Chi]s, \[Chi]a, Sequence@@\[Delta]\[CurlyPhi]s, 0,0,0,0,0];
+	
+	diff = RelativeDiff@@{MMA, Ripple};
+	ringdown = transition[[-2]] M G;
+	
+	
+	Ripple = Riffle[\[Omega], Ripple]//Partition[#,2]&;
+	MMA = Riffle[\[Omega],MMA]//Partition[#,2]&;
+	
+	pos = FirstPosition[\[Omega], x_/; x>=0.19]//Last; (*0.2 is the upper cutoff for IMRPhenomD. *)
+	diff = Riffle[\[Omega], diff]//Partition[#,2]&;
+	{
+		ListLinePlot[
+			Take[diff, pos], 
+			GridLines->{{{0.018,Red}, {ringdown/2, Red}}, None}, 
+			PlotRange->All, ImageSize->Medium, Background->White,
+			ScalingFunctions->"Log10"
+		],
+		ListLinePlot[
+			{Take[Ripple, pos], Take[MMA, pos]}, 
+			GridLines->{{{0.018,Red}, {ringdown/2, Red}}, None},
+			PlotRange->All,
+			PlotLegends->{"Python", "MMA"}, ImageSize->Medium, Background->White
+		]
+	}
+	
+
+]
+
+
+Test

@@ -1,21 +1,5 @@
 (* ::Package:: *)
 
-(*Needs["maTHEMEatica`"]
-colors=<|
-	"background"->RGBColor["#000000"],
-	"fontcolor"->RGBColor["#eeeeee"],
-	"primary"->RGBColor["#B87333"],
-	"variable"->RGBColor["#55f7df"],
-	"module"->RGBColor["#e638e9"],
-	"block"->RGBColor["#FFFF00"],
-	"error"->RGBColor["#FF0000"],
-	"headhighlight"->RGBColor["#02584c"]
-|>;
-SetColors[colors]
-CreateStyleSheet[]
-ApplyStyleSheet[]*)
-
-
 (* ::Section:: *)
 (*Package Header*)
 
@@ -23,7 +7,17 @@ ApplyStyleSheet[]*)
 BeginPackage["FelipeBarbosa`SymDALI`DALIPolynomial`"];
 
 
-CompiledPolynomial::usage="CompiledPolynomial[daliList, fiducialPoint ] gives the DALI polynomial associated to the coefficients in daliList expanded around fiducialPoint";
+ProcessDALITensors//ClearAll
+
+ProcessDALITensors::usage="ProcessDALITensors[DALI_List]
+DALI_List: the exact List that comes out from ```DALITensors```
+returns the list with only the LI components of the tensors and the multiplicity of each component, to be
+contracted with \!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(i\)]\)s directly.";
+
+c
+
+
+(*CompiledPolynomial::usage="CompiledPolynomial[daliList, fiducialPoint ] gives the DALI polynomial associated to the coefficients in daliList expanded around fiducialPoint";
 PermutationsNumber::usage = "PermutationsNumber[list] gives the number of all possible permutations of the elements in list.";
 StanPolynomial::usage="StanPolynomial[DALITensors, fiducialPoint_]
 DALITensors_List: list of DALI tensors as outputed by GWDALICoefficients or DALICoefficients;
@@ -44,7 +38,7 @@ Example:
 ";
 SymbolicVector::usage="SymbolicVector[listofLIComponents, head] applies head to the list of Linear Independent components of a tensor listOfLIComponents"
 PreprocessDALItensors
-TaylorForm
+TaylorForm*)
 
 
 Begin["`Private`"]
@@ -52,6 +46,20 @@ Begin["`Private`"]
 
 (* ::Section:: *)
 (*Definitions*)
+
+
+ClearAll@PermutationsNumber
+
+
+PermutationsNumber::usage=" PermutationNumber[{x,y,...,z}]
+returns the number of distinct permutations of (x,y,..z)
+
+>>PermutationsNumber[{1,2,3}] ==3!
+>>True
+
+>>PermutationsNumber[{1,2,2}]== 3
+>>True
+";
 
 
 PermutationsNumber[list_List] := With[
@@ -67,11 +75,83 @@ PermutationsNumber[list_List] := With[
 PermutationsNumber[x___] := Throw[$Failed, failTag[PermutationsNumber]]
 
 
-(*Compile[{x, y}, Module[{h}, h[a_] := 3]]*)
-
-
 c[i_,j_] := -1/(i! j!)
 c[i_,j_]/;i==j := -1/(2 (i!)^2)
+
+
+DALIComponents//ClearAll
+
+
+DALIComponents::usage="DALIComponents[dim, order]
+generates a list of the LI components of the gradients used to build the DALI structure.
+>>DALIComponents[3, 2]
+>>{
+	{{1},{2},{3}},
+	{{1,1},{1,2},{1,3},{2,2},{2,3},{3,3}}
+}";
+
+
+DALIComponents[dim_, order_] := SymmetrizedIndependentComponents[
+	ConstantArray[dim, #],
+	Symmetric[All]
+]&/@Range[order]
+
+
+ProcessDALITensors[DALITensors_List] := Module[
+	{
+		order = Length[DALITensors], dim = Sqrt[DALITensors[[1,1]]//Length], 
+		iTensorList, vectors, SymbolicDALI, highOrderLI, HOdim, HOLI, HOM, HOMultiplicity, HOLITensors 
+	},
+	
+	(*First you add the c[i,j] contribution in front of the tensors*)
+	iTensorList = Table[
+		c[i,j]DALITensors[[i,j]],
+		{i,order},
+		{j,i}
+	];
+	
+	(*Make a new DALI_List whose tensor components will match the multiplicity of each component in the original List*)
+	vectors = DALIComponents[dim, order];(*gradients LI components*)
+	vectors = Map[PermutationsNumber, vectors, {2}]; (*adding multiplicities of each component*)
+	
+	(*remember the order: {
+		{(1,1)}, {(1,2), (2,2)}, {(1,3), (2,3), (3,3)}, ...
+	}*)
+	SymbolicDALI = Do[
+		Sow[#, j]&@(Flatten[vectors[[j]]\[TensorProduct]vectors[[i]]]),
+		{i, 1, order},
+		{j, i, order}
+	]//Reap//Last;     
+	
+	
+	
+	
+	(*add these multiplicities to iTensorList:*)
+	iTensorList = SymbolicDALI*iTensorList;
+	
+	(*
+		Now we just extract the LI components of the high order terms: (1,1), (2,2), (3,3)
+		and include their multiplicities:
+	*)
+	
+	
+	HOLITensors = Table[
+		HOdim = Sqrt[(iTensorList[[i,i]]//Length)]; (*higher order dimensions*)
+		HOLI = SymmetrizedIndependentComponents[{HOdim, HOdim}, Symmetric[All]]; (*HO LIs*)
+		HOMultiplicity = PermutationsNumber/@HOLI; (*Multiplicities of these LI components*)
+		HOM = ArrayReshape[iTensorList[[i,i]], {HOdim, HOdim}]; (*Matrix Format*)
+		Extract[HOM, HOLI]*HOMultiplicity (*extract the LI components and add the multiplicityes*), 
+		{i, 1, order}
+	];
+	
+	Do[
+		iTensorList[[i,i]] = HOLITensors[[i]], (*modify iTensorList with the LI components and multiplicities*)
+		{i,1,order}
+	];
+	
+	iTensorList
+	
+]
 
 
 (*vector = Range[5]*)
@@ -178,6 +258,12 @@ SymbolicVector[LIComponents_, head_Symbol]/;MatrixQ[LIComponents, NumericQ] := T
 ]
 
 SymbolicVector[x___] := Throw[$Failed, failTag[SymbolicVector]]
+
+
+PermutationsNumber/@SymmetrizedIndependentComponents[{3,3}, Symmetric[All]]
+
+
+SymmetrizedIndependentComponents[{3,3}, Symmetric[All]]
 
 
 (*Multiply the LI components by their multiplicity and the c[i,j] from Taylor expansion*)
