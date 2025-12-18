@@ -63,11 +63,11 @@ RelativeDiff[x_, y_]/; x!=0 &&y!=0 := With[
 ]
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Phase*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*PPN-parameters:*)
 
 
@@ -116,7 +116,7 @@ Clear[\[Phi]0, \[Phi]1, \[Phi]2, \[Phi]3, \[Phi]4, \[Phi]5, \[Phi]6, \[Phi]7]
 }//Simplify;
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Ins-Phase*)
 
 
@@ -485,7 +485,7 @@ Module[
 (*Pos[expri, hj] ={POS1, POS2, ...},  j = 1, ..., N*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Making Block function*)
 
 
@@ -821,7 +821,7 @@ Export["Phase_Ds_order_0_to_3.mx", res1]
 	"SystemCompileOptions"->" -fPIC -O2"};*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing the function*)
 
 
@@ -1765,7 +1765,7 @@ Clear@\[ScriptCapitalA]IMR
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Making Block function*)
 
 
@@ -1918,15 +1918,11 @@ SubValues[Derivative] = Drop[SubValues[Derivative], {2, -1}]
 Protect[Derivative];
 
 
-SetDirectory[NotebookDirectory[]]
-Export["Amp_Ds_order_0_to_3.wdx", res1]
-
-
 Export["Amp_Ds_order_0_to_3.mx", res1]
 
 
 itest[i_] := Block[
-	{testF, \[Phi]1, \[Phi]2, ND\[Omega],\[Omega], \[Eta], \[Chi]s, \[Chi]a, DM, \[Delta], \[ScriptCapitalM]c,
+	{testF, \[Phi]1, \[Phi]2, ND\[Omega],\[Omega], \[Eta], DM, res,
 	M, G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]],
     grad, ngrad, f},
 	
@@ -1940,9 +1936,169 @@ itest[i_] := Block[
 	\[ScriptCapitalM]c = M \[Eta]^(3/5);
 	f = RandomReal[{20, 0.2/(G M)}];
 
-	
-	testF[\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, 2 \[Iota]]
+	(*No idea why, but the pattern is not working for iota here:*)
+	res = testF[\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota]];
+	Clear[\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a,\[Iota]];
+	res
 ]//Quiet
+
+
+(* ::Text:: *)
+(*I want also higher order now:*)
+
+
+Combinations[vars_List, n_Integer]/;n>0 := Module[
+	{result},
+	result  = Table[
+			(Sort/@Tuples[vars, i])//DeleteDuplicates,
+			{i,n}
+	]//Flatten[#,1]&
+]
+
+
+derivatives = Cases[Combinations[{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota]}, 4], x_/; Length@x>3, {1}];
+
+
+derivatives//Length
+
+
+Clear@expr;
+
+With[{
+	vars = {\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota]}
+	},
+	expr =  Hold[
+	{test, vars, derivatives},
+	Evaluate@$blockexpr,
+	"IncludeZeroDerivative"->False
+]//.HoldForm[X_] :> X;
+]
+
+
+res1 = EchoTiming[DerivativeRules@@expr];
+
+
+SetDirectory[NotebookDirectory[]]
+
+
+Clear@expr;
+With[{
+		vars = {\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota]}
+		},
+		Print[i];
+		expr =  Hold[
+			Evaluate@{test, vars, {{\[ScriptCapitalM]c,\[ScriptCapitalM]c,\[ScriptCapitalM]c,\[ScriptCapitalM]c}}},
+			Evaluate@$blockexpr,
+			"IncludeZeroDerivative"->False
+		]//.HoldForm[X_] :> X;
+]
+	
+res1 = EchoTiming[DerivativeRules@@expr//QuietEcho];
+	
+Unprotect[Derivative];
+SubValues[Derivative] = Drop[SubValues[Derivative], {2, -1}];
+Protect[Derivative];
+
+Export["d4_"<>ToString[idx]<>".mx", res1];
+Print["Finished:"<>ToString[idx]];
+
+
+idx=1;
+
+Do[
+	Clear@expr;
+
+	With[{
+		vars = {\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota]}
+		},
+		Print[i];
+		expr =  Hold[
+			Evaluate@{test, vars, {i}},
+			Evaluate@$blockexpr,
+			"IncludeZeroDerivative"->False
+		]//.HoldForm[X_] :> X;
+	];
+	
+	res1 = EchoTiming[DerivativeRules@@expr//QuietEcho];
+	
+	Unprotect[Derivative];
+	SubValues[Derivative] = Drop[SubValues[Derivative], {2, -1}];
+	Protect[Derivative];
+	
+	Export["d4_"<>ToString[idx]<>".mx", res1];
+	
+	Clear[res1]; Print["Finished:"<>ToString[idx]];
+	
+	idx ++,
+	
+	{i, derivatives}
+
+]
+
+
+SetDirectory[NotebookDirectory[]]
+
+
+res1 = Import["./Amp_Ds_order_0_to_3.mx"];
+
+
+ByteCount/@res1[[All,2]]//Max
+
+
+Position[390935816]@(ByteCount/@res1[[All,2]])
+
+
+(res1[[38,2]]//ByteCount)/(2.3 10^6)
+
+
+Module[
+	{},
+	sizes = Table[
+		Import["d4_"<>ToString[i] <>".mx"]//ByteCount,
+		{i, 70}
+	]
+]
+
+
+Position[sizes/(1. 10^9)//Max]@(sizes/(1. 10^9))
+
+
+derivatives[[41]]
+
+
+res1 = Import["d4_41.mx"];
+
+
+(*Function to take HoldForm[Block[...]] and make library functions*)
+compileThis[x_HoldForm] := Module[
+	{dummy},
+	dummy = Hold[
+		{{f, _Real, 1}, \[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota]}, 
+		Evaluate[x],
+		RuntimeOptions->{
+			"CatchMachineOverflow"->False,
+			"CatchMachineIntegerOverflow"->False,
+			"EvaluateSymbolically"->False,
+			"RuntimeErrorHandler"->None,
+			"WarningMessages"->True
+		}
+	]//.{HoldForm[y_] :> y, us\[Theta]->UnitStep, Rational[any_, any2_] :> Divide[any, any2], Complex[x1_, x2_] :> x1+I x2};
+	
+	Compile@@dummy
+]
+
+
+cF = compileThis[res1[[1,2]]];
+
+
+<<CCompilerDriver`
+<<CCodeGenerator`
+
+
+$CCompilerDefaultDirectory = "/Users/felipe"
+
+
+LibraryGenerate[cF, "test"]
 
 
 (*Compiler`$CCompilerOptions =Compiler`$CCompilerOptions={
@@ -1951,7 +2107,7 @@ itest[i_] := Block[
 	"CleanIntermediate"->True};*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing the function*)
 
 
@@ -1962,10 +2118,13 @@ res = Import["Amp_Ds_order_0_to_3.mx"];
 Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]]}, 
 	
 	ClearAll[Test\[ScriptCapitalA]];
-	Test\[ScriptCapitalA][f_, \[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_, \[Iota]_] = res[[1,2]]//.Join[{G -> g}];
+	Test\[ScriptCapitalA][f_, \[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_, \[Iota]_] = res1[[1,2]]//.Join[{G -> g}];
 
 ]
 DownValues[Test\[ScriptCapitalA]] = DownValues[Test\[ScriptCapitalA]]//.HoldForm[x_]:> x;
+
+
+Test\[ScriptCapitalA][{2,3}, 2, 0.1, 0.1, 0.2, iota]
 
 
 (* ::Subsection::Closed:: *)
@@ -1986,8 +2145,8 @@ python = StartExternalSession[
 
 ExternalEvaluate[python, {
 	   "import numpy as np",
-            "from ripplegw.waveforms import IMRPhenomD as IMRD",
-            "from ripplegw.waveforms import IMRPhenomD_utils as IMRD_utils"
+        "from ripplegw.waveforms import IMRPhenomD as IMRD",
+        "from ripplegw.waveforms import IMRPhenomD_utils as IMRD_utils"
        }]
 
 
@@ -2074,7 +2233,7 @@ test\[ScriptCapitalA] := Module[
 test\[ScriptCapitalA]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Comparing numerical x Symbolic derivatives*)
 
 
@@ -2313,7 +2472,7 @@ Test//ScientificForm
 Table[Test, {10}]//MinMax
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Compiling*)
 
 
@@ -2323,7 +2482,7 @@ SetDirectory[NotebookDirectory[]]
 Ds = Import["Amp_Ds_order_0_to_3.mx"];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Compiling Amp terms:*)
 
 

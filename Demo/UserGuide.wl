@@ -937,15 +937,15 @@ ListPlot[Flatten[a]//Sort, ScalingFunctions->"Log10", PlotRange->All]
 (*the high differences seem to be always on the dL column*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing GWFAST vs Symbolic Fishers:*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Fisher defs: *)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*GWFAST*)
 
 
@@ -981,9 +981,6 @@ import gwfast.gwfastGlobals as glob
 
 (* ::Text:: *)
 (*I will be using L1 and H1 with Aplus Design:*)
-
-
-NotebookDirectory[]
 
 
 ExternalEvaluate[python,
@@ -1053,9 +1050,9 @@ def Fisher(vec):
         'chi1z': onp.array([chi1z]),
         'chi2z': onp.array([chi2z]),
     }
-    sys.stdout = open(os.devnull, 'w')
+    #sys.stdout = open(os.devnull, 'w')
     fm = myLVNet.FisherMatr(res, res=1000)
-    sys.stdout = sys.__stdout__
+    #sys.stdout = sys.__stdout__
     return fm
 "]
 
@@ -1067,7 +1064,7 @@ def Fisher(vec):
 ExternalEvaluate[python, "IMRPhenomD().ParNums"]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*MMA: *)
 
 
@@ -1141,7 +1138,7 @@ MMAFisherMatrix[fp_Association] := Module[
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Test*)
 
 
@@ -1167,7 +1164,7 @@ test := Module[
 	{chi1z, chi2z} = RandomReal[{-1,1},2];
 	{chis, chia} = {(chi1z+chi2z)/2, (chi1z-chi2z)/2};
 	
-	tc =1126259462.;
+	tc = 1126259462.;
 	
 	pyvec = {Mc, dL, theta, phi, iota, psi, eta, phic, chi1z, chi2z};
 	
@@ -1738,7 +1735,7 @@ Plot[
 ], {f, 11, 1024}, {M, 10, 100}, {\[Chi]1, -1, 1}, {\[Chi]2, -1, 1}]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing ProcessDALITensors:*)
 
 
@@ -1849,7 +1846,7 @@ Test[dim_] := Module[
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Calculate*)
 
 
@@ -1867,6 +1864,250 @@ Table[Test[9], 5]
 
 
 <<FelipeBarbosa`SymDALI`
+
+
+(* ::Section::Closed:: *)
+(*Testing that only totally symmetric part of a tensor survives the contraction*)
+
+
+LITensorProduct[vec1_?VectorQ, vec2_?VectorQ] := Module[
+	{l1 = Length@vec1, l2 = Length@vec2},
+	If[
+		l1===l2, 
+		Table[vec1[[i]]*vec2[[j]], {i,l1}, {j,i,l1}]//Flatten,
+		vec1\[TensorProduct]vec2
+	]
+]
+
+
+MAKEDALI\[CapitalDelta]p//ClearAll
+
+MAKEDALI\[CapitalDelta]p[vec_] := Module[
+	{dim = Length@vec, \[CapitalDelta]p, DALIorder},
+	
+	\[CapitalDelta]p[1] = vec;
+	\[CapitalDelta]p[2] = Extract[vec\[TensorProduct]vec, SymmetrizedIndependentComponents[{dim, dim}, Symmetric[All]]];
+	\[CapitalDelta]p[3] = Extract[vec\[TensorProduct]vec\[TensorProduct]vec, SymmetrizedIndependentComponents[{dim, dim, dim}, Symmetric[All]]];
+	
+	DALIorder = Do[
+		Sow[#, j]&@(LITensorProduct[\[CapitalDelta]p[j], \[CapitalDelta]p[i]]),
+		{i, 3},
+		{j, i, 3}
+	]//Reap//Last;
+	
+	DALIorder//Flatten
+]
+
+
+MAKEDALI\[CapitalDelta]p//ClearAll
+
+MAKEDALI\[CapitalDelta]p[vec_] := Module[
+	{dim = Length@vec, \[CapitalDelta]p, DALIorder},
+	
+	\[CapitalDelta]p[1] = vec;
+	\[CapitalDelta]p[2] = Extract[vec\[TensorProduct]vec, SymmetrizedIndependentComponents[{dim, dim}, Symmetric[All]]];
+	\[CapitalDelta]p[3] = Extract[vec\[TensorProduct]vec\[TensorProduct]vec, SymmetrizedIndependentComponents[{dim, dim, dim}, Symmetric[All]]];
+	
+	DALIorder = Do[
+		Sow[#, j]&@(LITensorProduct[\[CapitalDelta]p[j], \[CapitalDelta]p[i]]),
+		{i, 3},
+		{j, i, 3}
+	]//Reap//Last;
+	
+	DALIorder//Flatten
+]
+
+
+Clear@Test
+Test[dim_] := Module[
+	{LIComponents, LIValues, SymmetricGradients, rules, \[CapitalDelta]p, DALIscheme1, DALIscheme2, scalar1, dali\[CapitalDelta]p, scalar2},
+	
+	(LIComponents[#] = SymmetrizedIndependentComponents[ConstantArray[dim, #],Symmetric[All]])&/@Range[3];
+	
+	(LIValues[#] = RandomReal[{1,10}, Length[LIComponents[#]]])&/@Range[3];
+	
+	(rules[#] = MapThread[Rule, {LIComponents[#], LIValues[#]}])&/@Range[3];
+	
+	(SymmetricGradients[#] = SymmetrizedArray[rules[#], ConstantArray[dim, #], Symmetric[All]])&/@Range[3];
+	
+	(*Way I am calculating the DALI Likelihood*)
+	DALIscheme1 = Do[
+		Sow[#, j]&@(Flatten[LIValues[j]\[TensorProduct]LIValues[i]]),
+		{i, 3},
+		{j, i, 3}
+	]//Reap//Last;
+	
+	(*Divide by c[i,j] bcs ProcessDALITensors multiplies by it and you want to include only the multiplicities:*)
+	DALIscheme1 = Table[
+		DALIscheme1[[i,j]]/c[i,j],
+		{i, 1, 3},
+		{j,1,i}
+	];
+		
+	
+	(*The second scheme is to take only the totally symmetric part of the tensor products and contract 
+	with the totally symmetric part of the Deltaps*)
+	DALIscheme2 = Do[
+		Sow[#, j]&@(SymmetricGradients[j]\[TensorProduct]SymmetricGradients[i]),
+		{i, 3},
+		{j, i, 3}
+	]//Reap//Last;
+	
+	scalar1 = Table[
+		Dot[(*Symmetrize will take the Totally symmetric part of the tensor*)
+			Symmetrize[DALIscheme2[[i,j]], Symmetric[All]], 
+			Sequence@@ConstantArray[\[CapitalDelta]p, i+j]
+		],
+		{i,3},
+		{j,1,i}
+	]//Flatten[#, 1]&;
+	
+	\[CapitalDelta]p = RandomReal[{1,2}, dim];
+	
+	dali\[CapitalDelta]p = MAKEDALI\[CapitalDelta]p[\[CapitalDelta]p];
+	
+	scalar2 = Flatten[ProcessDALITensors[DALIscheme1]] . dali\[CapitalDelta]p;
+	
+	((Plus@@scalar1) -  scalar2)/Min[{scalar1, scalar2}]//Abs
+	
+]
+
+
+Table[Test[8], 10]
+
+
+(* ::Section:: *)
+(*Testing "TaylorForm"*)
+
+
+(* ::Subsection:: *)
+(*Test Function*)
+
+
+LITensorProduct[vec1_?VectorQ, vec2_?VectorQ] := Module[
+	{l1 = Length@vec1, l2 = Length@vec2},
+	If[
+		l1===l2, 
+		Table[vec1[[i]]*vec2[[j]], {i,l1}, {j,i,l1}]//Flatten,
+		vec1\[TensorProduct]vec2
+	]
+]
+
+
+MAKEDALI\[CapitalDelta]p[vec_] := Module[
+	{dim = Length@vec, \[CapitalDelta]p, DALIorder},
+	
+	\[CapitalDelta]p[1] = vec;
+	\[CapitalDelta]p[2] = Extract[vec\[TensorProduct]vec, SymmetrizedIndependentComponents[{dim, dim}, Symmetric[All]]];
+	\[CapitalDelta]p[3] = Extract[vec\[TensorProduct]vec\[TensorProduct]vec, SymmetrizedIndependentComponents[{dim, dim, dim}, Symmetric[All]]];
+	
+	DALIorder = Do[
+		Sow[#, j]&@(LITensorProduct[\[CapitalDelta]p[j], \[CapitalDelta]p[i]]),
+		{i, 3},
+		{j, i, 3}
+	]//Reap//Last;
+	
+	DALIorder//Flatten
+]
+
+
+MAKELI\[CapitalDelta]p[vec_] := Module[
+	{\[CapitalDelta]p2, \[CapitalDelta]p3, \[CapitalDelta]p4, \[CapitalDelta]p5, \[CapitalDelta]p6, dim  = Length@vec},
+	
+	\[CapitalDelta]p2 = Table[
+		vec[[i]]*vec[[j]],
+		{i,dim},
+		{j, i, dim}
+	]//Flatten;
+	
+	\[CapitalDelta]p3 = Table[
+		vec[[i]]*vec[[j]]*vec[[k]],
+		{i,dim},
+		{j, i, dim},
+		{k, j, dim}
+	]//Flatten;
+	
+	\[CapitalDelta]p4 = Table[
+		vec[[i]]*vec[[j]]*vec[[k]]*vec[[l]],
+		{i,dim},
+		{j, i, dim},
+		{k, j, dim},
+		{l, k, dim}
+	]//Flatten;
+	
+	\[CapitalDelta]p5 = Table[
+		vec[[i]]*vec[[j]]*vec[[k]]*vec[[l]]*vec[[s]],
+		{i,dim},
+		{j, i, dim},
+		{k, j, dim},
+		{l, k, dim},
+		{s, l, dim}
+	]//Flatten;
+	
+	\[CapitalDelta]p6 = Table[
+		vec[[i]]*vec[[j]]*vec[[k]]*vec[[l]]*vec[[s]]*vec[[q]],
+		{i,dim},
+		{j, i, dim},
+		{k, j, dim},
+		{l, k, dim},
+		{s, l, dim},
+		{q, s, dim}
+	]//Flatten;
+	
+	Join[\[CapitalDelta]p2, \[CapitalDelta]p3, \[CapitalDelta]p4, \[CapitalDelta]p5, \[CapitalDelta]p6]
+]
+
+
+Clear@Test
+
+
+Test[dim_] := Module[
+	{LIComponents, LIValues, \[CapitalDelta]p, DALIscheme1,taylor,  scalar1, dali\[CapitalDelta]p, scalar2},
+	
+	(LIComponents[#] = SymmetrizedIndependentComponents[ConstantArray[dim, #],Symmetric[All]])&/@Range[3];
+	
+	(LIValues[#] = RandomReal[{1,10}, Length[LIComponents[#]]])&/@Range[3];
+	
+	DALIscheme1 = Do[
+		Sow[#, j]&@(Flatten[LIValues[j]\[TensorProduct]LIValues[i]]),
+		{i, 3},
+		{j, i, 3}
+	]//Reap//Last;
+	
+	taylor = TaylorForm[DALIscheme1]//EchoTiming;
+	
+	\[CapitalDelta]p = RandomReal[{1,2}, dim];
+	
+	dali\[CapitalDelta]p = MAKEDALI\[CapitalDelta]p[\[CapitalDelta]p];
+	
+	scalar2 = Flatten[ProcessDALITensors[DALIscheme1]] . dali\[CapitalDelta]p;
+	
+	scalar1 = Flatten[taylor] . MAKELI\[CapitalDelta]p[\[CapitalDelta]p];
+	
+	(scalar1 -  scalar2)/Min[{scalar1, scalar2}]//Abs
+	
+]
+
+
+(* ::Subsection:: *)
+(*Calculate*)
+
+
+(* ::Text:: *)
+(*I believe it takes so long bcs of ```SymmetrizedArray``` and ```Symmetrize``` functionality in Mathematica. They seem to be intrinsically slow. Not much I can I guess.*)
+
+
+MaxMemoryUsed[Test[12]]
+
+
+(* ::Text:: *)
+(*I am finding agreement to numerical precision pretty much*)
+
+
+Test[9]//EchoTiming
+
+
+Table[Test[12], 5]
 
 
 (* ::Section::Closed:: *)

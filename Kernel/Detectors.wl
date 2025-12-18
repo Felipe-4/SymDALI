@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Package Header*)
 
 
@@ -85,7 +85,7 @@ Begin["`Private`"];
 (*Definitions*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*ArmDirection and DetectorPosition*)
 
 
@@ -130,7 +130,7 @@ FromGeocentricCoordinates[{h_, \[CurlyPhi]_, \[Lambda]_}] := Module[
 Protect[ArmDirection]; Protect[FromGeocentricCoordinates];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*DetectorTensor*)
 
 
@@ -187,7 +187,7 @@ DetectorTensor["I1"] = Module[
 
 Module[
 	{
-		lat = (40 +31/60) Degree, lon = (9 + 25/60) Degree, n1, n2
+		lat = (40 + 31/60) Degree, lon = (9 + 25/60) Degree, n1, n2
 	}, 
 	
 	(*sardinia L shape detector*)
@@ -198,6 +198,9 @@ Module[
 	
 	DetectorTensor["ET-S-L"] = (n1\[TensorProduct]n1 - n2\[TensorProduct]n2)/2;
 ]
+
+
+?ArmDirection
 
 
 (* ::Text:: *)

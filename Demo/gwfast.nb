@@ -4112,10 +4112,10 @@ Cell[CellGroupData[{
 Cell[BoxData[
  RowBox[{"ExternalEvaluate", "[", 
   RowBox[{
-  "python", ",", " ", 
-   "\"\<\nfrom gwfast.waveforms import IMRPhenomD\nfrom gwfast.signal import \
-GWSignal\nfrom gwfast.network import DetNet\nfrom fisherTools import CovMatr, \
-compute_localization_region, check_covariance, fixParams\n\>\""}], 
+  "python", ",", 
+   " ", "\"\<\nfrom gwfast.waveforms import IMRPhenomD\nfrom gwfast.signal \
+import GWSignal\nfrom gwfast.network import DetNet\nfrom fisherTools import \
+CovMatr, compute_localization_region, check_covariance, fixParams\n\>\""}], 
   "]"}]], "Code",
  CellChangeTimes->{{3.948372108134741*^9, 3.9483721259903393`*^9}},
  CellLabel->"In[6]:=",ExpressionUUID->"83bfd391-8425-4fbf-89dc-614eb4ea58ff"],
@@ -5477,7 +5477,7 @@ Cell[BoxData[
    3.951838310879202*^9},
  CellLabel->"Out[11]=",ExpressionUUID->"d6f666dd-c6c6-42f8-b0c1-01a936548d5a"]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -21397,7 +21397,7 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[558, 20, 180, 3, 44, "Input",ExpressionUUID->"11b9b443-0aa6-4ea9-98c5-01cb3b3b580b"],
-Cell[741, 25, 418, 7, 92, "Input",ExpressionUUID->"a8e72f98-801c-45dc-8b26-9daa1facc01a"],
+Cell[741, 25, 418, 7, 44, "Input",ExpressionUUID->"a8e72f98-801c-45dc-8b26-9daa1facc01a"],
 Cell[CellGroupData[{
 Cell[1184, 36, 156, 3, 99, "Section",ExpressionUUID->"f6ade05f-b728-4aa4-a8e7-9e842a2c9a18"],
 Cell[CellGroupData[{
@@ -21456,9 +21456,9 @@ Cell[CellGroupData[{
 Cell[280090, 5353, 544, 14, 104, "Code",ExpressionUUID->"de8a02ee-0ee7-4bea-aab6-d6c3cffd094d"],
 Cell[280637, 5369, 5472, 108, 516, "Output",ExpressionUUID->"d6f666dd-c6c6-42f8-b0c1-01a936548d5a"]
 }, Open  ]]
-}, Closed]],
+}, Open  ]],
 Cell[CellGroupData[{
-Cell[286158, 5483, 155, 3, 76, "Section",ExpressionUUID->"444ca2c7-8949-4ce8-9544-9d495bb776f7"],
+Cell[286158, 5483, 155, 3, 99, "Section",ExpressionUUID->"444ca2c7-8949-4ce8-9544-9d495bb776f7"],
 Cell[CellGroupData[{
 Cell[286338, 5490, 250, 5, 76, "Code",ExpressionUUID->"a066a54f-6f1d-49e2-95a2-ce7fb873ce07"],
 Cell[286591, 5497, 386, 5, 50, "Output",ExpressionUUID->"74bc92dd-fc3b-4d80-846d-03ad32773636"]

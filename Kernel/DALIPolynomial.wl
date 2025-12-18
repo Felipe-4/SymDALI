@@ -1,11 +1,28 @@
 (* ::Package:: *)
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Package Header*)
 
 
 BeginPackage["FelipeBarbosa`SymDALI`DALIPolynomial`"];
 
+
+Unprotect@TaylorForm;
+
+TaylorForm//ClearAll
+
+TaylorForm::usage="TaylorForm[DALITensors_List]
+DALITensors: the exact List that comes out from ```DALITensors```
+
+returns the TaylorForm of the derivative expansion, that is, a list of tensors 
+to be contracted with {\!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(2\)]\), \!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(3\)]\), ..., \!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(2  n\)]\)}, where ```n``` is the derivative order of 
+the expansion.
+
+obs.:The tensors are represented by their LI components, supllemented of their
+multiplicities, ready to be contracted with the LI components of \!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(i\)]\).";
+
+
+Unprotect@ProcessDALITensors;
 
 ProcessDALITensors//ClearAll
 
@@ -14,7 +31,16 @@ DALI_List: the exact List that comes out from ```DALITensors```
 returns the list with only the LI components of the tensors and the multiplicity of each component, to be
 contracted with \!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(i\)]\)s directly.";
 
-c
+
+Begin["`Private`"]
+
+
+(* ::Section:: *)
+(*Definitions*)
+
+
+(* ::Subsection::Closed:: *)
+(*Old usage messages*)
 
 
 (*CompiledPolynomial::usage="CompiledPolynomial[daliList, fiducialPoint ] gives the DALI polynomial associated to the coefficients in daliList expanded around fiducialPoint";
@@ -41,11 +67,8 @@ PreprocessDALItensors
 TaylorForm*)
 
 
-Begin["`Private`"]
-
-
-(* ::Section:: *)
-(*Definitions*)
+(* ::Subsection::Closed:: *)
+(*PermutationsNumber*)
 
 
 ClearAll@PermutationsNumber
@@ -79,6 +102,10 @@ c[i_,j_] := -1/(i! j!)
 c[i_,j_]/;i==j := -1/(2 (i!)^2)
 
 
+(* ::Subsection::Closed:: *)
+(*DALIComponents*)
+
+
 DALIComponents//ClearAll
 
 
@@ -95,6 +122,10 @@ DALIComponents[dim_, order_] := SymmetrizedIndependentComponents[
 	ConstantArray[dim, #],
 	Symmetric[All]
 ]&/@Range[order]
+
+
+(* ::Subsection::Closed:: *)
+(*ProcessDALITensors*)
 
 
 ProcessDALITensors[DALITensors_List] := Module[
@@ -154,119 +185,27 @@ ProcessDALITensors[DALITensors_List] := Module[
 ]
 
 
-(*vector = Range[5]*)
+ProcessDALITensors//Protect;
 
 
-(*Clear@v*)
+(* ::Subsection::Closed:: *)
+(*SymbolicVector*)
 
 
-(*i[dim_, order_] := Module[
-	{IndComp, internalFunction},
-	
-	(IndComp[#] = SymmetrizedIndependentComponents[ConstantArray[dim, #], Symmetric[All]])&/@Range[order];
-	(IndComp[#] = ArrayReshape[IndComp[#], {Length[IndComp[#]]*order, 1}])&/@Range[order];
-	internalFunction = HoldComplete[
-		{matrixVector, iList, k},
-		
-		matrixVector = Table[
-		temp[vector, LIComponents, order,  Length[LIComponents]],
-			{LIComponents,  x}
-		];
-		matrixVector
-		
-		
-		(*Do[
-			KroneckerProduct[matrixVector[[j]], matrixVector[[i]]]//Flatten,
-			{i, 1, order},
-			{j, i, order}
-		]*)
-		
-	]/.{x-> IndComp/@Range[order]}
-]*)
-
-
-(*Clear@vector*)
-
-
-(*c = SymmetrizedIndependentComponents[ConstantArray[11, 3], Symmetric[All]];*)
-
-
-(*temp = Hold[{{vector, _Real, 1}, {LIComponents, _Real, 2}, {l}, {L}}, 
-	Block[
-		{res}, 
-		res = Extract[vector, LIComponents];
-		res = ArrayReshape[res, {L, l}];
-		Times@@@res
-	],
-	CompilationTarget->"C",
-	RuntimeOptions->"Speed"
-];
-
-temp = Compile@@temp*)
-
-
-(*ct = Compile[{{v1, _Real, 1}, {v2, _Real,1}}, 
-	Table[
-		v1[[i]]*v2[[j]],
-		{i, 1 , Length[v1]},
-		{j, 1, Length[v2]}
-	]//Flatten,
-	CompilationTarget->"C",
-	RuntimeOptions->"Speed"
-]*)
-
-
-(*f[vector_] = i[11,2]; DownValues[f] = DownValues[f]/.HoldComplete->Module;*)
-
-
-(*Hold[{{vector, _Real, 1}}, Evaluate[i[11,4]], CompilationTarget->"C",RuntimeOptions->"Speed"]/.HoldComplete->Module;
-cf = Compile@@%*)
-
-
-(*v = RandomReal[{0,1},11]*)
-
-
-(*cf[v];//AbsoluteTiming*)
-
-
-(*F=Function[
-{Typed[vector,"PackedArray"::["Real64", 1]], Typed[LIComponents,"PackedArray"::["Real64", 2]]}, 
-	Block[{res},
-	res = Map[
-		Part[vector, #]&,
-		LIComponents,
-		{2}
-	];
-	
-	Map[(Times@@#)&, res]
-]
-	
-	
-	]*)
-
-
-(*FunctionCompile[F]*)
-
-
-(*?CompilerOptions*)
-
-
-SymbolicVector[LIComponents_, head_Symbol]/;MatrixQ[LIComponents, NumericQ] := Times@@@Map[
+(*SymbolicVector[LIComponents_, head_Symbol]/;MatrixQ[LIComponents, NumericQ] := Times@@@Map[
 	head,
 	LIComponents,
 	{2}
 ]
 
-SymbolicVector[x___] := Throw[$Failed, failTag[SymbolicVector]]
+SymbolicVector[x___] := Throw[$Failed, failTag[SymbolicVector]]*)
 
 
-PermutationsNumber/@SymmetrizedIndependentComponents[{3,3}, Symmetric[All]]
+(* ::Subsection::Closed:: *)
+(*PreprocessDALITensors*)
 
 
-SymmetrizedIndependentComponents[{3,3}, Symmetric[All]]
-
-
-(*Multiply the LI components by their multiplicity and the c[i,j] from Taylor expansion*)
+(*(*Multiply the LI components by their multiplicity and the c[i,j] from Taylor expansion*)
 
 PreprocessDALItensors[DALIlist_List, dimension_Integer] := Module[
 	{n = Length@DALIlist, LIComponents, factorialmultiplicity, factorialmultiplicityTensor},
@@ -286,74 +225,114 @@ PreprocessDALItensors[DALIlist_List, dimension_Integer] := Module[
 
 ]
 
-PreprocessDALItensors[x___] := Throw[$Failed, failTag[PreprocessDALItensors]]
+PreprocessDALItensors[x___] := Throw[$Failed, failTag[PreprocessDALItensors]]*)
 
 
-(*(LIComponents[#] = SymmetrizedIndependentComponents[ConstantArray[12, #], Symmetric[All]])&/@Range[10];*)
+(*\[CapitalDelta]p[i_] := ToExpression["p"<>ToString[i]]*)
 
 
-\[CapitalDelta]p[i_] := ToExpression["p"<>ToString[i]]
+(* ::Subsection::Closed:: *)
+(*TaylorForm*)
 
 
-(*fiducial point = {{x1,value}, {x2,value},...}
-output is the polynomial*)
+ClearAll@DALISymmetry
 
-TaylorForm[DALIlist_List, fiducialPoint_?MatrixQ] := Module[
+DALISymmetry[1, 1] = Symmetric[{}];
 
-	{n = Length@DALIlist, dimension = Length@fiducialPoint, p, LIComponents, \[CapitalDelta]p, dummyvar, symtensor, dalilist, rules},
-	
-	(LIComponents[#] = SymmetrizedIndependentComponents[ConstantArray[dimension, #], Symmetric[All]])&/@Range[n];
-	
-	\[CapitalDelta]p/@Range[dimension]//Evaluate = Unique[ConstantArray[p, dimension]];
-	
-	dalilist = PreprocessDALItensors[DALIlist, dimension];
-	
-	dummyvar = 0;
-	(*Need to prioritize memory here, so nested loop and old style*)
+DALISymmetry[2, 1] = Symmetric[{1,2}];
+DALISymmetry[2, 2] = {Symmetric[{1,2}], Symmetric[{3,4}]};
+
+DALISymmetry[3,1] = Symmetric[{1,2,3}];
+DALISymmetry[3,2] = {Symmetric[{1,2,3}], Symmetric[{4,5}]};
+DALISymmetry[3,3] = {Symmetric[{1,2,3}], Symmetric[{4,5,6}]};
+
+DALISymmetry[4,1] = Symmetric[{1,2,3,4}];
+DALISymmetry[4,2] = {Symmetric[{1,2,3,4}], Symmetric[{5,6}]};
+DALISymmetry[4,3] = {Symmetric[{1,2,3,4}], Symmetric[{5,6,7}]};
+DALISymmetry[4,4] = {Symmetric[{1,2,3,4}], Symmetric[{5,6,7,8}]};
+
+
+TaylorForm[DALIlist_List] := Module[
+	{
+		LIC, rules, DALITensor, dim  = Sqrt[Length[DALIlist[[1,1]]]], order= Length@DALIlist,
+		list, dummy, multiplicities
+	},
+	(*LI components of the DALI tensors according to their position in the DALI list*)
+	LIC[i_,j_] := SymmetrizedIndependentComponents[ConstantArray[dim, i+j], DALISymmetry[i,j]];
 	
 	Do[
-		
-		Do[
-			
-			symtensor = (Flatten@KroneckerProduct[#1,#2])&@@{
-				SymbolicVector[LIComponents[i], \[CapitalDelta]p],
-				SymbolicVector[LIComponents[j], \[CapitalDelta]p]
-			}; (*This is a redundancy, but these are fast to calculate and I think memory will be a problem before 
-				performance
-			*)
-			
-			dummyvar = (dummyvar + Plus@@(symtensor*dalilist[[i,j]]))//Simplify;,
-			{j,1,i}
-		],
-		
-		{i,1,n}
+		(*Make the rules: LI component -> value*)
+		rules[i,j] = MapThread[Rule, {LIC[i,j], Flatten[DALIlist[[i,j]]]}],
+		{i, order},
+		{j, 1, i}
 	];
 	
-	rules = MapThread[
-			Rule,
-			{\[CapitalDelta]p/@Range[dimension], Subtract@@@fiducialPoint}
-		];
-	(*Put in the HornerForm:*)
-		
-		
-	(*HornerForm[*)dummyvar(*]*)//.rules
+	Do[
+		(*Create the Symmetrized Array Object to represent the Tensors:*)
+		DALITensor[i,j] = SymmetrizedArray[rules[i,j], ConstantArray[dim,i+j], DALISymmetry[i,j]];
+		(*
+			Introduce c[i,j] to account for the coefficients of the expansion in the tensors
+			and Make these tensors totally symmetric:
+		*)
+		DALITensor[i,j] = Symmetrize[
+			c[i,j]*DALITensor[i,j],
+			Symmetric[All]
+		],
+		{i, order},
+		{j, 1, i}
+	];
 	
+	
+	(*Organize Tensors by their rank and  summ different tensors with the same rank*)
+	list = Table[
+		dummy[i,j],
+		{i,order},
+		{j, 1, i}
+	]//Flatten;
+	
+	list = SortBy[list, (List@@#//Total)&]; (*This will organize ranks into increasing order*)
+	
+	(*This puts different ranks into different sublists and sums dummys in the same sublist with each other*)
+	list = Plus@@@GatherBy[list, (List@@#//Total)&];
+	
+	(*Use the actual tensors:*)
+	list = list//.dummy->DALITensor;
+	
+	(*Extract the LI components of every rank:*)
+	Clear@LIC;
+	(LIC[#] =  SymmetrizedIndependentComponents[ConstantArray[dim, #], Symmetric[All]])&/@Range[2, 2*order];
+	list = Table[
+		Extract[list[[i]], LIC[i+1]],
+		{i, 1, 2*order-1}
+	];
+	
+	(*now just introduce the multiplicities for every rank:*)
+	(multiplicities[#] = PermutationsNumber/@LIC[#])&/@Range[2, 2*order];
+	Table[
+		list[[i]]*multiplicities[i+1],
+		{i, 1, 2*order-1}
+	]
 ]
 
-TaylorForm[x___] := Throw[$Failed, failTag[TaylorForm]]
+
+Protect@TaylorForm;
 
 
-StanParser[a_] := Module[
+(* ::Subsection:: *)
+(*Legacy Stan and Compiled Polynomial*)
+
+
+(*StanParser[a_] := Module[
 	{res},
 	res = HornerForm[a];
 	res = Block[{Power=pow}, res];
 	CForm[res]//ToString
 ]
 
-StanParser[x___] := Throw[$Failed, failTag[StanParser]]
+StanParser[x___] := Throw[$Failed, failTag[StanParser]]*)
 
 
-MakeStanCode[expression_, vars_List] := Module[
+(*MakeStanCode[expression_, vars_List] := Module[
 	{iVars = ToString[("real "<> ToString[#])&/@vars], iExpression},
 	
 	iExpression = StanParser[expression];	
@@ -369,10 +348,10 @@ MakeStanCode[expression_, vars_List] := Module[
 	StringJoin["parameters", iVars, " model{ target +=" , iExpression , ";}"]
 ]
 
-MakeStanCode[x___] := Throw[$Failed, failTag[MakeStanCode]]
+MakeStanCode[x___] := Throw[$Failed, failTag[MakeStanCode]]*)
 
 
-StanPolynomial[DALIOutput_, fiducialPoint_] := Module[
+(*StanPolynomial[DALIOutput_, fiducialPoint_] := Module[
 	{TaylorPolynomial, vars},
 	
 	Catch[
@@ -382,13 +361,13 @@ StanPolynomial[DALIOutput_, fiducialPoint_] := Module[
       ]
 ]
 
-StanPolynomial[x___] := Throw[$Failed, failTag[StanPolynomial]] 
+StanPolynomial[x___] := Throw[$Failed, failTag[StanPolynomial]] *)
 
 
-CompiledPolynomial::fail = "The function failed. The failure occured in function `1`"
+(*CompiledPolynomial::fail = "The function failed. The failure occured in function `1`"*)
 
 
-CompiledPolynomial[GetDALIOutput_, fiducialPoint_?MatrixQ] := Module[
+(*CompiledPolynomial[GetDALIOutput_, fiducialPoint_?MatrixQ] := Module[
     {TaylorPolynomial, vars},
     
     
@@ -409,10 +388,10 @@ CompiledPolynomial[GetDALIOutput_, fiducialPoint_?MatrixQ] := Module[
     
 ]
 
-CompiledPolynomial[x___] := Throw[$Failed, failTag[CompiledPolynomial]]
+CompiledPolynomial[x___] := Throw[$Failed, failTag[CompiledPolynomial]]*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Package Footer*)
 
 
