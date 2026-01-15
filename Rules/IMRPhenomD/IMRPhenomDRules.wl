@@ -3,6 +3,9 @@
 Quit
 
 
+SetOptions[EvaluationNotebook[], LightDark->"Light"]
+
+
 (*Basic stuff:*)
 $HistoryLength = 1;
 PacletDirectoryLoad[ParentDirectory[NotebookDirectory[], 3]];
@@ -1765,7 +1768,7 @@ Clear@\[ScriptCapitalA]IMR
 ];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Making Block function*)
 
 
@@ -1876,7 +1879,7 @@ FinalExpr = Module[
 	{dummy},
 	dummy = HoldForm[
 		{aIMR}
-	]/.aIMR-> \[ScriptCapitalA]IMRExpr*{(1+Cos[\[Iota]]^2)/2, I Cos[\[Iota]]};
+	]/.aIMR-> \[ScriptCapitalA]IMRExpr*{(1+Cos[\[Iota]]^2)/2, -I Cos[\[Iota]]};
 
 	dummy//.Headrules
 ];
@@ -2138,7 +2141,8 @@ DeleteObject/@ExternalSessions[]
 python = StartExternalSession[
 	{
 
-		"System" -> "Python"
+		"System" -> "Python",
+		"Evaluator" -> "/Users/felipe/anaconda3/envs/RIPPLE_GW/bin/python"
     }
 ];
 
@@ -2159,7 +2163,7 @@ RippleCoeffs[\[Theta]_] := helperCoeffs[\[Theta]]//Normal
 
 helperArg = ExternalFunction[python, "def h0(f, \[Theta]in, \[Theta]extr, coeffs,  fref):
 	b = np.array(f)
-	a, psi = IMRD._gen_IMRPhenomD(b, \[Theta]in, \[Theta]extr, coeffs,  fref)
+	a = IMRD._gen_IMRPhenomD(b, \[Theta]in, \[Theta]extr, coeffs,  fref)
 	return np.array(a)"
 ];
 
@@ -2199,6 +2203,7 @@ test\[ScriptCapitalA] := Module[
 	
 
 	Ripple = Amplitude[f, \[Theta]in, \[Theta]ex, coeffs,  20];
+	
 	MMA = 10^3 Test\[ScriptCapitalA][f, \[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, 0][[1]];
 	diff = RelativeDiff[Ripple, MMA];
 	
@@ -2290,7 +2295,7 @@ Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Sec
 	
 	ClearAll[TestGrad\[ScriptCapitalA]];
 	
-	TestGrad\[ScriptCapitalA][f_, \[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_, \[Iota]_] = res[[2;;6, 2]]//.G->g;
+	TestGrad\[ScriptCapitalA][f_, \[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_, \[Iota]_] = res1[[2;;6, 2]]//.G->g;
 
 ]
 DownValues[TestGrad\[ScriptCapitalA]] = DownValues[TestGrad\[ScriptCapitalA]]//.HoldForm[x_]:> x;
@@ -2337,7 +2342,7 @@ Table[Round@Test, {100}]//DeleteDuplicates
 
 
 Module[
-	{all = res[[2;;-1,1, 0, 1]]},
+	{all = res1[[2;;-1,1, 0, 1]]},
 	
 	positions = Position[all, x_/; Total[x]== 2, {1}, Heads->False];
 	positions = positions+1//Flatten
@@ -2350,7 +2355,7 @@ Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Sec
 	
 	ClearAll[TestGrad\[ScriptCapitalA]O2];
 	
-	TestGrad\[ScriptCapitalA]O2[f_, \[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_, \[Iota]_] = res[[positions, 2]]//.rule;
+	TestGrad\[ScriptCapitalA]O2[f_, \[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_, \[Iota]_] = res1[[positions, 2]]//.rule;
 
 ]
 DownValues[TestGrad\[ScriptCapitalA]O2] = DownValues[TestGrad\[ScriptCapitalA]O2]//.HoldForm[x_]:> x;
@@ -2392,7 +2397,7 @@ Test//ScientificForm
 Table[Round@Test, {100}]//DeleteDuplicates
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Third Order*)
 
 
@@ -2410,7 +2415,7 @@ SymmetricTestGradOrder2[x__] := Module[
 
 
 Module[
-	{allTerms = res[[2;;-1, 1, 0, 1]]},
+	{allTerms = res1[[2;;-1, 1, 0, 1]]},
 	
 	positions = Position[
 		allTerms, x_/;Total[x] === 3, 
@@ -2427,7 +2432,7 @@ Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Sec
 	
 	ClearAll[TestGrad\[ScriptCapitalA]O3];
 	
-	TestGrad\[ScriptCapitalA]O3[f_, \[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_, \[Iota]_] = res[[positions, 2]]//.rule;
+	TestGrad\[ScriptCapitalA]O3[f_, \[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_, \[Iota]_] = res1[[positions, 2]]//.rule;
 
 ]
 DownValues[TestGrad\[ScriptCapitalA]O3] = DownValues[TestGrad\[ScriptCapitalA]O3]//.HoldForm[x_]:> x;
@@ -2518,9 +2523,6 @@ compiledDs = MapAt[
 ];
 
 
-CompilePrint[compiledDs[[20,2]]]
-
-
 <<CCompilerDriver`
 <<CCodeGenerator`
 
@@ -2533,13 +2535,16 @@ $CCompilerDefaultDirectory = FileNameJoin[{
 }]
 
 
+compiledDs[[1]]
+
+
 list = MapIndexed[
 	LibraryGenerate[#1[[2]], "a" <> ToString[#2//First]]&,
 	compiledDs
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Defining amplitude for Rosetta stone*)
 
 

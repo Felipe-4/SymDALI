@@ -258,7 +258,7 @@ list[[All,2]]//Sort//ListPlot[#, PlotRange->All, ScalingFunctions->"Log10"]&
 Clear@list
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Test IMRPhenomD against lal:*)
 
 
@@ -269,7 +269,11 @@ Clear@list
 Clear[python]
 DeleteObject/@ExternalSessions[];
 
-python = StartExternalSession["Python"]
+python = StartExternalSession[{
+	"Python", (*you should change the evaluator to your installation:*)
+	(*"Evaluator"-> "/home/cosmo-ufes/anaconda3/envs/gwfast_env/bin/python"*)
+	"Evaluator" -> "/Users/felipe/anaconda3/envs/GWFAST/bin/python"
+}];
 ExternalEvaluate[python,"
 import numpy as np
 
@@ -331,7 +335,7 @@ def lal_hp(m1, m2, s1z, s2z, dL, iota, phiRef, deltaF,
 "]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Test hp and hc*)
 
 
@@ -408,7 +412,7 @@ testhc := Module[
 	f1 = 0.014/(G (m1+m2));
 	
 	
-	MMA =  -hphcIMRPhenomD[f, mc, \[Delta], \[Chi]s, \[Chi]a, \[Iota], 0, \[Phi]Ref, 10^3][[2]];
+	MMA =  hphcIMRPhenomD[f, mc, \[Delta], \[Chi]s, \[Chi]a, \[Iota], 0, \[Phi]Ref, 10^3][[2]];
 	lalD = lal[m1, m2, s1z,s2z, 1,\[Iota],\[Phi]Ref, 1., 10., fmax, 10., "IMRPhenomD"][[2]];
 	
 	(*
@@ -426,7 +430,7 @@ testhc := Module[
 
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*check plots: *)
 
 
@@ -442,7 +446,7 @@ testhp
 
 
 (* ::Text:: *)
-(*Curiously lal uses "-i Cos[\[Iota]]" instead of "i Cos[\[Iota]]" for hc.*)
+(*Curiously lal uses "-i Cos[\[Iota]]" instead of "i Cos[\[Iota]]" for hc like GWFAST.*)
 
 
 testhc
@@ -1042,7 +1046,7 @@ def Fisher(vec):
         'dL': onp.array([dL]),
         'theta': onp.array([theta]),
         'phi': onp.array([phi]),
-        'iota': onp.array([iota]),
+        'iota': onp.array([iota]) + onp.pi, #Accounts for the fact that GWFAST uses ''+I*Cos[iota]''
         'psi': onp.array([psi]),
         'tGPS': onp.array([61094.012]),
         'eta': onp.array([eta]),
@@ -1199,11 +1203,11 @@ rd = Extract[a, SymmetrizedIndependentComponents[{11,11}, Symmetric[All]]];
 ListPlot[Sort[rd], PlotRange->All, ScalingFunctions->"Log10"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing SNRs against GWFAST:*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*SNR defs: *)
 
 
@@ -1387,7 +1391,7 @@ fp  = Thread@Rule[
 ]//Association
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Test*)
 
 
@@ -1735,7 +1739,7 @@ Plot[
 ], {f, 11, 1024}, {M, 10, 100}, {\[Chi]1, -1, 1}, {\[Chi]2, -1, 1}]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing ProcessDALITensors:*)
 
 
@@ -1976,11 +1980,11 @@ Test[dim_] := Module[
 Table[Test[8], 10]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing "TaylorForm"*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test Function*)
 
 
@@ -2089,7 +2093,7 @@ Test[dim_] := Module[
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Calculate*)
 
 
