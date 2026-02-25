@@ -85,7 +85,7 @@ Begin["`Private`"];
 (*Definitions*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*ArmDirection and DetectorPosition*)
 
 
@@ -200,9 +200,6 @@ Module[
 ]
 
 
-?ArmDirection
-
-
 (* ::Text:: *)
 (*triangle + L-shape detectors below in Sardinia:*)
 
@@ -289,10 +286,25 @@ Module[
 	\[Gamma]dy = \[Minus]1.047200; \[Gamma]dx = \[Gamma]dy-\[Pi]/2;
 	\[Psi]y = \[Pi]/2-\[Gamma]dy; \[Psi]x = \[Pi]/2 - \[Gamma]dx;
 	
+	
+	
 	{n1, n2} = ArmDirection[{lat, lon}, {{0, \[Psi]x}, {0, \[Psi]y}}];
 	
 	DetectorTensor["CE-NM"] = (n1\[TensorProduct]n1 - n2\[TensorProduct]n2)/2;
 ]
+
+
+{4.188792653589793`/Degree,2.6179963267948967`/Degree}
+
+
+(* ::Input:: *)
+(*{240.0001403060998`,150.0001403060998`}*)
+
+
+DetectorVertex["CE-NM"]
+
+
+Extract[DetectorTensor["CE-NM"], SymmetrizedIndependentComponents[{3,3}, Symmetric[All]]]
 
 
 Protect[DetectorTensor];

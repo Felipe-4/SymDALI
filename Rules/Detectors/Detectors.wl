@@ -91,7 +91,7 @@ $Block[
 	{
 		Fplus[f1[\[Theta],\[Phi],D11,D12,D13,D22,D23,D33], f2[\[Theta],\[Phi],D11,D12,D13,D22,D23], \[Psi]], 
 		Fcross[f1[\[Theta],\[Phi],D11,D12,D13,D22,D23,D33], f2[\[Theta],\[Phi],D11,D12,D13,D22,D23], \[Psi]]
-	}*Exp[-I 2 \[Pi] f \[Delta]t]
+	}*Exp[I 2 \[Pi] f \[Delta]t] (*bilby uses + sign and GWFAST uses - sign*)
 ]]//.{
 	\[ScriptF]1 -> f1[\[Theta],\[Phi],D11,D12,D13,D22,D23,D33], 
 	\[ScriptF]2 -> f2[\[Theta],\[Phi],D11,D12,D13,D22,D23], 
@@ -123,14 +123,14 @@ Clear[FpFc]
 expr2 = HoldForm[Evaluate[{name, vars, derivatives}], Evaluate@expr, "IncludeZeroDerivative"->False]//.HoldForm[x_] :> x;
 
 
-Remove["$x*"]
+(*Remove["$x*"]*)
 res = DerivativeRules@@expr2;
 
 
 Export["Detector_Ds_order_0_to_3.mx", res];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing the function*)
 
 
@@ -164,7 +164,7 @@ Block[
 DownValues[TestFpFc] = DownValues[TestFpFc]//.HoldForm[x_]:> x;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Testing the Phase against lal*)
 
 
@@ -174,7 +174,9 @@ Clear@python
 
 DeleteObject/@ExternalSessions[];
 
-python = StartExternalSession["Python"];
+python = StartExternalSession[{"Python", 
+	"Evaluator" -> "/Users/felipe/anaconda3/envs/bilby/bin/python"
+}];
 
 ExternalEvaluate[python, "
 from lal import antenna
@@ -189,7 +191,7 @@ def fpfc(ra, dec, psi):
 "]
 
 
-ExternalEvaluate["Python","
+ExternalEvaluate[python,"
 from astropy.time import Time
 
 gps_time = 630696086.1999
@@ -271,7 +273,7 @@ list[[All,2]]//Sort//ListPlot[#, PlotRange->All, ScalingFunctions->"Log10"]&
 Clear@list
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Comparing numerical x Symbolic derivatives*)
 
 
@@ -375,11 +377,14 @@ ListPlot[l[[All,2]]//Sort, PlotRange->All, ScalingFunctions->"Log10"]
 Clear@l
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Compiling*)
 
 
 Ds = Import["Detector_Ds_order_0_to_3.mx"];
+
+
+Ds = res;
 
 
 compileThis[x_HoldForm] := Module[

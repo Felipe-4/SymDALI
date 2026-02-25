@@ -318,7 +318,7 @@ TaylorForm[DALIlist_List] := Module[
 Protect@TaylorForm;
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Legacy Stan and Compiled Polynomial*)
 
 
@@ -389,6 +389,133 @@ StanPolynomial[x___] := Throw[$Failed, failTag[StanPolynomial]] *)
 ]
 
 CompiledPolynomial[x___] := Throw[$Failed, failTag[CompiledPolynomial]]*)
+
+
+(* ::Subsection:: *)
+(*Coordinate Change*)
+
+
+isFrequencyFunction[x_] = False;
+
+innerProduct[Times[x1___, x2_, x3___], y_]/;(
+	isFrequencyFunction[x2] === False
+) := x2*innerProduct[Times[x1, x3], y]
+
+innerProduct[x_, Times[y1___, y2_, y3___]]/;(
+	isFrequencyFunction[y2]===False
+) := y2*innerProduct[x, Times[y1, y3]]
+
+innerProduct[x_Plus, y_] := innerProduct[#, y]&/@x
+innerProduct[x_, y_Plus] := innerProduct[x, #]&/@y
+
+isFrequencyFunction[Derivative[y__][h][x__]] = True;
+
+
+ClearAll@CheckList
+
+CheckList[dim_] :=  Module[
+	{LI, a},
+	(LI[#] = SymmetrizedIndependentComponents[ConstantArray[dim, #], Symmetric[All]])&/@Range[3];
+	
+	a = Do[
+		Sow[#, j]&@Flatten[Outer[f, LI[j], LI[i], 1], 1],
+		{i, 3},
+		{j, i, 3}
+	]//Reap//Last;
+	
+	
+	(*get the Derivative structure of the processed list in (\[Iota]==1, invdL==2)*)
+	a
+]
+
+
+ConvertFromString//ClearAll
+
+MapThread[
+	(ConvertFromString[#1] = #2)&,
+	{
+		{"\[Theta]","\[Phi]","\[Psi]", "\[ScriptCapitalM]c", "\[Delta]","\[Chi]s","\[Chi]a","\[Iota]","1/dL","tc","\[Phi]ref"},
+		{\[Theta][dec], \[Phi],  \[Psi], \[ScriptCapitalM]c, \[Delta][q], \[Chi]s[\[Chi]1, \[Chi]2], \[Chi]a[\[Chi]1, \[Chi]2], \[Iota], invdL[dL], tc, \[Phi]ref}
+	}
+];
+
+
+dict = <|
+	"\[Theta]"->1,"\[Phi]"->2,"\[Psi]"->3,
+	"\[ScriptCapitalM]c"->4,"\[Delta]"->5,"\[Chi]s"->6,"\[Chi]a"->7,
+	"\[Iota]"->8,"1/dL"->9,"tc"->10,"\[Phi]ref"->11,
+	
+	"\[Delta]\[CurlyPhi]-2"->12,"\[Delta]\[CurlyPhi]0"->13,"\[Delta]\[CurlyPhi]1"->14,"\[Delta]\[CurlyPhi]2"->15,"\[Delta]\[CurlyPhi]3"->16,"\[Delta]\[CurlyPhi]4"->17,"\[Delta]\[CurlyPhi]5l"->18,"\[Delta]\[CurlyPhi]6"->19,"\[Delta]\[CurlyPhi]6l"->20,"\[Delta]\[CurlyPhi]7"->21,
+	"\[Delta]\[Beta]2"->22,"\[Delta]\[Beta]3"->23,
+	"\[Delta]\[Alpha]2"->24,"\[Delta]\[Alpha]3"->25,"\[Delta]\[Alpha]4"->26
+|>;
+
+
+(*<|"\[Theta]"-> \[Theta][dec], ...|>
+<|dec->1, \[Phi]->2, \[Psi]->3, ...|>*)
+
+
+ChangeCoordinate[processedDALI_List, transform_Association, varNumbers_Association] := Module[
+	{a, b, rules, hVars, dim = Length@vars, CoordinateToVar, hFunc},
+	
+	a = CheckList[dim];
+	
+	hVars = ConvertFromString/@(SortBy[vars, dict]);
+	hFunc = h@@hVars;
+	
+	
+	Block[
+		{l =  hVars//.{
+			invdL[dL]->dL,
+			(* Mcp[\[ScriptCapitalM]c]->\[ScriptCapitalM]c, 
+			tc[y] -> y, 
+			\[Iota][y\[Iota]]->y\[Iota], *)
+			\[Delta][q]->q, 
+			\[Chi]s[\[Chi]1, \[Chi]2]->\[Chi]1, 
+			\[Chi]a[\[Chi]1, \[Chi]2]->\[Chi]2,
+			\[Theta][dec]->dec
+		}, n = Range[Length@hVars]},
+		
+		MapThread[(CoordinateToVar[#1] = #2)&, {n,l}] (*Associate coordinates with their number in the reduced DALI structure*)
+	];
+	
+	
+	(*This will give the tensor elements in dL in terms of the ones in terms of invdL introducing derivatives of invdL[dL]*)
+	b = a/.f[y1_, y2_] :> \[LeftAngleBracket]
+		D[hFunc, Sequence@@(CoordinateToVar/@y1)],
+		D[hFunc, Sequence@@(CoordinateToVar/@y2)]
+	\[RightAngleBracket]//EchoTiming;
+	
+	(*This eliminates the \[LeftAngleBracket]...\[RightAngleBracket] structure and reintroduces the f[list1, list2]*)
+	AngleBracket[Derivative[n__][h][x__], Derivative[m__][h][x__]] := With[
+		{l = Range[Length@{x}]},
+		f[
+			Join@@(MapThread[
+				ConstantArray,
+				{l, {n}}
+			]),
+			Join@@(MapThread[
+				ConstantArray,
+				{l, {m}}
+				])
+		]
+	];
+	f[x_, y_]/;Length[y]>Length[x] := f[y,x];
+	b=b;
+	DownValues@AngleBracket = Drop[DownValues@AngleBracket,-1];
+	
+	
+	
+	 Block[
+	     {f}, 
+	     MapThread[
+	         Set,
+	         {Flatten[a], Flatten[processedDALI]}
+	         
+	     ];
+	     b
+	 ] (*numerical rules for f[list1, list2]->numerical values*)
+]
 
 
 (* ::Section::Closed:: *)

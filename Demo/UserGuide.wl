@@ -6,9 +6,6 @@ Quit
 $HistoryLength=1;
 
 
-SetOptions[EvaluationNotebook[], LightDark->"Light"]
-
-
 PacletDirectoryLoad[NotebookDirectory[]//ParentDirectory[#,2]&];
 
 
@@ -258,7 +255,7 @@ list[[All,2]]//Sort//ListPlot[#, PlotRange->All, ScalingFunctions->"Log10"]&
 Clear@list
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Test IMRPhenomD against lal:*)
 
 
@@ -343,7 +340,7 @@ def lal_hp(m1, m2, s1z, s2z, dL, iota, phiRef, deltaF,
 (*It is easier to just run the section "functions to generate plots" and go to "check plots" to see the plots*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*functions to generate plots*)
 
 
@@ -430,7 +427,7 @@ testhc := Module[
 
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*check plots: *)
 
 
@@ -945,11 +942,15 @@ ListPlot[Flatten[a]//Sort, ScalingFunctions->"Log10", PlotRange->All]
 (*Testing GWFAST vs Symbolic Fishers:*)
 
 
+(* ::Text:: *)
+(*OBSERVE THAT DELTA_T ENTERS WITH OPPOSITE SIGN IN THE DEFINITIONS NOW, (BCS bilby USES THE OPPPOSITE SIGN OF GWFAST. THIS WILL CAUSE DISAGREEMENTS ON THE SKYPOSITION-ELEMENTS)*)
+
+
 (* ::Subsection:: *)
 (*Fisher defs: *)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*GWFAST*)
 
 
@@ -1099,7 +1100,7 @@ MMAFisherMatrix[fp_Association] := Module[
 	J = DiagonalMatrix[ConstantArray[1, 11]];
 	
 	(*
-		to change \[Delta]->\[Eta],
+		to change \[Delta]->\[Eta], (D[\[Delta][\[Eta]], \[Eta]])
 	*)
 	J[[5,5]] = -(2/Sqrt[1-4 eta]);
 	
@@ -1142,7 +1143,7 @@ MMAFisherMatrix[fp_Association] := Module[
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test*)
 
 
@@ -1211,7 +1212,7 @@ ListPlot[Sort[rd], PlotRange->All, ScalingFunctions->"Log10"]
 (*SNR defs: *)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*GWFAST*)
 
 
@@ -1342,7 +1343,7 @@ def SNR(vec):
 (*Order of elements in the Fisher matrix of IMRPhenomD: *)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*MMA: *)
 
 
@@ -1386,7 +1387,7 @@ MMASNR[fp_Association] := Module[
 
 
 fp  = Thread@Rule[
-	{"\[ScriptCapitalM]c","\[Delta]","\[Chi]s","\[Chi]a","\[Iota]","\[Theta]","\[Phi]","\[Psi]", "1/dL", "tc","\[Phi]ref"},
+	{"\[ScriptCapitalM]c","\[Delta]","\[Chi]s","\[Chi]a", "\[Iota]", "\[Theta]","\[Phi]","\[Psi]", "1/dL", "tc","\[Phi]ref"},
 	{20, 0.23, 0.1, -0.2, 2, 3, 1.4, 1.2, 2, 0.2, 0}
 ]//Association
 
