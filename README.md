@@ -2,6 +2,6 @@
 
 An example application is show in this [Figure](https://github.com/Felipe-4/SymDALI/tree/main/Demo/Overplot.pdf). It is the exact likelihood (black), Fisher approximation (blue), DALI order 2 (red) and DALI order 3 (green). The event has SNR of 109. The assumed network was 2 ET L-shaped and 1 CE detectors. The waveform is ```IMRPhenomD``` and it includes the extra parameters from the [```TIGER```](https://arxiv.org/pdf/1311.0420) framework, from inspiral to ringdown. This examples uses the parameter \delta_1.
 
-The DALI order 2 result takes around ~ 15 minutes to run, while the exact likelihood takes around 13 hours. A publication with more examples is comming... .
+The DALI order 2 result takes around ~ 15 minutes (using [```emcee```](https://arxiv.org/pdf/1202.3665)) to run, while the exact likelihood takes around 13 hours (using [```nessai```](https://arxiv.org/pdf/2102.11056)). A publication with more examples is comming... .
 
 At the moment this repository supports the calculation of DALI tensors to order 3 for IMRPhenomD. The file ```UserGuide.wl``` in [Demo](https://github.com/Felipe-4/SymDALI/tree/main/Demo) has some examples on how to use part of the functionality of the code. Right now It is fully functional only on MacOs Apple Silicon M1. I will also be implementing Linux and Windows as soon as possible.
