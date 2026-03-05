@@ -1,4 +1,4 @@
-**SymDALI** is a Mathematica implementation of [DALI](https://arxiv.org/abs/1401.6892), utilizing symbolic differentiation. It is actively being developed for applications in [gravitational waves](https://arxiv.org/abs/2203.02670). 
+**SymDALI** is a Mathematica implementation of [DALI](https://arxiv.org/abs/1401.6892), with symbolic differentiation. It is actively being developed for applications in [gravitational waves](https://arxiv.org/abs/2203.02670). 
 
 An example of the application is show in this [Figure](https://github.com/Felipe-4/SymDALI/tree/main/Demo/Overplot.pdf). It is the Full Likelihood (red) vs DALI order 3 (blue). This event has SNR ~ 2000. 2 ET L-shaped detectors were used, one in Meuse-Rhine and another in Sardinia. The variables not present in the plot were kept fixed and the waveform is ```IMRPhenomD```. More examples and applications are comming... (It is a lot of work).
 
