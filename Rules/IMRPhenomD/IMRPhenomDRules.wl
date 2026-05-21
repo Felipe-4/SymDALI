@@ -66,7 +66,7 @@ RelativeDiff[x_, y_]/; x!=0 &&y!=0 := With[
 ]
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Phase*)
 
 
@@ -264,6 +264,9 @@ IntVecPhase[\[Delta]_, \[Chi]s_, \[Chi]a_, \[Delta]\[Beta]2_, \[Delta]\[Beta]3_]
 \[Eta]-> (1-\[Delta]^2)/4
 
 }//Simplify;
+
+
+ \[Omega]IntVecPhase[\[Omega]]
 
 
 IntExpr = {U\[CapitalBeta]1[\[Delta], \[Chi]s, \[Chi]a], U\[CapitalBeta]2[\[Delta], \[Chi]s, \[Chi]a, \[Delta]\[Beta]2],U\[CapitalBeta]3[\[Delta], \[Chi]s, \[Chi]a, \[Delta]\[Beta]3]} . \[Omega]IntVecPhase[\[Omega]];
@@ -488,7 +491,7 @@ Module[
 (*Pos[expri, hj] ={POS1, POS2, ...},  j = 1, ..., N*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Making Block function*)
 
 
@@ -824,7 +827,7 @@ Export["Phase_Ds_order_0_to_3.mx", res1]
 	"SystemCompileOptions"->" -fPIC -O2"};*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing the function*)
 
 
@@ -847,7 +850,7 @@ Block[{rule, g = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Sec
 DownValues[Test\[CapitalPsi]] = DownValues[Test\[CapitalPsi]]//.HoldForm[x_]:> x;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Testing the Phase against Ripple*)
 
 
@@ -855,12 +858,21 @@ DeleteObject/@ExternalSessions[]
 
 Clear@python
 
-python = StartExternalSession["Python"];
+python = StartExternalSession[{
+	"Python",
+	"Evaluator" -> "/Users/felipe/anaconda3/envs/RIPPLE/bin/python"
+}];
 ExternalEvaluate[python,"
 import numpy as np
 
 from ripplegw.waveforms import IMRPhenomD as IMRD
 from ripplegw.waveforms import IMRPhenomD_utils as IMRD_utils
+"]
+
+
+ExternalEvaluate[python,"
+import ripplegw
+print(ripplegw.__file__)
 "]
 
 
@@ -901,12 +913,12 @@ Test := Module[
 	f = Range[20, 2048, 1.];
 	{m1, m2} = ReverseSort@RandomReal[{10,120},2];
 	
-	M = (m1+m2);
+	M = (m1+m2)//Echo;
 	
-	\[Eta] = (m1 m2)/M^2;
+	\[Eta] = (m1 m2)/M^2//Echo;
 	tc =0;  
 	\[Phi]c = 0; 
-	{\[Chi]1, \[Chi]2} = RandomReal[{-1,1}, 2];
+	{\[Chi]1, \[Chi]2} = RandomReal[{-1,1}, 2]//Echo;
 	
 	\[Delta] = Sqrt[1-4 \[Eta]];
 	\[Chi]s = (\[Chi]1+\[Chi]2)/2; \[Chi]a = (\[Chi]1-\[Chi]2)/2;
@@ -934,11 +946,13 @@ Test := Module[
 
 	pos = FirstPosition[\[Omega], x_/; x>=0.19]//Last; (*0.2 is the upper cutoff for IMRPhenomD. *)
 	diff = Riffle[\[Omega], diff]//Partition[#,2]&;
+	
 	{
 		ListLinePlot[
 			Take[diff, pos], 
 			GridLines->{{{0.018,Red}, {ringdown/2, Red}}, None}, 
-			PlotRange->All, ImageSize->Medium, Background->White
+			PlotRange->All, ImageSize->Medium, Background->White,
+			ScalingFunctions->"Log10"
 		],
 		ListLinePlot[
 			{Take[Ripple, pos], Take[MMA, pos]}, GridLines->{{{0.018,Red}, {ringdown/2, Red}}, None},PlotRange->All,
@@ -1406,7 +1420,7 @@ phis3 = Join[
 ];
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Amplitude*)
 
 
@@ -1598,6 +1612,9 @@ AuxiliarDefs["MR"] = HoldForm[{
 }];
 
 
+MRAmpExpr
+
+
 (* ::Section::Closed:: *)
 (*Intermediate*)
 
@@ -1715,6 +1732,9 @@ Block[
 ]
 
 
+IntAmpExpr
+
+
 AuxiliarDefs["intermediate"] = HoldForm[{
 	Derivative[delta_, Mc_, chis_, chia_][v2]/; chis+chia>3 := ZeroFunction,
 	
@@ -1768,7 +1788,10 @@ Clear@\[ScriptCapitalA]IMR
 ];
 
 
-(* ::Section::Closed:: *)
+\[ScriptCapitalA]IMRExpr
+
+
+(* ::Section:: *)
 (*Making Block function*)
 
 
@@ -2487,7 +2510,7 @@ SetDirectory[NotebookDirectory[]]
 Ds = Import["Amp_Ds_order_0_to_3.mx"];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Compiling Amp terms:*)
 
 
@@ -2544,7 +2567,7 @@ list = MapIndexed[
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Defining amplitude for Rosetta stone*)
 
 

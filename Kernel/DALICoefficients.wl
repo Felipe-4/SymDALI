@@ -18,7 +18,7 @@ Begin["`Private`"];
 PacletDirectoryLoad["/Users/felipe/Documents/GitHub"];*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Definitions*)
 
 
@@ -46,11 +46,11 @@ GenMessage[True, mess_] := True;
 GenMessage[False, mess_] := With[{}, Message[mess]; False]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Make Gradients*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Function Set-Up*)
 
 
@@ -621,7 +621,7 @@ GenGrads[head_, {dims__Integer}, {obspoints__List}, {Orighs___Symbol}, {uniquehs
 GenGrads[x___] := Throw[$Failed, failTag[GenGrads]]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PartitionLIComponents*)
 
 
@@ -780,6 +780,7 @@ GradientsList[{gradients__Association}, {varnumbers__Integer}, n_Integer] :=Modu
 	
 	(*Note that Dimensions[result] === {n, LI_i, Length[fvec]}, where LI_i -> number of LI comps. of the order i gradient*)
 	result = MakeGradient[{gradients}, {varnumbers}, LIComponents[#]]&/@Range[n];
+	
 	
 	(*we want Dimensions[result] === {n, Length[fvec], LI_i} for the making of DALI tensors*)
 	result = Transpose/@result;
@@ -1081,8 +1082,8 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 	EchoTiming[
 		SymRulehs = ToExpression/@Keys[SymRules];
 		Orighs = ToExpression/@Keys[NRules];
-		Uniquehs = Unique[Orighs];,
-		"pre work"
+		Uniquehs = Unique[Orighs];
+		,"pre work"
 	];
 	
 	EchoTiming[
@@ -1097,12 +1098,14 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 		List@@(Clear/@Orighs);
 		Orighs = List@@Orighs;
 		Uniquehs = List@@Uniquehs;*)
-		iNRules = NRules/.Thread@Rule[Orighs, Uniquehs];,
-		"parsing NRules"
+		iNRules = NRules/.Thread@Rule[Orighs, Uniquehs];
+		,"parsing NRules"
 	];
 	
 	
-	EchoTiming[MakeDefs[SymRules, iNRules]; Clear[iNRules];, "MakeDefs"];
+	EchoTiming[
+		MakeDefs[SymRules, iNRules]; Clear[iNRules];
+		, "MakeDefs"];
 	
 	
 	(*Define some basic quantities:*)
@@ -1175,7 +1178,9 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 	];
 	
 	
-	EchoTiming[ClearAll[remainingGradients];, "extra cleaning"];
+	EchoTiming[
+		ClearAll[remainingGradients];
+	, "extra cleaning"];
 	
 	(*Put the matrices in  the form for DALIList*)
 	
@@ -1184,8 +1189,8 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 		result = MapThread[
 			GenDaliList[#1, #2, \[CapitalDelta]f]&,
 			{detectorGradients, {PSD}}
-		];,
-		"DALIList"
+		];
+		,"DALIList"
 	];
 	
 	If[
@@ -1200,7 +1205,7 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 (*DALITensors*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*SymRules and NRules*)
 
 
@@ -1218,6 +1223,13 @@ Module[
 	{(*SymRules["IMRPhenomPv2"],*) SymRules["IMRPhenomD"], SymRules["FpFc"]} = m[[All,1]];
 	{(*NRules["IMRPhenomPv2"],*) NRules["IMRPhenomD"], NRules["FpFc"]} = m[[All,2]];
 ];
+
+
+Module[
+	{hm = DerivativeRulesLoadMMA["IMRPhenomHM", "HMhphc"]},
+	SymRules["IMRPhenomHM"] = <||>;
+	NRules["IMRPhenomHM"] = hm[[2]];
+]
 
 
 NRules[ii\[ScriptA]IMR] = <|
@@ -1283,6 +1295,22 @@ ihphcIMRPhenomD[
 ];
 
 
+ihphcIMRPhenomHM[
+	\[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_,
+	\[Iota]_, invdL_, tc_, \[Phi]ref_,
+	\[Delta]\[CurlyPhi]minus2_,\[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_,
+	fref_, f_ 
+] = Module[
+	{G = 4.925490947641267`*^-6, \[Omega], \[Omega]ref, M = \[ScriptCapitalM]c ((1-\[Delta]^2)/4)^(-3/5), \[Eta]},
+	
+	\[Eta] = (1-\[Delta]^2)/4;
+	\[Omega] = f M G; 
+	\[Omega]ref = fref M G;
+	
+	M^2 HMhphc[\[Omega], \[Omega]ref, \[Eta], \[Chi]s, \[Chi]a, \[Iota], \[Phi]ref]*Exp[-I 2 \[Pi] f tc]*invdL
+];
+
+
 ihphcIMRPhenomPv2[
 	m1_, m2_, 
 	s1x_, s1y_, s1z_,
@@ -1302,10 +1330,10 @@ iFpFc[
 ] = FpFc[f,\[Theta],\[Phi],\[Psi],pi,Dij];
 
 
-Protect[ihphcIMRPhenomD, ihphcIMRPhenomPv2, iFpFc(*, \[CapitalPhi]IMR, \[ScriptA]IMR, FpFc*)];
+Protect[ihphcIMRPhenomD, ihphcIMRPhenomPv2, ihphcIMRPhenomHM, iFpFc(*, \[CapitalPhi]IMR, \[ScriptA]IMR, FpFc*)];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Utils for Fisher Matrix*)
 
 
@@ -1366,6 +1394,49 @@ RetrieveFiducial[aligned_String, fp_Association]/;(
 	ContainsAll[vars["Aligned"],Keys[fp]] &&
 	
 	aligned == "IMRPhenomD"
+) := Module[
+	{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref, \[Delta]p, test, res},
+	
+	{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref} = fp/@{
+		"\[ScriptCapitalM]c", "\[Delta]", "\[Chi]s", "\[Chi]a",
+		"\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "1/dL",
+		"tc", "\[Phi]ref"
+	};
+	
+	
+	(*Test variables:*)
+	test = Thread@LessEqual[
+		{10^-3, 0, -1, -1, 0, 0, 0,0, 10^-11, -Infinity, 0},
+		{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref},
+		{Infinity, 0.9999, 1,1, \[Pi], \[Pi], 2 \[Pi], \[Pi], 10^20,  Infinity, 2 \[Pi]}
+	];
+	
+	(*this collapses to True or False*)
+	test = (And@@test)//TrueQ;
+	
+	GenErrorMessage["Aligned", test];
+	
+	If[
+		Length[Keys[fp]] === 11,
+		res = {{\[Theta], \[Phi], \[Psi]}, {\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref}},
+		
+		\[Delta]p = DeleteElements[Keys[fp], vars["Aligned"][[1;;11]]];(*check for real value*)
+		\[Delta]p = fp/@SortBy[\[Delta]p, order\[Delta]];
+		
+		If[VectorQ[\[Delta]p, RealValuedNumberQ] === False, Throw["\[Delta]pi values should be in the range -\[Infinity]< \[Delta]pi <\[Infinity]"]];
+		
+		res = {{\[Theta], \[Phi], \[Psi]}, {\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref, Sequence@@\[Delta]p}}
+	]
+	
+]
+
+
+RetrieveFiducial[aligned_String, fp_Association]/;(
+	(*there should not be more than 11 variables*)
+	Length@Keys[fp] <= 11 && 
+	(*the keys must be contained in vars["Aligned"]*)
+	ContainsAll[{"\[ScriptCapitalM]c", "\[Delta]", "\[Chi]s", "\[Chi]a", "\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "1/dL", "tc", "\[Phi]ref"}, Keys[fp]] &&
+	aligned == "IMRPhenomHM"
 ) := Module[
 	{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref, \[Delta]p, test, res},
 	
@@ -1485,6 +1556,7 @@ LIDij = SymmetrizedIndependentComponents[{3,3}, Symmetric[All]];
 
 Clear@headhphc
 headhphc["IMRPhenomD"] = ihphcIMRPhenomD;
+headhphc["IMRPhenomHM"] = ihphcIMRPhenomHM;
 headhphc["IMRPhenomPv2"] = ihphcIMRPhenomPv2;
 
 
@@ -1502,11 +1574,15 @@ iihphcvars["IMRPhenomD", fref_] = Join[
 ]
 
 
+iihphcvars["IMRPhenomHM", fref_] = iihphcvars["IMRPhenomD", fref]
+
+
 isAligned["IMRPhenomD"] = True
+isAligned["IMRPhenomHM"] = True
 isAligned["IMRPhenomPv2"] = False
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Fisher Matrix*)
 
 
@@ -1518,6 +1594,7 @@ make1[n_]/; n>0 := 1
 
 
 iconvert["IMRPhenomD"] = "Aligned"
+iconvert["IMRPhenomHM"] = "Aligned"
 iconvert["IMRPhenomPv2"] = "Precessing"
 
 
@@ -1528,7 +1605,7 @@ iDALITensors[
 	n_,
 	fmin_, fmax_, res_, AllFisherMatrices_
 ]/;(
-	approximant === "IMRPhenomD" ||approximant ===  "IMRPhenomPv2" 
+	approximant === "IMRPhenomD" || approximant === "IMRPhenomHM" ||approximant ===  "IMRPhenomPv2" 
 ) := Module[
 	{
 		FiducialFpFc,  Fiducialhphc,
@@ -1555,14 +1632,19 @@ iDALITensors[
 	
 	varsFpFc = {\[Theta], \[Phi], \[Psi], pi, Dij, f, 3};
 	
-	ivarshphc = If[
+	ivarshphc = Which[
 		approximant==="IMRPhenomD",
-		iL = DeleteElements[keysFP, vars["Aligned"][[1;;11]]];
-		iL = iToExpression/@SortBy[iL, order\[Delta]];
-		{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref},
-		iL = DeleteElements[keysFP, vars["Precessing"][[1;;15]]]; 
-		iL = iToExpression/@SortBy[iL, order\[Delta]];
-		{m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Iota], dL, tc, \[Phi]ref}
+			iL = DeleteElements[keysFP, vars["Aligned"][[1;;11]]];
+			iL = iToExpression/@SortBy[iL, order\[Delta]];
+			{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref},
+		approximant==="IMRPhenomHM",
+			iL = DeleteElements[keysFP, vars["Aligned"][[1;;11]]];
+			iL = iToExpression/@SortBy[iL, order\[Delta]];
+			{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref},
+		approximant==="IMRPhenomPv2",
+			iL = DeleteElements[keysFP, vars["Precessing"][[1;;15]]]; 
+			iL = iToExpression/@SortBy[iL, order\[Delta]];
+			{m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Iota], dL, tc, \[Phi]ref}
 	];
 	
 	(*Extra \[Delta]p var if it exists*)
@@ -1627,7 +1709,7 @@ iDALITensors[
 	
 	(*iGWDALICoefficients[{h__}, detecs_, {{vars__}, {fp__}, n_}, {f0_, f1_, \[CapitalDelta]f_}, {PSD__}, SymRules, NRules, returnAll]*)
 	
-	
+	(*DownValues@ihphc//Echo;*)
 	iGWDALICoefficients[
 		{iFpFc, ihphc}, 
 		Length[{detectors}],

@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Package Header*)
 
 
@@ -8,11 +8,11 @@ BeginPackage["FelipeBarbosa`SymDALI`Utils`", {"FelipeBarbosa`SymDALI`DerivativeT
 
 
 Unprotect[
-	PatternFunctions, hphcIMRPhenomD, hphcIMRPhenomPv2,EmptyAssociation, SNR
+	PatternFunctions, hphcIMRPhenomD, hphcIMRPhenomPv2,EmptyAssociation, SNR, hphcIMRPhenomHM
 ];
 
 ClearAll[
-	PatternFunctions, hphcIMRPhenomD, hphcIMRPhenomPv2,EmptyAssociation, SNR
+	PatternFunctions, hphcIMRPhenomD, hphcIMRPhenomPv2,EmptyAssociation, SNR, hphcIMRPhenomHM
 ];
 
 
@@ -48,6 +48,20 @@ By default all deviation parameters are 0.";
 
 
 
+
+
+hphcIMRPhenomHM::usage="```hphcIMRPhenomD[f, M, \[Eta], s1z, s2z, \[Iota], tc, \[Phi]ref, dL]``` returns the plus and cross 
+polarizations {\!\(\*SubscriptBox[\(h\), \(+\)]\), \!\(\*SubscriptBox[\(h\), \(x\)]\)} in the form of a matrix with dimensions {2, Length[f]} for the IMRPhenomHM approximant.
+
+f: frequency vector, {f1,f2,f3,...} [Hz].
+M: total mass [solar masses] (M>0).
+\[Eta]: symmetric mass ratio, in the range (0, 0.25].
+s1z: dimensionless spin component (direction of orbital \!\(\*OverscriptBox[\(L\), \(->\)]\)) of the heaviest BH, in the range [-1,1].
+s2z: dimensionless spin component (direction of orbital \!\(\*OverscriptBox[\(L\), \(->\)]\)) of the lightest BH, in the range [-1,1].
+\[Iota]: inclination angle, in the range [0, \[Pi]].
+tc: coalescence time [seconds].
+\[Phi]ref: reference frequency, in the range [0, 2 \[Pi]].
+dL: luminosity distance [Gpc].";
 
 
 (*hphcIMRPhenomPv2::usage="```hphcIMRPhenomPv2[f, M, \[Eta], s1x, s1y, s1z, s2x, s2y, s2z, \[Iota], tc, \[Phi]ref, dL]``` returns 
@@ -90,7 +104,7 @@ Begin["Private`"];
 (*Definitions*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*SymRules, NRules and iFunctions for Fisher calculation*)
 
 
@@ -113,6 +127,7 @@ Module[
 FpFcHead = NRules["FpFc"][FpFc][[1,2,0]];
 D\[ScriptA]IMR = NRules["IMRPhenomD"][\[ScriptA]IMR][[1,2,0]];
 D\[CapitalPhi]IMR = NRules["IMRPhenomD"][\[CapitalPhi]IMR][[1,2,0]];
+HMhphc := FelipeBarbosa`SymDALI`DALICoefficients`Private`NRules["IMRPhenomHM"][FelipeBarbosa`SymDALI`DALICoefficients`Private`HMhphc][[1,2,0]];
 (*Pv2\[ScriptA]IMR =  NRules["IMRPhenomPv2"][\[ScriptA]IMR][[1,2,0]];
 Pv2\[CapitalPhi]IMR =  NRules["IMRPhenomPv2"][\[CapitalPhi]IMR][[1,2,0]];*)
 
@@ -120,7 +135,7 @@ Pv2\[CapitalPhi]IMR =  NRules["IMRPhenomPv2"][\[CapitalPhi]IMR][[1,2,0]];*)
 ClearAll@NRules;
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*(Public) PatternFunctions*)
 
 
@@ -139,7 +154,7 @@ PatternFunctions[$f_, $\[Delta]_, $\[Alpha]_, $\[Psi]_, $GMST_, $pi_, $Dij_]/;(
 Protect[PatternFunctions];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*(Public) hphc's*)
 
 
@@ -189,6 +204,31 @@ hphcIMRPhenomD[$f_, $\[ScriptCapitalM]c_, $\[Delta]_, $\[Chi]s_, $\[Chi]a_, $\[I
 Protect[hphcIMRPhenomD];
 
 
+(* ::Subsubsection:: *)
+(*PhenomHM*)
+
+
+hphcIMRPhenomHM[
+	$f_, $\[ScriptCapitalM]c_, $\[Delta]_, $\[Chi]s_, $\[Chi]a_, $\[Iota]_, $tc_, $\[Phi]ref_, $invdL_
+] := Module[
+	{G = 4.925490947641267`*^-6, \[Omega], \[Omega]ref, M = $\[ScriptCapitalM]c ((1-$\[Delta]^2)/4)^(-3/5), \[Eta], hphc},
+	
+	\[Eta] = (1-$\[Delta]^2)/4;
+	\[Omega] = $f M G; 
+	\[Omega]ref = Min[\[Omega]];
+	
+	hphc = M^2 HMhphc[\[Omega], \[Omega]ref, \[Eta], $\[Chi]s, $\[Chi]a, $\[Iota], $\[Phi]ref]*Exp[-I 2 \[Pi] $f $tc]*$invdL;
+	
+	{
+		hphc[[All,1]],
+		hphc[[All,2]]
+	}
+];
+
+
+Protect[hphcIMRPhenomHM];
+
+
 (* ::Subsubsection::Closed:: *)
 (*PhenomPv2*)
 
@@ -235,7 +275,7 @@ Protect[hphcIMRPhenomD];
 (*Protect[hphcIMRPhenomPv2]*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*(Public) EmptyAssociation*)
 
 
@@ -261,7 +301,7 @@ Protect[EmptyAssociation]
 (*SNR*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*RetrieveFiducial*)
 
 
@@ -396,7 +436,7 @@ RetrieveFiducial[x___] := Throw[$Failed, failTag[RetrieveFiducial]]
 LIDij = SymmetrizedIndependentComponents[{3,3}, Symmetric[All]];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*SNR*)
 
 
