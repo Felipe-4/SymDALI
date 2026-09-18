@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Package Header*)
 
 
@@ -11,31 +11,24 @@ Unprotect@TaylorForm;
 
 TaylorForm//ClearAll
 
-TaylorForm::usage="TaylorForm[DALITensors_List]
-DALITensors: the exact List that comes out from ```DALITensors```
-
-returns the TaylorForm of the derivative expansion, that is, a list of tensors 
-to be contracted with {\!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(2\)]\), \!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(3\)]\), ..., \!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(2  n\)]\)}, where ```n``` is the derivative order of 
-the expansion.
-
-obs.:The tensors are represented by their LI components, supllemented of their
-multiplicities, ready to be contracted with the LI components of \!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(i\)]\).";
+TaylorForm::usage="TaylorForm[DALITensors_List] given the output of DALITensors, this function returns the Taylor form 
+of the expansion";
 
 
-Unprotect@ProcessDALITensors;
+(*Unprotect@ProcessDALITensors;
 
 ProcessDALITensors//ClearAll
 
 ProcessDALITensors::usage="ProcessDALITensors[DALI_List]
 DALI_List: the exact List that comes out from ```DALITensors```
 returns the list with only the LI components of the tensors and the multiplicity of each component, to be
-contracted with \!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(i\)]\)s directly.";
+contracted with \!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(i\)]\)s directly.";*)
 
 
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Definitions*)
 
 
@@ -124,11 +117,11 @@ DALIComponents[dim_, order_] := SymmetrizedIndependentComponents[
 ]&/@Range[order]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*ProcessDALITensors*)
 
 
-ProcessDALITensors[DALITensors_List] := Module[
+(*ProcessDALITensors[DALITensors_List] := Module[
 	{
 		order = Length[DALITensors], dim = Sqrt[DALITensors[[1,1]]//Length], 
 		iTensorList, vectors, SymbolicDALI, highOrderLI, HOdim, HOLI, HOM, HOMultiplicity, HOLITensors 
@@ -182,10 +175,10 @@ ProcessDALITensors[DALITensors_List] := Module[
 	
 	iTensorList
 	
-]
+]*)
 
 
-ProcessDALITensors//Protect;
+(*ProcessDALITensors//Protect;*)
 
 
 (* ::Subsection::Closed:: *)
@@ -231,7 +224,7 @@ PreprocessDALItensors[x___] := Throw[$Failed, failTag[PreprocessDALItensors]]*)
 (*\[CapitalDelta]p[i_] := ToExpression["p"<>ToString[i]]*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*TaylorForm*)
 
 
@@ -391,7 +384,7 @@ StanPolynomial[x___] := Throw[$Failed, failTag[StanPolynomial]] *)
 CompiledPolynomial[x___] := Throw[$Failed, failTag[CompiledPolynomial]]*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Coordinate Change*)
 
 

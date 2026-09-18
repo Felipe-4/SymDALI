@@ -6,14 +6,7 @@ Quit
 $HistoryLength=1;
 SetOptions[EvaluationNotebook[], LightDark->"Light"]
 PacletDirectoryLoad[NotebookDirectory[]//ParentDirectory[#,2]&];
-<<FelipeBarbosa`SymDALI`
-
-
-(* ::Text:: *)
-(*I DIDN' T SET UP PHENOMPV2 YET, SO DON' T TRY TO RUN THOSE TESTS*)
-
-
-MemoryInUse[]
+EchoTiming[<<FelipeBarbosa`SymDALI`]
 
 
 (* ::Section::Closed:: *)
@@ -200,7 +193,7 @@ print(\"GMST (radians):\", gmst_rad)
 Clear@test
 
 test := Module[
-	{r1, r2, \[Theta], \[Phi],\[Alpha], \[Delta], \[Psi], MMA},
+	{r1, r2, \[Theta], \[Phi], \[Alpha], \[Delta], \[Psi], MMA},
 	\[Delta] = RandomReal[{-\[Pi]/2,\[Pi]/2}];
 	\[Psi] = RandomReal[{0, \[Pi]}];
 	\[Alpha] = RandomReal[{0, 2 \[Pi]}];
@@ -210,8 +203,7 @@ test := Module[
 	
 	MMA = PatternFunctions[
 		{10},
-		\[Delta], \[Alpha], \[Psi],
-		2.821265599576199 10^-6,
+		\[Delta], \[Phi], \[Psi],
 		{0,0,0}, (*The lal definition does not include the time delay so we set the position to 0.*)
 		DetectorTensor["H1"]
 	];
@@ -230,9 +222,6 @@ test := Module[
 	
 	{r1,r2}
 ]
-
-
-test//ScientificForm
 
 
 (* ::Text:: *)
@@ -340,7 +329,7 @@ def lal_hp(m1, m2, s1z, s2z, dL, iota, phiRef, deltaF,
 (*It is easier to just run the section "functions to generate plots" and go to "check plots" to see the plots*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*functions to generate plots*)
 
 
@@ -350,11 +339,12 @@ testhp := Module[
 	{
 		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota], f, MMA, lalD, lalR, MMAR, lalIm, MMAIm, fmax,\[Eta],
 		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], 
-		 Rediff, Imdiff, f1, sp, irrelevant, rePlot, imPlot, reDiffPlot, imDiffPlot, mc, \[Delta], \[Chi]s, \[Chi]a
+		 Rediff, Imdiff, f1, sp, irrelevant, rePlot, imPlot, reDiffPlot, imDiffPlot, mc, \[Delta], \[Chi]s, \[Chi]a,q
 	},
 	
 	{m1, m2} = ReverseSort[RandomReal[{20, 100},2]];
 	\[Eta] = (m1 m2)/(m1+m2)^2;
+	q = m2/m1;
 	\[Delta] = Sqrt[1 - 4 \[Eta]];
 	mc = (m1+m2) \[Eta]^(3/5);
 	{s1z, s2z} = RandomReal[{-1,1}, 2];
@@ -368,8 +358,10 @@ testhp := Module[
 	f1 = 0.014/(G (m1+m2));
 	
 	
-	MMA =  hphcIMRPhenomD[f, mc, \[Delta], \[Chi]s, \[Chi]a, \[Iota], 0, \[Phi]Ref, 10^3][[1]];
+	MMA =  hphcIMRPhenomD[f, mc, q, s1z, s2z, \[Iota], 0, \[Phi]Ref, 10^3][[1]];
 	lalD = lal[m1, m2, s1z,s2z, 1,\[Iota], \[Phi]Ref, 1., 10., fmax, 10., "IMRPhenomD"][[1]];
+	
+	
 	
 	(*
 		lal starts at f=0 and goes to the nearest fp = 2^k, where fp>= fmax.
@@ -390,12 +382,13 @@ testhc := Module[
 	{
 		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota], f, MMA, lalD, lalR, MMAR, lalIm, MMAIm, fmax,\[Eta],
 		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], 
-		 Rediff, Imdiff, f1, sp, irrelevant, rePlot, imPlot, reDiffPlot, imDiffPlot, mc, \[Delta], \[Chi]s, \[Chi]a
+		 Rediff, Imdiff, f1, sp, irrelevant, rePlot, imPlot, reDiffPlot, imDiffPlot, mc, \[Delta], \[Chi]s, \[Chi]a,q
 	},
 	
 	{m1, m2} = ReverseSort[RandomReal[{20, 100},2]];
 	\[Eta] = (m1 m2)/(m1+m2)^2; 
 	\[Delta] = Sqrt[1-4 \[Eta]];
+	q = m2/m1;
 	mc = (m1+m2) \[Eta]^(3/5);
 	{s1z, s2z} = RandomReal[{-1,1}, 2];
 	
@@ -409,7 +402,7 @@ testhc := Module[
 	f1 = 0.014/(G (m1+m2));
 	
 	
-	MMA =  hphcIMRPhenomD[f, mc, \[Delta], \[Chi]s, \[Chi]a, \[Iota], 0, \[Phi]Ref, 10^3][[2]];
+	MMA =  hphcIMRPhenomD[f, mc, q, s1z, s2z, \[Iota], 0, \[Phi]Ref, 10^3][[2]];
 	lalD = lal[m1, m2, s1z,s2z, 1,\[Iota],\[Phi]Ref, 1., 10., fmax, 10., "IMRPhenomD"][[2]];
 	
 	(*
@@ -420,8 +413,6 @@ testhc := Module[
 	
 	
 	CompareComplexVectors[{lalD, MMA}, {"lal", "MMA"}, f]
-	
-	
 ]
 
 
@@ -439,6 +430,13 @@ testhc := Module[
 (*You can see that the highest relative differences are on points where the functions cross zero*)
 
 
+(*hphcIMRPhenomD[$f_, $\[ScriptCapitalM]c_, $q_, $s1z_, $s2z_, $\[Iota]_, $tc_, $\[Phi]ref_, $invdL_, OptionsPattern[]]*)
+
+
+(*VectorQ[$f, NumberQ] && Min[$f] > 0 && $\[ScriptCapitalM]c>0 && -1<=$s1z<=1 && -1<=$s2z<=1 &&
+	0<=$\[Iota]<=\[Pi] && 0<=$\[Phi]ref<= 2 \[Pi] && $invdL>0*)
+
+
 testhp
 
 
@@ -452,7 +450,187 @@ testhc
 Clear[testhc, testhp]
 
 
-(* ::Section:: *)
+(* ::Subsubsection::Closed:: *)
+(*Compare amplitude and angle*)
+
+
+Clear@TestAmp
+
+TestAmp := Module[
+	{
+		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota], f, MMA, lalD, lalR, MMAR, lalIm, MMAIm, fmax,
+		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], 
+		 Rediff, Imdiff, f1, sp, irrelevant, rePlot, imPlot, reDiffPlot, imDiffPlot,q,Amplitude,
+		 \[ScriptCapitalM]c = 36, \[Eta] = 0.24, M, dL
+	},
+	
+	(*{m1, m2} = ReverseSort[RandomReal[{20, 100},2]];*)
+	(*\[Eta] = (m1 m2)/(m1+m2)^2;*)
+	
+	M = \[ScriptCapitalM]c \[Eta]^(-3/5);
+	m1 = M/2 (1+Sqrt[1-4 \[Eta]]);
+	m2 = M/2 (1-Sqrt[1 - 4 \[Eta]]);
+	
+	q = m2/m1;
+	
+	
+	(*{s1z, s2z} = RandomReal[{-1,1}, 2];*)
+	{s1z, s2z} = {0.8, \[Minus]0.8};
+	
+	\[Phi]Ref = 0; RandomReal[{0, 2 \[Pi]}];
+	\[Iota] = 0; RandomReal[{0, \[Pi]}];
+	
+	f = Range[5., 0.2/(G (m1+m2)), 1.];
+	fmax =  0.2/(G (m1+m2))//Round;
+	f1 = 0.014/(G (m1+m2));
+	dL = 0.98; (*Gpc*)
+	
+	
+	(*m1, m2, s1z, s2z, dL, iota, phiRef, deltaF,
+           f_min, f_max, f_ref, appr*)
+	MMA =  hphcIMRPhenomD[f, \[ScriptCapitalM]c, q, s1z, s2z, \[Iota], 0, \[Phi]Ref, 1/dL][[1]];
+	lalD = lal[m1, m2, s1z,s2z, dL 10^3, \[Iota], \[Phi]Ref, 1., 5., fmax, 5., "IMRPhenomD"][[1]];
+	
+	
+	
+	(*
+		lal starts at f=0 and goes to the nearest fp = 2^k, where fp>= fmax.
+		This line insures the same f points for lal and MMA
+	*)
+	lalD = lalD[[6;;Length[MMA]+5]]; 
+	
+	Amplitude = {
+		plot1 = ListLinePlot[
+			Abs@{lalD, MMA},
+			PlotLegends->Placed[{Style["LAL", Black, 15], Style["SymDALI", Black, 15]}, {Left, Bottom}],
+			DataRange-> MinMax@f,
+			ImageSize->Medium,
+			(*PlotLabel->Style["A+", Black],*)
+			Frame->True,
+			Background->White,
+			FrameStyle->Directive[Black, 15, Thickness[0.0025]],
+			ScalingFunctions->{"Log10", "Log10"},
+			PlotStyle->{Directive[Gray, Opacity[0.5], Thickness[0.015]], Directive[Red, Dashed]}
+		],
+		
+		plot2 = ListLinePlot[
+			RelativeDiff[lalD, MMA],
+			DataRange-> MinMax@f,
+			ImageSize->Medium,
+			(*PlotLabel->Style["Relative Diff", Black],*)
+			Frame->True,
+			Background->White,
+			ScalingFunctions->{"Log10", "Log10"},
+			PlotRange->All,
+			FrameStyle->Directive[Black, 15, Thickness[0.0025]]
+		]
+	}
+	
+	
+]
+
+
+TestAmp
+
+
+Clear@Test\[CapitalPsi]
+
+Test\[CapitalPsi] := Module[
+	{
+		m1, m2,  s1z, s2z, \[Phi]Ref, \[Iota], f, MMA, lalD, lalR, MMAR, lalIm, MMAIm, fmax,
+		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], 
+		Rediff, Imdiff, f1, sp, irrelevant, rePlot, imPlot, 
+		reDiffPlot, imDiffPlot,q,Amplitude,
+		Phases, Cosines, \[ScriptCapitalM]c = 36, \[Eta] = 0.24, M, dL
+	},
+	
+	(*{m1, m2} = ReverseSort[RandomReal[{20, 100},2]];*)
+	(*\[Eta] = (m1 m2)/(m1+m2)^2;*)
+	
+	M = \[ScriptCapitalM]c \[Eta]^(-3/5);
+	m1 = M/2 (1+Sqrt[1-4 \[Eta]]);
+	m2 = M/2 (1-Sqrt[1 - 4 \[Eta]]);
+	
+	q = m2/m1;
+	
+	(*{s1z, s2z} = RandomReal[{-1,1}, 2];*)
+	{s1z, s2z} = {0.8, \[Minus]0.8};
+	
+	
+	\[Phi]Ref = RandomReal[{0, 2 \[Pi]}];
+	\[Iota] = RandomReal[{0, \[Pi]}];
+	
+	f = Range[5., 0.2/(G (m1+m2)), 1.];
+	fmax =  0.2/(G (m1+m2))//Round;
+	f1 = 0.014/(G (m1+m2));
+	dL = 0.98; (*Gpc*)
+	
+	
+	MMA =  hphcIMRPhenomD[f, \[ScriptCapitalM]c, q, s1z, s2z, \[Iota], 0, \[Phi]Ref, 1/dL][[1]];
+	lalD = lal[m1, m2, s1z,s2z, dL 10^3, \[Iota], \[Phi]Ref, 1., 5., fmax, 5., "IMRPhenomD"][[1]];
+	
+	
+	(*
+		lal starts at f=0 and goes to the nearest fp = 2^k, where fp>= fmax.
+		This line insures the same f points for lal and MMA
+	*)
+	lalD = lalD[[6;;Length[MMA]+5]]; 
+	
+	Amplitude =  Abs@{lalD, MMA};
+	
+	Phases = {lalD, MMA}/Amplitude//Quiet;
+	
+	Cosines = {
+		(Phases[[1]] + Phases[[1]]\[Conjugate])/2,
+		(Phases[[2]] + Phases[[2]]\[Conjugate])/2
+	};
+	   {
+		plot3 = ListLinePlot[
+			Cosines[[All, 1;;-2]],
+			(*PlotLegends->Placed[{Style["LAL", Black, 15], Style["SymDALI", Black, 15]}, {Right, Top}],*)
+			DataRange->MinMax@f,
+			ImageSize->Medium,
+			Frame->True,
+			Background->White,
+			FrameStyle->Directive[Black, 15, Thickness[0.0025]],
+			ScalingFunctions->{"Log10", None},
+			PlotStyle->{Directive[Gray, Opacity[0.5], Thickness[0.015]], Directive[Red, Dashed]}
+		],
+		
+		plot4 = ListLinePlot[
+			RelativeDiff@@Cosines,
+			DataRange->MinMax@f,
+			ImageSize->Medium,
+			(*PlotLabel->Style["Relative Diff", Black],*)
+			Frame->True,
+			Background->White,
+			ScalingFunctions->{"Log10", "Log10"},
+			PlotRange->All,
+			FrameStyle->Directive[Black, 15, Thickness[0.0025]]
+		]
+	}
+	
+	
+]
+
+
+Test\[CapitalPsi]
+
+
+allPlots = GraphicsGrid[
+	{{plot1, plot3}, {plot2, plot4}}, 
+	ImageSize->Large, 
+	Background->White
+]
+
+
+Export["/Users/felipe/Desktop/Amp.pdf", plot1]
+Export["/Users/felipe/Desktop/res_Amp.pdf", plot2]
+Export["/Users/felipe/Desktop/cos.pdf", plot3]
+Export["/Users/felipe/Desktop/res_cos.pdf", plot4]
+
+
+(* ::Section::Closed:: *)
 (*Test IMRPhenomHM against lal:*)
 
 
@@ -529,7 +707,7 @@ def lal_hp(m1, m2, s1z, s2z, dL, iota, phiRef, deltaF,
 "]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Test hp and hc*)
 
 
@@ -545,17 +723,17 @@ Clear@testhp
 
 testhp := Module[
 	{
-		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota], f, MMA, lalD, lalR, MMAR, lalIm, MMAIm, fmax,\[Eta],
+		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota], f, MMA, lalD, lalR, MMAR, lalIm, MMAIm, fmax,\[Eta],q,
 		G = 4.925490947641267`*^-6,
 		 Rediff, Imdiff, f1, sp, irrelevant, rePlot, imPlot, reDiffPlot, imDiffPlot, mc, \[Delta], \[Chi]s, \[Chi]a,
 		 MMA2, lal2
 	},
 	
 	{m1, m2} = ReverseSort[RandomReal[{20, 100},2]];
-	Echo[m1+m2];
+	(*Echo[m1+m2];*)
 	\[Eta] = (m1 m2)/(m1+m2)^2;
 	
-	\[Delta] = Sqrt[1 - 4 \[Eta]];
+	q = m2/m1;
 	
 	mc = (m1+m2) \[Eta]^(3/5);
 	
@@ -572,7 +750,7 @@ testhp := Module[
 	f1 = 0.014/(G (m1+m2));
 	
 	
-	MMA =  hphcIMRPhenomHM[f, mc, \[Delta], \[Chi]s, \[Chi]a, \[Iota], 0, \[Phi]Ref, 10^3][[1]];
+	MMA =  hphcIMRPhenomHM[f, mc, q, s1z, s2z, \[Iota], 0, \[Phi]Ref, 10^3][[1]];
 	
 	lalD = lal[m1, m2, s1z,s2z, 1, \[Iota], \[Phi]Ref, 1., 5., fmax, 5., "IMRPhenomHM"][[1]];
 	
@@ -588,11 +766,14 @@ testhp := Module[
 ]
 
 
+?hphcIMRPhenomHM
+
+
 Clear@testhc
 
 testhc := Module[
 	{
-		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota], f, MMA, lalD, lalR, MMAR, lalIm, MMAIm, fmax,\[Eta],
+		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota], f, MMA, lalD, lalR, MMAR, lalIm, MMAIm, fmax,\[Eta],q,
 		G = 4.925490947641267`*^-6,
 		 Rediff, Imdiff, f1, sp, irrelevant, rePlot, imPlot, reDiffPlot, imDiffPlot, mc, \[Delta], \[Chi]s, \[Chi]a
 	},
@@ -602,7 +783,7 @@ testhc := Module[
 	Echo[m1+m2];
 	
 	\[Eta] = (m1 m2)/(m1+m2)^2; 
-	\[Delta] = Sqrt[1-4 \[Eta]];
+	q = m2/m1;
 	mc = (m1+m2) \[Eta]^(3/5);
 	{s1z, s2z} = RandomReal[{-1,1}, 2];
 	
@@ -618,7 +799,7 @@ testhc := Module[
 	(*lal_hp(m1, m2, s1z, s2z, dL, iota, phiRef, deltaF,
            f_min, f_max, f_ref, appr):*)
 	
-	MMA =  hphcIMRPhenomHM[f, mc, \[Delta], \[Chi]s, \[Chi]a, \[Iota], 0, \[Phi]Ref, 10^3][[2]];
+	MMA =  hphcIMRPhenomHM[f, mc, q, s1z, s2z, \[Iota], 0, \[Phi]Ref, 10^3][[2]];
 	lalD = lal[m1, m2, s1z, s2z, 1, \[Iota], \[Phi]Ref, 1., 5., fmax, 5., "IMRPhenomHM"][[2]];
 	
 	(*
@@ -654,206 +835,6 @@ testhc
 
 
 Clear[testhc, testhp]
-
-
-(* ::Section::Closed:: *)
-(*Test IMRPhenomPv2 against lal:*)
-
-
-(* ::Subsection::Closed:: *)
-(*lal hphc function*)
-
-
-Clear[python]
-DeleteObject/@ExternalSessions[];
-
-python = StartExternalSession["Python"]
-ExternalEvaluate[python,"
-import numpy as np
-
-import jax
-import jax.numpy as jnp
-
-
-from jax import grad, vmap
-from functools import partial
-
-
-import lalsimulation as lalsim
-import lal
-
-jax.config.update(\"jax_enable_x64\", True)
-"]
-
-
-lal = ExternalFunction[python, "
-def lal_hp(m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, dL, iota, phiRef, deltaF, f_min, f_max, f_ref, appr):
-
-    approximant = lalsim.SimInspiralGetApproximantFromString(appr)
-    
-    dL_m = dL * 3.08568 * (10**22)  # convert megaparsecs to meters
-
-    # solar mass to Kg
-    m1_kg = m1 * 1.9884 * (10**30)
-    m2_kg = m2 * 1.9884 * (10**30)
-    
-    hp, hc = lalsim.SimInspiralChooseFDWaveform(
-        m1_kg,
-        m2_kg,
-        s1x,#s1x,
-        s1y,#s1y,
-        s1z,
-        s2x,#s2x,
-        s2y,#s2y,
-        s2z,
-        dL_m,
-        iota,
-        phiRef,
-        0,
-        0,
-        0,
-        deltaF,
-        f_min,
-        f_max,
-        f_ref,
-        None,
-        approximant,
-    )
-
-    hP = hp.data.data
-    hC = hc.data.data    
-
-    return [hP.tolist(), hC.tolist()]
-
-"]
-
-
-(* ::Subsection::Closed:: *)
-(*Test hp and hc*)
-
-
-(* ::Text:: *)
-(*It is easier to just run the section "functions to generate plots" and go to "check plots" to see the plots*)
-
-
-(* ::Subsubsection::Closed:: *)
-(*functions to generate plots*)
-
-
-Clear@RandomSpin
-RandomSpin[] := Module[
-	{abs, spin}, 
-	abs=2; 
-	While[
-		abs>1, 
-		spin = RandomReal[{-1,1},3];
-		abs = Norm[spin];
-	];
-	spin
-];
-
-
-Clear@testhp
-
-testhp := Module[
-	{
-		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota], f, MMA, lalD, lalR, MMAR, lalIm, MMAIm, fmax,\[Eta],
-		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], 
-		 Rediff, Imdiff, f1, sp, irrelevant, rePlot, imPlot, reDiffPlot, imDiffPlot
-	},
-	
-	
-	{m1, m2} = ReverseSort[RandomReal[{20, 100},2]];
-	\[Eta] = (m1 m2)/(m1+m2)^2;
-	{s1x, s1y, s1z} = RandomSpin[];
-	{s2x, s2y, s2z} = RandomSpin[];
-	
-	\[Phi]Ref = RandomReal[{0, 2 \[Pi]}];
-	\[Iota] = RandomReal[{0, \[Pi]}];
-	
-	f = Range[10., 0.2/(G (m1+m2)), 1.];
-	fmax =  0.2/(G (m1+m2))//Round;
-	f1 = 0.014/(G (m1+m2));
-	
-	
-	MMA =  hphcIMRPhenomPv2[f, m1+m2, \[Eta], s1x, s1y, s1z, s2x, s2y, s2z, \[Iota], 0, \[Phi]Ref, 10^-3][[1]];
-	lalD = lal[m1, m2, s1x, s1y, s1z,s2x, s2y, s2z, 1,\[Iota],\[Phi]Ref, 1., 10., fmax, 10., "IMRPhenomPv2"][[1]];
-	
-	(*
-		lal starts at f=0 and goes to the nearest fp = 2^k, where fp>= fmax.
-		This line insures the same f points for lal and MMA
-	*)
-	lalD = lalD[[11;;Length[MMA]+10]]; 
-	
-	
-	CompareComplexVectors[{lalD, MMA}, {"lal", "MMA"}, f]
-	
-	
-]
-
-
-Clear@testhc
-
-testhc := Module[
-	{
-		m1, m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Phi]Ref, \[Iota], f, MMA, lalD, lalR, MMAR, lalIm, MMAIm, fmax,\[Eta],
-		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]], 
-		 Rediff, Imdiff, f1, sp, irrelevant, rePlot, imPlot, reDiffPlot, imDiffPlot
-	},
-	
-	{m1, m2} = ReverseSort[RandomReal[{20, 100},2]];
-	\[Eta] = (m1 m2)/(m1+m2)^2;
-	{s1x, s1y, s1z} = RandomSpin[];
-	{s2x, s2y, s2z} = RandomSpin[];
-	
-	\[Phi]Ref = RandomReal[{0, 2 \[Pi]}];
-	\[Iota] = RandomReal[{0, \[Pi]}];
-	
-	f = Range[10., 0.2/(G (m1+m2)), 1.];
-	fmax =  0.2/(G (m1+m2))//Round;
-	f1 = 0.014/(G (m1+m2));
-	
-	
-	MMA =  hphcIMRPhenomPv2[f, m1+m2, \[Eta], s1x, s1y, s1z, s2x, s2y, s2z, \[Iota], 0, \[Phi]Ref, 10^-3][[2]];
-	lalD = lal[m1, m2, s1x, s1y, s1z,s2x, s2y, s2z, 1,\[Iota],\[Phi]Ref, 1., 10., fmax, 10., "IMRPhenomPv2"][[2]];
-	
-	(*
-		lal starts at f=0 and goes to the nearest fp = 2^k, where fp>= fmax.
-		This line insures the same f points for lal and MMA
-	*)
-	lalD = lalD[[11;;Length[MMA]+10]]; 
-	
-	CompareComplexVectors[{lalD, MMA}, {"lal", "MMA"}, f]
-	
-	
-	
-	
-]
-
-
-(* ::Subsubsection::Closed:: *)
-(*check plots: *)
-
-
-(* ::Text:: *)
-(*The functions generates random values of {m1, m2, \[Eta], s1z, s2z, \[Iota], \[Phi]Ref} to do the analysis*)
-
-
-(* ::Text:: *)
-(*You can see that the highest relative differences are on points where the functions cross zero*)
-
-
-testhp
-
-
-testhc
-
-
-Clear[testhc, testhp]
-
-
-DeleteObject/@ExternalSessions[]
-Clear@python
 
 
 (* ::Section::Closed:: *)
@@ -1027,203 +1008,6 @@ ListPlot[Flatten[a]//Sort, ScalingFunctions->"Log10", PlotRange->All]
 (*the high differences seem to be always on the dL column*)
 
 
-(* ::Subsection::Closed:: *)
-(*IMRPhenomPv2 test*)
-
-
-ClearAll@strain;
-strain[\[Theta]_, \[Phi]_, \[Psi]_, m1_, m2_, s1x_,s1y_,s1z_,s2x_,s2y_,s2z_, \[Iota]_, dL_, tc_,\[Phi]ref_] := Module[
-	{FpFc, fvec = Range[20, 1024, 0.125], hphc},
-	
-	FpFc = PatternFunctions[fvec, \[Pi]/2-\[Theta], \[Phi], \[Psi], 0, DetectorVertex["H1"], DetectorTensor["H1"]];
-	
-	hphc = hphcIMRPhenomPv2[fvec, m1+m2, (m1 m2)/(m1+m2)^2, s1x,s1y,s1z,s2x,s2y,s2z, \[Iota], tc, \[Phi]ref, dL];
-	
-	FpFc[[1]] hphc[[1]] + FpFc[[2]] hphc[[2]]
-]
-
-
-ivars = {"m1", "m2", "s1x","s1y","s1z","s2x", "s2y", "s2z",
-	"\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "dL", 
-	"tc", "\[Phi]ref"};
-
-
-psd = (ASD["ET-D"]@Range[20, 1024, 0.125])^2;
-
-
-H1 = <|
-	"ASD" -> ASD["ET-D"],
-	"Position" -> DetectorVertex["H1"],
-	"DetectorTensor" -> DetectorTensor["H1"]
-|>;
-
-
-RandomSpin[] := Module[
-	{norm, s},
-	norm=2;
-	While[norm>1,s =RandomReal[{-1,1},3 ]; norm=Norm[s]];
-	s
-]
-
-
-Test["IMRPhenomPv2"] := Module[
-	{m1, m2, s1x,s1y,s1z,s2x,s2y,s2z, \[Iota], tc, \[Phi]ref, dL, \[Theta], \[Phi], \[Psi], numerical, fp, Symbolic},
-	
-	{m1, m2} = RandomReal[{20, 80}, 2]//ReverseSort;
-	
-	{s1x,s1y,s1z} = RandomSpin[];
-	{s2x,s2y,s2z} = RandomSpin[];
-	
-	{tc} = RandomReal[{-1,1},1];
-	
-	{\[Theta], \[Iota], \[Psi]} = RandomReal[{0, \[Pi]}, 3];
-	{\[Phi]ref, \[Phi]} = RandomReal[{0, 2 \[Pi]},2];
-	dL = RandomReal[{2, 10}];
-	
-	fp = Association@(Thread@Rule[ivars, {m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Iota],\[Theta],\[Phi],\[Psi],dL,tc,\[Phi]ref}]);
-	
-	numerical = NFisher[strain, {\[Theta],\[Phi],\[Psi],m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Iota],dL,tc,\[Phi]ref}, 1, 15, psd];
-	
-	
-	Symbolic = FisherMatrix["IMRPhenomPv2", fp, {H1}, "fmin"->20, "fmax"->1024, "res"->8032]//QuietEcho;
-	
-	{numerical[[-3,-2]] , numerical[[-2, -3]] }//Echo;
-	{Symbolic[[-3,-2]], Symbolic[[-2, -3]]}//Echo;
-	(*
-	these should be exactly zero since they are purelly imaginary contributions in the tensor product,
-	we set them to zero, so they don't contaminate the comparison. The Symbolic implementation is usually closer
-	to zero by some orders of magnitude
-	*)
-	numerical[[-3,-2]]  = numerical[[-2, -3]] = 0;
-	Symbolic[[-3,-2]]  =Symbolic[[-2, -3]] = 0;
-	
-	RelativeDiff[numerical, Symbolic]
-
-]
-
-
-a = Test["IMRPhenomPv2"]//UpperTriangularize;
-
-a//MatrixForm
-
-ListPlot[Flatten[a]//Sort, ScalingFunctions->"Log10", PlotRange->All]
-(*the high differences seem to be always on the dL column*)
-
-
-
-
-(* ::Subsection::Closed:: *)
-(*IMRPhenomPv2 test with all \[Delta]pi*)
-
-
-ClearAll@strain;
-strain[
-	\[Theta]_, \[Phi]_, \[Psi]_, 
-	m1_, m2_, s1x_,s1y_,s1z_,s2x_,s2y_,s2z_, 
-	\[Iota]_, dL_, tc_,\[Phi]ref_,
-	\[Delta]\[CurlyPhi]minus2_, \[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_
-] := Module[
-	{FpFc, fvec = Range[20, 1024, 0.125], hphc, opts},
-	
-	FpFc = PatternFunctions[fvec, \[Pi]/2-\[Theta], \[Phi], \[Psi], 0, DetectorVertex["H1"], DetectorTensor["H1"]];
-	
-	opts = Thread@Rule[
-		{"\[Delta]\[CurlyPhi]-2","\[Delta]\[CurlyPhi]0","\[Delta]\[CurlyPhi]1","\[Delta]\[CurlyPhi]2","\[Delta]\[CurlyPhi]3","\[Delta]\[CurlyPhi]4","\[Delta]\[CurlyPhi]5l","\[Delta]\[CurlyPhi]6","\[Delta]\[CurlyPhi]6l","\[Delta]\[CurlyPhi]7","\[Delta]\[Beta]2","\[Delta]\[Beta]3","\[Delta]\[Alpha]2","\[Delta]\[Alpha]3","\[Delta]\[Alpha]4"},
-		{\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4}
-	];
-	
-	
-	hphc = hphcIMRPhenomPv2[
-		fvec, m1+m2, (m1 m2)/(m1+m2)^2, s1x,s1y,s1z,s2x,s2y,s2z, \[Iota], tc, \[Phi]ref, dL,
-		Sequence@@opts
-	];
-	
-	FpFc[[1]] hphc[[1]] + FpFc[[2]] hphc[[2]]
-]
-
-
-ivars = {
-	"m1", "m2", "s1x","s1y","s1z","s2x", "s2y", "s2z",
-	"\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "dL", 
-	"tc", "\[Phi]ref",
-	"\[Delta]\[CurlyPhi]-2","\[Delta]\[CurlyPhi]0","\[Delta]\[CurlyPhi]1","\[Delta]\[CurlyPhi]2","\[Delta]\[CurlyPhi]3","\[Delta]\[CurlyPhi]4","\[Delta]\[CurlyPhi]5l","\[Delta]\[CurlyPhi]6","\[Delta]\[CurlyPhi]6l","\[Delta]\[CurlyPhi]7","\[Delta]\[Beta]2","\[Delta]\[Beta]3","\[Delta]\[Alpha]2","\[Delta]\[Alpha]3","\[Delta]\[Alpha]4"
-};
-
-
-psd = (ASD["ET-D"]@Range[20, 1024, 0.125])^2;
-
-
-H1 = <|
-	"ASD" -> ASD["ET-D"],
-	"Position" -> DetectorVertex["H1"],
-	"DetectorTensor" -> DetectorTensor["H1"]
-|>;
-
-
-RandomSpin[] := Module[
-	{norm, s},
-	norm=2;
-	While[norm>1,s =RandomReal[{-1,1},3 ]; norm=Norm[s]];
-	s
-]
-
-
-Test["IMRPhenomPv2"] := Module[
-	{
-		m1, m2, s1x,s1y,s1z,s2x,s2y,s2z, \[Iota], tc, \[Phi]ref, dL, \[Theta], \[Phi], \[Psi], numerical, fp, Symbolic, 
-		\[Delta]ps
-	},
-	
-	{m1, m2} = RandomReal[{20, 80}, 2]//ReverseSort;
-	
-	{s1x,s1y,s1z} = RandomSpin[];
-	{s2x,s2y,s2z} = RandomSpin[];
-	
-	{tc} = RandomReal[{-1,1},1];
-	
-	{\[Theta], \[Iota], \[Psi]} = RandomReal[{0, \[Pi]}, 3];
-	{\[Phi]ref, \[Phi]} = RandomReal[{0, 2 \[Pi]},2];
-	dL = RandomReal[{2, 10}];
-	\[Delta]ps = RandomReal[{-10,10}, 15];
-	
-	fp = Association@(Thread@Rule[
-		ivars,
-		{m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Iota],\[Theta],\[Phi],\[Psi],dL,tc,\[Phi]ref,Sequence@@\[Delta]ps}
-	]);
-	
-	
-	numerical = NFisher[strain, {\[Theta],\[Phi],\[Psi],m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Iota],dL,tc,\[Phi]ref, Sequence@@\[Delta]ps}, 1, 30, psd];
-	(*Echo[numerical];*)
-	Symbolic = FisherMatrix["IMRPhenomPv2", fp, {H1}, "fmin"->20, "fmax"->1024, "res"->8033]//QuietEcho;
-	
-	numerical[[13, 14;;30]]//Echo;
-	Symbolic[[13, 14;;30]]//Echo;
-	(*
-	these should be exactly zero since they are purelly imaginary contributions in the tensor product,
-	we set them to zero, so they don't contaminate the comparison. The Symbolic implementation is usually closer
-	to zero by some orders of magnitude
-	*)
-	Do[
-		numerical[[13,i]] = 0; Symbolic[[13,i]] = 0; 
-		numerical[[i,13]] =0;  Symbolic[[i,13]] =0,
-		{i, 14, 30}
-	];
-	
-	RelativeDiff[numerical, Symbolic]
-
-]
-
-
-a = Test["IMRPhenomPv2"]//UpperTriangularize;
-
-Echo[{Position[Max[a]]@a, Max@a}];
-
-a//MatrixForm
-
-ListPlot[Flatten[a]//Sort, ScalingFunctions->"Log10", PlotRange->All]
-(*the high differences seem to be always on the dL column*)
-
-
 (* ::Section::Closed:: *)
 (*Testing GWFAST vs Symbolic Fishers:*)
 
@@ -1232,7 +1016,7 @@ ListPlot[Flatten[a]//Sort, ScalingFunctions->"Log10", PlotRange->All]
 (*OBSERVE THAT DELTA_T ENTERS WITH OPPOSITE SIGN IN THE DEFINITIONS NOW, (BCS bilby USES THE OPPPOSITE SIGN OF GWFAST. THIS WILL CAUSE DISAGREEMENTS ON THE SKYPOSITION-ELEMENTS)*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Fisher defs: *)
 
 
@@ -1278,10 +1062,10 @@ ExternalEvaluate[python,
 (*Replace the path by your own: *)
 "
 alldetectors = copy.deepcopy(glob.detectors)
-LVdetectors = {det:alldetectors[det] for det in ['L1', 'H1', 'Virgo']}
-#LVdetectors['L1']['psd_path'] = '/home/cosmo-ufes/Documentos/GitHub/GWFORECAST/Data/ASD/AplusDesign.txt'
-LVdetectors['L1']['psd_path'] = '/Users/felipe/Documents/GitHub/GWFORECAST/Data/ASD/AplusDesign.txt'
-LVdetectors['H1']['psd_path'] = LVdetectors['L1']['psd_path']
+LVdetectors = {det:alldetectors[det] for det in ['L1', 'H1']}
+
+LVdetectors['L1']['asd_path'] = '/Users/felipe/Documents/GitHub/SymDALI/Data/ASD/AplusDesign.txt'
+LVdetectors['H1']['asd_path'] = LVdetectors['L1']['asd_path']
 "]
 
 
@@ -1305,7 +1089,8 @@ myLVSignals = {}
 for d in ['L1','H1']:
 
     myLVSignals[d] = GWSignal(IMRPhenomD(),
-                psd_path=LVdetectors[d]['psd_path'],
+                psd_path=LVdetectors[d]['asd_path'],
+				is_ASD=True,
                 detector_shape = LVdetectors[d]['shape'],
                 det_lat= LVdetectors[d]['lat'],
                 det_long=LVdetectors[d]['long'],
@@ -1333,7 +1118,7 @@ def Fisher(vec):
         'dL': onp.array([dL]),
         'theta': onp.array([theta]),
         'phi': onp.array([phi]),
-        'iota': onp.array([iota]) + onp.pi, #Accounts for the fact that GWFAST uses ''+I*Cos[iota]''
+        'iota': onp.array([iota]) +  onp.pi, #Accounts for the fact that GWFAST uses ''+I*Cos[iota]''
         'psi': onp.array([psi]),
         'tGPS': onp.array([61094.012]),
         'eta': onp.array([eta]),
@@ -1341,9 +1126,10 @@ def Fisher(vec):
         'chi1z': onp.array([chi1z]),
         'chi2z': onp.array([chi2z]),
     }
-    #sys.stdout = open(os.devnull, 'w')
-    fm = myLVNet.FisherMatr(res, res=1000)
-    #sys.stdout = sys.__stdout__
+
+    
+    fm = myLVNet.FisherMatr(res, res=2000)
+    
     return fm
 "]
 
@@ -1352,46 +1138,44 @@ def Fisher(vec):
 (*Order of elements in the Fisher matrix of IMRPhenomD: *)
 
 
-ExternalEvaluate[python, "IMRPhenomD().ParNums"]
-
-
 (* ::Subsubsection::Closed:: *)
 (*MMA: *)
 
 
+(*THE "-" IN "Position" IS BCS SYMDALI FOLLOWS BILBY'S CONVENTION FOR THE TIME DELAY : Exp[I p.r]
+AND THE GWFAST ONE IS Exp[-I p.r]
+*)
+
 H1 = <|
-	"Position"-> DetectorVertex["H1"],
+	"Position"-> -DetectorVertex["H1"],
 	"DetectorTensor"-> DetectorTensor["H1"],
 	"ASD" -> ASD["L1H1-O5"]
 |>;
 
 L1 = <|
-	"Position"-> DetectorVertex["L1"],
+	"Position"-> -DetectorVertex["L1"],
 	"DetectorTensor"-> DetectorTensor["L1"],
 	"ASD" -> ASD["L1H1-O5"]
 |>;
 
 
-EmptyAssociation["Aligned"]
-
-
 MMAFisherMatrix[fp_Association] := Module[
-	{M, chirp, eta,delta, J, fm, value, gwfast, invdL, dL},
+	{eta,delta, J, fm, value, gwfast, invdL, dL},
 	
-	{M, delta, invdL} = fp/@{"M", "\[Delta]", "1/dL"};
+	{delta, invdL} = fp/@{"\[Delta]", "1/dL"};
+	
 	eta = (1-delta^2)/4;
 	dL = 1/invdL;
-	chirp = M eta^(3/5);
 	
 	J = DiagonalMatrix[ConstantArray[1, 11]];
 	
 	(*
-		to change \[Delta]->\[Eta], (D[\[Delta][\[Eta]], \[Eta]])
+		to change \[Delta]-> \[Eta], (D[\[Delta][\[Eta]], \[Eta]])
 	*)
 	J[[5,5]] = -(2/Sqrt[1-4 eta]);
 	
 	(*(\[Chi]s, \[Chi]a)->(s1z, s2z)*)
-	{J[[6,6]], J[[6,7]], J[[7,6]], J[[7,7]]} = {1/2,1/2,1/2,-(1/2)};
+	{J[[6,6]], J[[6,7]], J[[7,6]], J[[7,7]]} = {1/2, 1/2, 1/2, -(1/2)};
 	
 	(*
 		to change tc -> -tc
@@ -1405,9 +1189,16 @@ MMAFisherMatrix[fp_Association] := Module[
 	
 	
 	
-	fm = DALITensors["IMRPhenomD", fp, {L1, H1}, 1, "fmin"->20, "fmax"->1024, "res"->8033]//QuietEcho;
+	fm = DALITensors[
+		"IMRPhenomD", 
+		fp, 
+		{L1, H1}, 
+		1, 
+		"fmin"->20, "fmax"->1024, "res"->1000
+	]//QuietEcho;
 	
 	fm = ArrayReshape[fm, {11,11}];
+	
 	
 	fm = J\[Transpose] . fm . J;
 	
@@ -1417,19 +1208,25 @@ MMAFisherMatrix[fp_Association] := Module[
 		(value[#1] = #2)&,
 	
 		{
-			Flatten[{\[Theta],\[Phi],\[Psi],Mc,\[Eta],s1z,s2z,\[Iota], dL, tc, \[Phi]ref}\[TensorProduct]{\[Theta],\[Phi],\[Psi],Mc,\[Eta],s1z,s2z,\[Iota], dL, tc, \[Phi]ref}],
+			Flatten[{\[Theta], \[Phi], \[Psi], Mc, \[Eta], s1z, s2z, \[Iota], Dl, tc, \[Phi]ref}\[TensorProduct]{\[Theta],\[Phi],\[Psi],Mc,\[Eta],s1z,s2z,\[Iota], Dl, tc, \[Phi]ref}],
 			Flatten[fm]
 		}
 	];
 	
-	gwfast = Flatten[{Mc, \[Eta], dL, \[Theta], \[Phi], \[Iota], \[Psi], tc, \[Phi]ref, s1z, s2z}\[TensorProduct]{Mc, \[Eta], dL, \[Theta], \[Phi], \[Iota], \[Psi], tc, \[Phi]ref, s1z, s2z}];
+	gwfast = Flatten[{Mc, \[Eta], Dl, \[Theta], \[Phi], \[Iota], \[Psi], tc, \[Phi]ref, s1z, s2z}\[TensorProduct]{Mc, \[Eta], Dl, \[Theta], \[Phi], \[Iota], \[Psi], tc, \[Phi]ref, s1z, s2z}];
 	
 	ArrayReshape[value/@gwfast, {11,11}]
 	
 ]
 
 
-(* ::Subsection::Closed:: *)
+Flatten[{\[Theta], \[Phi], \[Psi], Mc, \[Eta], s1z, s2z, \[Iota], Dl, tc, \[Phi]ref}\[TensorProduct]{\[Theta],\[Phi],\[Psi],Mc,\[Eta],s1z,s2z,\[Iota], Dl, tc, \[Phi]ref}]
+
+
+ExternalEvaluate[python, "IMRPhenomD().ParNums"] +1
+
+
+(* ::Subsection:: *)
 (*Test*)
 
 
@@ -1449,22 +1246,25 @@ test := Module[
 	Mc = M eta^(3/5);
 	
 	dL = RandomReal[{2, 10}];
-	{theta, psi} = RandomReal[{0, \[Pi]},2];
+	{theta, psi} = RandomReal[{0, \[Pi]}, 2];
 	iota = RandomReal[{0, \[Pi]}];
-	{phi, phic} = RandomReal[{0, 2 \[Pi]},2];
+	{phi, phic} = RandomReal[{0, 2 \[Pi]}, 2];
 	{chi1z, chi2z} = RandomReal[{-1,1},2];
 	{chis, chia} = {(chi1z+chi2z)/2, (chi1z-chi2z)/2};
 	
 	tc = 1126259462.;
 	
-	pyvec = {Mc, dL, theta, phi, iota, psi, eta, phic, chi1z, chi2z};
 	
+	pyvec = {Mc, dL, theta, phi, iota, psi, eta, phic, chi1z, chi2z};
+			(*Mc, dL, theta, phi, iota, psi, eta, phic, chi1z, chi2z = vec*)
+			
 	fp =  (Thread@Rule[
-		{"\[ScriptCapitalM]c","\[Delta]","\[Chi]s","\[Chi]a","\[Iota]","\[Theta]","\[Phi]","\[Psi]","1/dL","tc","\[Phi]ref"},
-		{Mc, delta, chis, chia, iota, theta, phi, psi, 1/dL, tc, phic}
+		{"\[ScriptCapitalM]c","\[Delta]","\[Chi]s","\[Chi]a","\[Iota]", "\[Theta]", "\[Phi]","\[Psi]","1/dL", "tc", "\[Phi]ref"},
+		{Mc, delta, chis, chia, iota, theta,  phi, psi, 1/dL, tc, phic}
 	])//Association;
 	
 	MMA = MMAFisherMatrix[fp];
+	
 	python = Normal[PythonFisher[pyvec][[All, All, 1]]];
 	
 	
@@ -1481,6 +1281,9 @@ test := Module[
 ]
 
 
+ExternalEvaluate[python, "IMRPhenomD().ParNums"] + 1
+
+
 a = UpperTriangularize[test];
 Echo[{Position[Max@a]@a, Max@a}];
 a//MatrixForm
@@ -1494,7 +1297,7 @@ ListPlot[Sort[rd], PlotRange->All, ScalingFunctions->"Log10"]
 (*Testing Fisher matrix performance PhenomD*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*MMA: *)
 
 
@@ -1522,27 +1325,62 @@ EmptyAssociation["Aligned"]
 
 
 fp = <|
-	"\[Theta]"->0.408,"\[Phi]"->3.4,"\[Psi]"->0.1,
-	"\[ScriptCapitalM]c"->0.01162182`,"\[Delta]"->0.2,"\[Chi]s"->0.1,"\[Chi]a"->0.,
+	"dec"->\[Pi]/2 - 0.408,"\[Phi]"->3.4,"\[Psi]"->0.1,
+	"\[ScriptCapitalM]c"->0.01162182`,"q"->0.2,"s1z"->0.1,"s2z"->0.1,
 	"\[Iota]"->2.5,"1/dL"->1,"tc"->10,"\[Phi]ref"->0.
 |>;
 
 
-DALITensors[
+a = DALITensors[
 	"IMRPhenomD", 
 	fp, 
 	{L1, H1, V1}, 
-	2, 
+	3, 
 	"fmin"->20, "fmax"->1024, 
 	"res"->1000
-];//RepeatedTiming//ScientificForm
+];//AbsoluteTiming//ScientificForm
+
+
+(* ::Text:: *)
+(*Os timings s\[ATilde]o (0.4, 0.9,  4) segundos*)
+
+
+{
+	3.821065385341644287 10^2,
+	8.094647829532623291 10^2,
+	1.436757323503494263 10^3
+}/3600
+
+
+a
+
+
+l=%;
+
+
+l
+
+
+2.130884590148925781 10^2/60
+
+
+7.239057724475860596 10^2/60
+
+
+1.300651202201843262 10^3/60
+
+
+0.19 60
+
+
+46.1 60
 
 
 (* ::Section::Closed:: *)
 (*Testing Fisher matrix performance PhenomHM*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*MMA: *)
 
 
@@ -1570,8 +1408,8 @@ EmptyAssociation["Aligned"]
 
 
 fp = <|
-	"\[Theta]"->0.408,"\[Phi]"->3.4,"\[Psi]"->0.1,
-	"\[ScriptCapitalM]c"->0.01162182`,"\[Delta]"->0.2,"\[Chi]s"->0.1,"\[Chi]a"->0.,
+	"dec"->\[Pi]/2-0.408,"\[Phi]"->3.4,"\[Psi]"->0.1,
+	"\[ScriptCapitalM]c"->0.01162182`,"q"->0.9,"s1z"->0.1,"s2z"->0.,
 	"\[Iota]"->2.5,"1/dL"->1,"tc"->10,"\[Phi]ref"->0.
 |>;
 
@@ -1584,6 +1422,20 @@ a = DALITensors[
 	"fmin"->20, "fmax"->1024,
 	"res"->1000
 ];//EchoTiming
+
+
+(* ::Text:: *)
+(*Os tempos s\[ATilde]o  (0.95, 9.5, 123)*)
+
+
+{
+	3.821065385341644287 10^2,
+	8.094647829532623291 10^2 + 9.5,
+	1.436757323503494263 10^3 + 123
+}/3600
+
+
+a[[2,2]]//Total
 
 
 (* ::Text:: *)
@@ -1608,15 +1460,15 @@ MemoryInUse[]
 MemoryInUse[]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing SNRs against GWFAST:*)
 
 
-(* ::Subsection:: *)
-(*SNR defs: *)
+(* ::Subsection::Closed:: *)
+(*IMRPhenomD*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*GWFAST*)
 
 
@@ -1643,9 +1495,6 @@ PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd())))
 sys.path.append(SCRIPT_DIR)
 import gwfast.gwfastGlobals as glob
-
-
-
 "
 ]
 
@@ -1747,7 +1596,7 @@ def SNR(vec):
 (*Order of elements in the Fisher matrix of IMRPhenomD: *)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*MMA: *)
 
 
@@ -1790,13 +1639,7 @@ MMASNR[fp_Association] := Module[
 ]
 
 
-fp  = Thread@Rule[
-	{"\[ScriptCapitalM]c","\[Delta]","\[Chi]s","\[Chi]a", "\[Iota]", "\[Theta]","\[Phi]","\[Psi]", "1/dL", "tc","\[Phi]ref"},
-	{20, 0.23, 0.1, -0.2, 2, 3, 1.4, 1.2, 2, 0.2, 0}
-]//Association
-
-
-(* ::Subsection:: *)
+(* ::Subsubsection:: *)
 (*Test*)
 
 
@@ -1808,17 +1651,23 @@ Clear@test
 
 
 test := Module[
-	{M, Mc, dL, theta, phi, iota,delta, psi,chis, chia, tc, eta, phic, chi1z, chi2z, pyvec, fp, python, MMA},
+	{
+		M, Mc, dL, theta, phi, iota,delta, psi,chis, chia, tc, eta, phic, chi1z, chi2z, pyvec, fp, python, MMA, 
+		q
+	},
 	
 	M = RandomReal[{10, 120}];
 	eta = RandomReal[{0.01, 0.2499}];
 	delta = Sqrt[1-4 eta];
 	Mc = M eta^(3/5);
+	q = (1 - Sqrt[1-4 eta])/(1 + Sqrt[1-4 eta]);
+	
 	
 	dL = RandomReal[{0.05, 10}];
 	{theta, psi} = RandomReal[{0, \[Pi]},2];
 	iota = RandomReal[{0, \[Pi]}];
 	{phi, phic} = RandomReal[{0, 2 \[Pi]},2];
+	
 	{chi1z, chi2z} = RandomReal[{-1,1},2];
 	{chis, chia} = {(chi1z+chi2z)/2, (chi1z-chi2z)/2};
 	
@@ -1828,8 +1677,8 @@ test := Module[
 	pyvec = {Mc, dL, theta, phi, iota+\[Pi], psi, eta, phic, chi1z, chi2z};
 	
 	fp =  (Thread@Rule[
-		{"\[ScriptCapitalM]c","\[Delta]","\[Chi]s","\[Chi]a","\[Iota]","\[Theta]","\[Phi]","\[Psi]","1/dL","tc","\[Phi]ref"},
-		{Mc, delta, chis, chia, iota, theta, phi, psi, 1/dL, tc, phic}
+		{"\[ScriptCapitalM]c","q","s1z","s2z","\[Iota]","dec","\[Phi]","\[Psi]","1/dL","tc","\[Phi]ref"},
+		{Mc, q, chi1z, chi2z, iota, \[Pi]/2 - theta, phi, psi, 1/dL, tc, phic}
 	])//Association;
 	
 	MMA = MMASNR[fp];
@@ -1842,6 +1691,238 @@ test := Module[
 
 (* ::Text:: *)
 (*Agreement overall better than 5%*)
+
+
+test
+
+
+Table[test, 1000]//MinMax
+
+
+(* ::Subsection:: *)
+(*IMRPhenomHM*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*GWFAST*)
+
+
+DeleteObject/@ExternalSessions[]
+Clear@python
+python = StartExternalSession[{
+	"Python", (*you should change the evaluator to your installation:*)
+	"Evaluator"-> "/Users/felipe/anaconda3/envs/GWFAST/bin/python"
+	(*"Evaluator"-> "/home/cosmo-ufes/anaconda3/envs/gwfast_env/bin/python"*)
+}];
+
+
+(*Standard stuff:*)
+ExternalEvaluate[python,
+"
+import os
+import sys
+
+import copy
+import numpy as onp
+from astropy.cosmology import Planck18
+
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd())))
+sys.path.append(SCRIPT_DIR)
+import gwfast.gwfastGlobals as glob
+"
+]
+
+
+(* ::Text:: *)
+(*I will be using L1 and H1 with Aplus Design:*)
+
+
+ExternalEvaluate[python,
+(*Replace the path by your own: *)
+"
+alldetectors = copy.deepcopy(glob.detectors)
+LVdetectors = {det:alldetectors[det] for det in ['L1', 'H1', 'ETSL', 'ETMRL45d', 'ETMRLpar']}
+
+#LVdetectors['L1']['psd_path'] = '/home/cosmo-ufes/Documentos/GitHub/GWFORECAST/Data/ASD/AplusDesign.txt'
+LVdetectors['L1']['psd_path'] = '/Users/felipe/Documents/GitHub/GWFORECAST/Data/ASD/AplusDesign.txt'
+
+LVdetectors['H1']['psd_path'] = LVdetectors['L1']['psd_path']
+LVdetectors['ETSL']['psd_path'] = LVdetectors['L1']['psd_path']
+LVdetectors['ETMRL45d']['psd_path'] = LVdetectors['L1']['psd_path']
+LVdetectors['ETMRLpar']['psd_path'] = LVdetectors['L1']['psd_path']
+"]
+
+
+ExternalEvaluate[python,
+"
+from gwfast.signal import GWSignal
+from gwfast.network import DetNet
+from gwfast.waveforms import IMRPhenomHM
+from fisherTools import CovMatr, compute_localization_region, check_covariance, fixParams
+"
+]
+
+
+(* ::Text:: *)
+(*Function to define parameters : *)
+
+
+ExternalEvaluate[python, "
+myLVSignals = {}
+
+for d in ['L1','H1', 'ETSL', 'ETMRL45d', 'ETMRLpar']:
+
+    myLVSignals[d] = GWSignal(IMRPhenomHM(),
+                psd_path=LVdetectors[d]['psd_path'],
+                detector_shape = LVdetectors[d]['shape'],
+                det_lat= LVdetectors[d]['lat'],
+                det_long=LVdetectors[d]['long'],
+                det_xax=LVdetectors[d]['xax'],
+                verbose=False,
+                useEarthMotion = False,
+                fmin= 20.,
+                fmax = 1024,
+                IntTablePath=None,
+                jitCompileDerivs=False
+    )
+
+
+myLVNet = DetNet(myLVSignals)
+myLVNet.verbose=False
+"]
+
+
+PythonSNR = ExternalFunction[python, 
+"
+def SNR(vec):
+    Mc, dL, theta, phi, iota, psi, eta, phic, chi1z, chi2z = vec
+    res = {
+        'Mc': onp.array([Mc]),
+        'dL': onp.array([dL]),
+        'theta': onp.array([theta]),
+        'phi': onp.array([phi]),
+        'iota': onp.array([iota]),
+        'psi': onp.array([psi]),
+        'tGPS': onp.array([61094.012]),
+        'eta': onp.array([eta]),
+        'Phicoal': onp.array([phic]),
+        'chi1z': onp.array([chi1z]),
+        'chi2z': onp.array([chi2z]),
+    }
+    sys.stdout = open(os.devnull, 'w')
+
+    fm = myLVNet.SNR(res, res=1000, return_all=True)
+
+    sys.stdout = sys.__stdout__
+
+    return [
+        fm['L1'].item(),
+        fm['H1'].item(),
+        fm['ETSL'].item(),
+        fm['ETMRL45d'].item(),
+		fm['ETMRLpar'].item()
+    ]
+
+"]
+
+
+(* ::Text:: *)
+(*Order of elements in the Fisher matrix of IMRPhenomD: *)
+
+
+(* ::Subsubsection:: *)
+(*MMA: *)
+
+
+H1 = <|
+	"Position"-> DetectorVertex["H1"],
+	"DetectorTensor"-> DetectorTensor["H1"],
+	"ASD" -> ASD["L1H1-O5"]
+|>;
+
+L1 = <|
+	"Position"-> DetectorVertex["L1"],
+	"DetectorTensor"-> DetectorTensor["L1"],
+	"ASD" -> ASD["L1H1-O5"]
+|>;
+
+
+ETS = <|
+	"Position"->DetectorVertex["ET-S"], 
+	"DetectorTensor"->DetectorTensor["ET-S-L"],
+	"ASD"->ASD["L1H1-O5"]
+|>;
+
+ETMR = <|
+	"Position"->DetectorVertex["ET-MR"], 
+	"DetectorTensor"->DetectorTensor["ET-MR-L-45"],
+	"ASD"->ASD["L1H1-O5"]
+|>;
+
+ETMR2 = <|
+	"Position"->DetectorVertex["ET-MR"], 
+	"DetectorTensor"->DetectorTensor["ET-MR-L-0"],
+	"ASD"->ASD["L1H1-O5"]
+|>;
+
+
+MMASNR[fp_Association] := Module[
+	{M, chirp, eta, J, fm, value, gwfast},
+	
+	SNR["IMRPhenomHM", fp, {L1, H1, ETS, ETMR, ETMR2}, "fmin"->20, "fmax"->1024, "res"->8033, "AllSNRs"->True]
+]
+
+
+(* ::Subsubsection:: *)
+(*Test*)
+
+
+Clear@test
+
+
+test := Module[
+	{
+		M, Mc, dL, theta, phi, iota,delta, psi,chis, chia, tc, eta, phic, chi1z, chi2z, pyvec, fp, python, MMA, 
+		q
+	},
+	
+	M = RandomReal[{10, 120}];
+	eta = RandomReal[{0.01, 0.2499}];
+	delta = Sqrt[1-4 eta];
+	Mc = M eta^(3/5);
+	q = (1 - Sqrt[1-4 eta])/(1 + Sqrt[1-4 eta]);
+	
+	
+	dL = RandomReal[{0.05, 10}];
+	{theta, psi} = RandomReal[{0, \[Pi]},2];
+	iota = RandomReal[{0, \[Pi]}];
+	{phi, phic} = RandomReal[{0, 2 \[Pi]},2];
+	phic=0;
+	
+	{chi1z, chi2z} = RandomReal[{-1,1},2];
+	{chis, chia} = {(chi1z+chi2z)/2, (chi1z-chi2z)/2};
+	
+	tc = 61094.012;
+	
+	(*GWFAST uses the opposite sign for Cos(iota) in hc, that is why "iota+\[Pi]" below*)
+	pyvec = {Mc, dL, theta, phi, iota+\[Pi], psi, eta, phic, chi1z, chi2z};
+	
+	fp =  (Thread@Rule[
+		{"\[ScriptCapitalM]c","q","s1z","s2z","\[Iota]","dec","\[Phi]","\[Psi]","1/dL","tc","\[Phi]ref"},
+		{Mc, q, chi1z, chi2z, iota, \[Pi]/2 - theta, phi, psi, 1/dL, tc, phic}
+	])//Association;
+	
+	MMA = MMASNR[fp];
+	
+	python = PythonSNR[pyvec];
+	RelativeDiff[python, MMA]
+	
+]
+
+
+(* ::Text:: *)
+(*Agreement overall better than 30%*)
 
 
 test
@@ -1874,6 +1955,12 @@ d_c.value
 
 Clear@dc
 dc = ComovingDistance["\[CapitalOmega]m" -> 0.30966] (*astropy uses this for \[CapitalOmega]m*)
+
+
+?ComovingDistance
+
+
+ComovingDistance[][1]
 
 
 l2 = dc@Range[0, 20, 20/9999.];
@@ -1992,7 +2079,7 @@ With[
 Clear[l1, l2, dVdz]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*MadauDickinsonProfile*)
 
 
@@ -2065,7 +2152,7 @@ Clear[l1, l2]
 NIntegrate[]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*PowerLaw + Peak*)
 
 
@@ -2652,3 +2739,4 @@ Test := Module[
 
 
 Test
+

@@ -751,10 +751,12 @@ AuxiliarFunctions[expr_, derivativeVars_List, {parallel___Integer}, {defs___Rule
 		symbols = EchoTiming[DependencySearch[#, dictionary]&/@derivatives, "DependencySearch"];
 		(*Echo[{derivatives, dictionary}];*)(*Echo[{symbols, derivatives, dictionary}];*)
 		(*(make the functions:)*)
+		
 		functions = EchoTiming[
 			Module[
 				{iass = Association@dictionary},
 				(*iass = Quiet[Simplify[#, TimeConstraint->1]&/@iass, Simplify::time];*)
+				(*Echo[{iass, {defs}, derivatives, symbols}];*)
 				MapThread[
 					DFunction[#1, #2, iass(*Association@dictionary*), {defs}]&,
 					{derivatives, symbols}
@@ -918,6 +920,10 @@ DerivativeRules[{name_, vars_, derivatives_List}, expr_, OptionsPattern[]]/;(
 
 (* ::Subsection:: *)
 (*DerivativeRulesLoad Defs*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Version for C-functions*)
 
 
 outType[Real] := RandomReal[]
@@ -1139,8 +1145,14 @@ DerivativeRulesLoad[theory_String] := Module[
 ]
 
 
+(* ::Subsubsection:: *)
+(*Version for MMA WVM*)
+
+
 (*THIS MAKES A SIDE EFFECT OF CLEARING head SO BE CAREFULL*)
-LoadFunctionDefMMA[head_Symbol] := Module[
+
+
+(*LoadFunctionDefMMA[head_Symbol] := Module[
 	{iHead = dummyHead, downValues, DownValuesRule, upValues, UpValuesRule, allRules},
 	
 	
@@ -1174,10 +1186,10 @@ LoadFunctionDefMMA[head_Symbol] := Module[
 	ClearAll[head];
 	
 	allRules//.iHead->head	
-]
+]*)
 
 
-DerivativeRulesLoadMMA[theory_String, hphcHead_String] := Module[
+(*DerivativeRulesLoadMMA[theory_String, hphcHead_String] := Module[
 	{
 		Pacletdirectory, SymRulesDirec, MMADirec, SymRulesDerivatives, NRulesDerivatives, 
 		Definitions, operatingsystem, hphc
@@ -1205,6 +1217,42 @@ DerivativeRulesLoadMMA[theory_String, hphcHead_String] := Module[
 	{
 		<||>,
 		<|hphc -> NRulesDerivatives|>
+	}
+]*)
+
+
+(* ::Text:: *)
+(*VERSION WITH NO SIDE EFFECTS:*)
+
+
+DerivativeRulesLoadMMA[theory_String, hphcHead_String] := Module[
+	{
+		Pacletdirectory, SymRulesDirec, MMADirec, SymRulesDerivatives, NRulesDerivatives, 
+		Definitions, operatingsystem, dummyHead, head
+	},
+	
+	operatingsystem = SystemInformation["Kernel", "SystemID"];
+	
+	Pacletdirectory = FindFile["FelipeBarbosa`SymDALI`"]//FileNameDrop[#, -2]&;
+	
+	MMADirec = FileNameJoin[{Pacletdirectory,"LibraryResources", operatingsystem, "DerivativeRules", theory, "MMA"}];
+	
+	(*LOAD THE DEFINITIONS OF THE WAVEFORM/DETECTOR*)
+	Get[MMADirec <> "/Defs.mx"];
+	
+	
+	dummyHead = ToExpression["dummy"<>hphcHead];
+	head = ToExpression[hphcHead];
+	
+	
+	NRulesDerivatives = LoadFunctionDefMMA[hphc];
+	
+	{
+		<||>,
+		<|dummyHead -> {
+			dummyHead[x__] -> head[x],
+			TagRule[dummyHead, $D[{n__}, dummyHead], $D[{n}, head]]
+		}|>
 	}
 ]
 

@@ -18,12 +18,12 @@ Begin["`Private`"];
 PacletDirectoryLoad["/Users/felipe/Documents/GitHub"];*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Definitions*)
 
 
 Unprotect[
-	SymRules, NRules,iFpFc,ihphcIMRPhenomD, ihphcIMRPhenomPv2, \[ScriptA]IMR, \[CapitalPhi]IMR, FpFc
+	SymRules, NRules,iFpFc,ihphcIMRPhenomD, ihphcIMRPhenomHM, \[ScriptA]IMR, \[CapitalPhi]IMR, FpFc
 ];
 
 
@@ -46,11 +46,11 @@ GenMessage[True, mess_] := True;
 GenMessage[False, mess_] := With[{}, Message[mess]; False]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Make Gradients*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Function Set-Up*)
 
 
@@ -200,6 +200,7 @@ Output: none, it changes Rule -> SetDelayed and TagRule -> TagSetDelayed";
 
 ChangeNRulesHead[{rules__}] := Module[
 	{}, 
+	
 	MapAt[
 		newHead,
 		{rules},
@@ -215,6 +216,7 @@ it will make the relevant definitions in for the lists";
 
 ProcessNRules[NRules_Association] := Module[
 	{},
+	
 	ChangeNRulesHead/@NRules;
 ]
 
@@ -621,7 +623,7 @@ GenGrads[head_, {dims__Integer}, {obspoints__List}, {Orighs___Symbol}, {uniquehs
 GenGrads[x___] := Throw[$Failed, failTag[GenGrads]]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*PartitionLIComponents*)
 
 
@@ -1213,16 +1215,73 @@ SymRules = <||>;
 NRules = <||>;
 
 
-Module[
+(*Module[
 	{symPv2, symD, symFpFc, nPv2, nD, nFpFc, m},
 	m = Quiet[
-		DerivativeRulesLoad/@{(*"IMRPhenomPv2",*) "IMRPhenomD", "Detectors"},
+		DerivativeRulesLoad/@{"IMRPhenomD", "Detectors"},
 		{Part::partw, Part::take}
 	];
 	
-	{(*SymRules["IMRPhenomPv2"],*) SymRules["IMRPhenomD"], SymRules["FpFc"]} = m[[All,1]];
-	{(*NRules["IMRPhenomPv2"],*) NRules["IMRPhenomD"], NRules["FpFc"]} = m[[All,2]];
-];
+	{SymRules["IMRPhenomD"], SymRules["FpFc"]} = m[[All,1]];
+	{NRules["IMRPhenomD"], NRules["FpFc"]} = m[[All,2]];
+];*)
+
+
+(*test = NRules["IMRPhenomD"];*)
+
+
+Module[
+	{
+		rules = DerivativeRulesLoadMMA["Detectors", "name"]
+	},
+	
+	SymRules["FpFc"] = <||>;
+	NRules["FpFc"] = rules[[2]];
+]
+
+
+Module[
+	{
+		\[Psi]Rules = DerivativeRulesLoadMMA["IMRPhenomD", "D\[CapitalPsi]"], 
+		\[ScriptCapitalA]Rules = DerivativeRulesLoadMMA["IMRPhenomD", "D\[ScriptCapitalA]IMR"]
+	},
+	
+	(*I should have made this definition for PhenomD in PhenomDrules2.wl, but I forgot*)
+	D\[CapitalPsi]/: $D[{x__}, D\[CapitalPsi]]/;({x}[[1]] === 0 && {x}[[2]] > 0)  :=  Aux\[CapitalPhi]IMR2[x];
+
+	Aux\[CapitalPhi]IMR2[x__][y__] := Module[
+		{ds, args},
+	
+		ds = Join[
+			{x}[[{2}]], 
+			{0},
+			{x}[[3;;-1]]
+		];
+	
+		args = Join[
+			{{y}[[{2}]]},
+			{0.001}, (*note that this number is irrelevant as the derivative in \[Omega] kills the contribution from \[Omega]ref*)
+			{y}[[3;;-1]]
+		];
+	
+		-Last[
+			$D[ds, D\[CapitalPsi]]@@args
+		]
+	];
+	
+	
+	
+	SymRules["IMRPhenomD"] = <|dummyD\[CapitalPsi]->{
+		$D[{x__},dummyD\[CapitalPsi]]/;Total[{x}[[6;;-1]]]>1->0,
+		$D[{x__},dummyD\[CapitalPsi]]/;Total[{x}[[6;;15]]]==1 && Total[{x}[[4;;5]]]>0->0,
+		$D[{x__},dummyD\[CapitalPsi]]/;{x}[[1]]>0&&{x}[[2]]>0->0
+	}|>;
+	
+	
+	
+	
+	NRules["IMRPhenomD"] = Join[\[Psi]Rules[[2]], \[ScriptCapitalA]Rules[[2]]];
+]
 
 
 Module[
@@ -1232,15 +1291,15 @@ Module[
 ]
 
 
-NRules[ii\[ScriptA]IMR] = <|
+(*NRules[ii\[ScriptA]IMR] = <|
 	ii\[ScriptA]IMR -> {
 		ii\[ScriptA]IMR[x__] :> Aux\[ScriptA]IMR1[x],
 		TagRule[ii\[ScriptA]IMR, $D[{n__}, ii\[ScriptA]IMR], Aux\[ScriptA]IMR2[n]]
 	}
-|>;
+|>;*)
 
 
-NRules[Aux\[ScriptA]IMR1] = <|
+(*NRules[Aux\[ScriptA]IMR1] = <|
 	Aux\[ScriptA]IMR1 -> {
 		Aux\[ScriptA]IMR1[x__] :> Module[
 			{},
@@ -1249,20 +1308,21 @@ NRules[Aux\[ScriptA]IMR1] = <|
 	}
 |>;
 
+
 NRules[Aux\[ScriptA]IMR2] = <|
 	Aux\[ScriptA]IMR2 -> {
 		Aux\[ScriptA]IMR2[n__][y__] :> Module[
 			{},
 			Transpose[$D[{n}, \[ScriptA]IMR][y]]
 		]
-	}|>
+	}|>*)
 
 
 NRules2 = Join[
-	NRules["FpFc"], 
-	NRules[ii\[ScriptA]IMR], 
+	NRules["FpFc"](*, 
+	NRules[ii\[ScriptA]IMR],
 	NRules[Aux\[ScriptA]IMR1], 
-	NRules[Aux\[ScriptA]IMR2]
+	NRules[Aux\[ScriptA]IMR2]*)
 ];
 
 
@@ -1278,62 +1338,85 @@ Protect[SymRules, NRules];
 (*M = Mc \[Eta]^(-3/5);*)
 
 
-ihphcIMRPhenomD[
+(*ihphcIMRPhenomD[
 	\[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_,
 	\[Iota]_, invdL_, tc_, \[Phi]ref_,
 	\[Delta]\[CurlyPhi]minus2_,\[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_,
 	fref_, f_ 
 ] = Module[
-	{G = 4.9254664969309`3.6105383994801805*^-6 (*G/c^3 [s/solarMass]*), \[Omega], \[Omega]ref, M = \[ScriptCapitalM]c ((1-\[Delta]^2)/4)^(-3/5)},
+	{G = 4.9254664969309`3.6105383994801805*^-6, \[Omega], \[Omega]ref, M = \[ScriptCapitalM]c ((1-\[Delta]^2)/4)^(-3/5)},
 	
 	\[Omega] = f M G; 
 	\[Omega]ref = fref M G;
 	
 	ii\[ScriptA]IMR[f,\[ScriptCapitalM]c,\[Delta],\[Chi]s,\[Chi]a,\[Iota]] Exp[
-		-I \[CapitalPhi]IMR[\[Omega],\[Omega]ref,\[Delta],\[Chi]s, \[Chi]a,\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4]
+		-I \[CapitalPhi]IMR[\[Omega], \[Omega]ref, \[Delta], \[Chi]s, \[Chi]a,\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4]
+	]*Exp[-I (2 \[Pi] f tc - 2 \[Phi]ref)]*invdL
+];*)
+
+
+ihphcIMRPhenomD[
+	\[ScriptCapitalM]c_, q_, \[Chi]1_, \[Chi]2_,
+	\[Iota]_, invdL_, tc_, \[Phi]ref_,
+	\[Delta]\[CurlyPhi]minus2_,\[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_,
+	fref_, f_ 
+] = Module[
+	{\[Eta], G = 4.9254664969309`3.6105383994801805*^-6, \[Omega], \[Omega]ref, M, \[Chi]s, \[Chi]a},
+	
+	
+	\[Eta] =q/(1+q)^2;
+	M = \[ScriptCapitalM]c \[Eta]^(-3/5);
+	
+	\[Omega] = f M G; 
+	\[Omega]ref = fref M G;
+	
+	\[Chi]s = (\[Chi]1+\[Chi]2)/2; \[Chi]a = (\[Chi]1-\[Chi]2)/2;
+	
+	M^2 dummyD\[ScriptCapitalA]IMR[\[Omega], \[Eta], \[Chi]s, \[Chi]a, \[Iota]] Exp[
+		-I dummyD\[CapitalPsi][\[Omega], \[Omega]ref, \[Eta], \[Chi]s, \[Chi]a, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7]
 	]*Exp[-I (2 \[Pi] f tc - 2 \[Phi]ref)]*invdL
 ];
 
 
 ihphcIMRPhenomHM[
-	\[ScriptCapitalM]c_, \[Delta]_, \[Chi]s_, \[Chi]a_,
+	\[ScriptCapitalM]c_, q_, \[Chi]1_, \[Chi]2_,
 	\[Iota]_, invdL_, tc_, \[Phi]ref_,
 	\[Delta]\[CurlyPhi]minus2_,\[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_,
 	fref_, f_ 
 ] = Module[
-	{G = 4.925490947641267`*^-6, \[Omega], \[Omega]ref, M = \[ScriptCapitalM]c ((1-\[Delta]^2)/4)^(-3/5), \[Eta]},
+	{G = 4.925490947641267`*^-6, \[Omega], \[Omega]ref, M, \[Eta], \[Chi]s, \[Chi]a},
 	
-	\[Eta] = (1-\[Delta]^2)/4;
+	\[Eta] = q/(1+q)^2;
+	M = \[ScriptCapitalM]c \[Eta]^(-3/5);
+	
+	
+	\[Chi]s = (\[Chi]1+\[Chi]2)/2; \[Chi]a = (\[Chi]1-\[Chi]2)/2;
+	
 	\[Omega] = f M G; 
 	\[Omega]ref = fref M G;
 	
-	M^2 HMhphc[\[Omega], \[Omega]ref, \[Eta], \[Chi]s, \[Chi]a, \[Iota], \[Phi]ref]*Exp[-I 2 \[Pi] f tc]*invdL
+	M^2 dummyHMhphc[\[Omega], \[Omega]ref, \[Eta], \[Chi]s, \[Chi]a, \[Iota], \[Phi]ref]*Exp[-I 2 \[Pi] f tc]*invdL
 ];
 
 
-ihphcIMRPhenomPv2[
-	m1_, m2_, 
-	s1x_, s1y_, s1z_,
-	s2x_, s2y_, s2z_,
-	\[Iota]_, dL_, tc_, \[Phi]ref_,
-	\[Delta]\[CurlyPhi]minus2_,\[Delta]\[CurlyPhi]0_,\[Delta]\[CurlyPhi]1_,\[Delta]\[CurlyPhi]2_,\[Delta]\[CurlyPhi]3_,\[Delta]\[CurlyPhi]4_,\[Delta]\[CurlyPhi]5l_,\[Delta]\[CurlyPhi]6_,\[Delta]\[CurlyPhi]6l_,\[Delta]\[CurlyPhi]7_,\[Delta]\[Beta]2_,\[Delta]\[Beta]3_,\[Delta]\[Alpha]2_,\[Delta]\[Alpha]3_,\[Delta]\[Alpha]4_,
-	fref_, f_
-] = ii\[ScriptA]IMR[f, fref, m1, m2, s1x,s1y,s1z,s2x,s2y,s2z,\[Phi]ref,\[Iota]]*Exp[
-	-I \[CapitalPhi]IMR[f,fref,m1,m2,s1x,s1y,s1z,s2x,s2y,s2z,\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7,\[Delta]\[Beta]2,\[Delta]\[Beta]3,\[Delta]\[Alpha]2,\[Delta]\[Alpha]3,\[Delta]\[Alpha]4]
-]*Exp[-I (2 \[Pi] f tc)]/dL;
-
-
-iFpFc[
+(*iFpFc[
 	\[Theta]_, \[Phi]_, \[Psi]_,
 	pi_, Dij_,
 	f_
-] = FpFc[f,\[Theta],\[Phi],\[Psi],pi,Dij];
+] = FpFc[f,\[Theta],\[Phi],\[Psi],pi,Dij];*)
 
 
-Protect[ihphcIMRPhenomD, ihphcIMRPhenomPv2, ihphcIMRPhenomHM, iFpFc(*, \[CapitalPhi]IMR, \[ScriptA]IMR, FpFc*)];
+iFpFc[
+	dec_, \[Phi]_, \[Psi]_,
+	pi_, Dij_,
+	f_
+] = dummyname[f,\[Pi]/2-dec,\[Phi],\[Psi],pi,Dij];
 
 
-(* ::Subsubsection::Closed:: *)
+Protect[ihphcIMRPhenomD, ihphcIMRPhenomHM, iFpFc];
+
+
+(* ::Subsubsection:: *)
 (*Utils for Fisher Matrix*)
 
 
@@ -1349,16 +1432,8 @@ MapThread[
 
 
 vars["Aligned"] = {
-	"\[ScriptCapitalM]c", "\[Delta]", "\[Chi]s", "\[Chi]a",
-	"\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "1/dL", 
-	"tc", "\[Phi]ref",
-	"\[Delta]\[CurlyPhi]-2","\[Delta]\[CurlyPhi]0","\[Delta]\[CurlyPhi]1","\[Delta]\[CurlyPhi]2","\[Delta]\[CurlyPhi]3","\[Delta]\[CurlyPhi]4","\[Delta]\[CurlyPhi]5l","\[Delta]\[CurlyPhi]6","\[Delta]\[CurlyPhi]6l","\[Delta]\[CurlyPhi]7","\[Delta]\[Beta]2","\[Delta]\[Beta]3","\[Delta]\[Alpha]2","\[Delta]\[Alpha]3","\[Delta]\[Alpha]4"
-};
-
-
-vars["Precessing"] = {
-	"m1", "m2", "s1x","s1y","s1z","s2x", "s2y", "s2z",
-	"\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "dL",
+	"\[ScriptCapitalM]c", "q", "s1z", "s2z",
+	"\[Iota]", "dec", "\[Phi]", "\[Psi]", "1/dL", 
 	"tc", "\[Phi]ref",
 	"\[Delta]\[CurlyPhi]-2","\[Delta]\[CurlyPhi]0","\[Delta]\[CurlyPhi]1","\[Delta]\[CurlyPhi]2","\[Delta]\[CurlyPhi]3","\[Delta]\[CurlyPhi]4","\[Delta]\[CurlyPhi]5l","\[Delta]\[CurlyPhi]6","\[Delta]\[CurlyPhi]6l","\[Delta]\[CurlyPhi]7","\[Delta]\[Beta]2","\[Delta]\[Beta]3","\[Delta]\[Alpha]2","\[Delta]\[Alpha]3","\[Delta]\[Alpha]4"
 };
@@ -1369,7 +1444,7 @@ GenErrorMessage["Aligned", True] := Null;
 GenErrorMessage["Aligned", False] := Throw[
 "\n
 PhenomD variables should satisfy the following conditions: \n
-1\[LessEqual]M\[LessEqual]\[Infinity] && \!\(\*SuperscriptBox[\(10\), \(-4\)]\)\[LessEqual]\[Eta]\[LessEqual]0.25`&& -1\[LessEqual]s1z\[LessEqual]1 && -1\[LessEqual]s2z\[LessEqual]1 && 0\[LessEqual]\[Iota]\[LessEqual]\[Pi] && 0\[LessEqual]\[Theta]\[LessEqual]\[Pi] && \n
+1\[LessEqual]M\[LessEqual]\[Infinity] && 0 < q < 1. && -1\[LessEqual]s1z\[LessEqual]1 && -1\[LessEqual]s2z\[LessEqual]1 && 0\[LessEqual]\[Iota]\[LessEqual]\[Pi] && -\[Pi]/2\[LessEqual]dec\[LessEqual]\[Pi]/2 && \n
 0\[LessEqual]\[Phi]\[LessEqual]2\[Pi] && 0\[LessEqual]\[Psi]\[LessEqual]\[Pi] && \!\(\*SuperscriptBox[\(10\), \(-11\)]\)\[LessEqual]dL\[LessEqual]\[Infinity] && -\[Infinity]\[LessEqual]tc\[LessEqual]\[Infinity] && 0\[LessEqual]\[Phi]ref\[LessEqual]2 \[Pi]
 \n"
 ];
@@ -1395,20 +1470,20 @@ RetrieveFiducial[aligned_String, fp_Association]/;(
 	
 	aligned == "IMRPhenomD"
 ) := Module[
-	{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref, \[Delta]p, test, res},
+	{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref, \[Delta]p, test, res},
 	
-	{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref} = fp/@{
-		"\[ScriptCapitalM]c", "\[Delta]", "\[Chi]s", "\[Chi]a",
-		"\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "1/dL",
+	{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref} = fp/@{
+		"\[ScriptCapitalM]c", "q", "s1z", "s2z",
+		"\[Iota]", "dec", "\[Phi]", "\[Psi]", "1/dL",
 		"tc", "\[Phi]ref"
 	};
 	
 	
 	(*Test variables:*)
 	test = Thread@LessEqual[
-		{10^-3, 0, -1, -1, 0, 0, 0,0, 10^-11, -Infinity, 0},
-		{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref},
-		{Infinity, 0.9999, 1,1, \[Pi], \[Pi], 2 \[Pi], \[Pi], 10^20,  Infinity, 2 \[Pi]}
+		{10^-3, 0, -1, -1, 0, -\[Pi]/2, 0,0, 10^-11, -Infinity, 0},
+		{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref},
+		{Infinity, 0.999999999, 1, 1, \[Pi], \[Pi]/2, 2 \[Pi], \[Pi], 10^20,  Infinity, 2 \[Pi]}
 	];
 	
 	(*this collapses to True or False*)
@@ -1418,14 +1493,14 @@ RetrieveFiducial[aligned_String, fp_Association]/;(
 	
 	If[
 		Length[Keys[fp]] === 11,
-		res = {{\[Theta], \[Phi], \[Psi]}, {\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref}},
+		res = {{dec, \[Phi], \[Psi]}, {\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], invdL, tc, \[Phi]ref}},
 		
 		\[Delta]p = DeleteElements[Keys[fp], vars["Aligned"][[1;;11]]];(*check for real value*)
 		\[Delta]p = fp/@SortBy[\[Delta]p, order\[Delta]];
 		
 		If[VectorQ[\[Delta]p, RealValuedNumberQ] === False, Throw["\[Delta]pi values should be in the range -\[Infinity]< \[Delta]pi <\[Infinity]"]];
 		
-		res = {{\[Theta], \[Phi], \[Psi]}, {\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref, Sequence@@\[Delta]p}}
+		res = {{dec, \[Phi], \[Psi]}, {\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], invdL, tc, \[Phi]ref, Sequence@@\[Delta]p}}
 	]
 	
 ]
@@ -1435,23 +1510,23 @@ RetrieveFiducial[aligned_String, fp_Association]/;(
 	(*there should not be more than 11 variables*)
 	Length@Keys[fp] <= 11 && 
 	(*the keys must be contained in vars["Aligned"]*)
-	ContainsAll[{"\[ScriptCapitalM]c", "\[Delta]", "\[Chi]s", "\[Chi]a", "\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "1/dL", "tc", "\[Phi]ref"}, Keys[fp]] &&
+	ContainsAll[{"\[ScriptCapitalM]c", "q", "s1z", "s2z", "\[Iota]", "dec", "\[Phi]", "\[Psi]", "1/dL", "tc", "\[Phi]ref"}, Keys[fp]] &&
 	aligned == "IMRPhenomHM"
 ) := Module[
-	{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref, \[Delta]p, test, res},
+	{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref, \[Delta]p, test, res},
 	
-	{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref} = fp/@{
-		"\[ScriptCapitalM]c", "\[Delta]", "\[Chi]s", "\[Chi]a",
-		"\[Iota]", "\[Theta]", "\[Phi]", "\[Psi]", "1/dL",
+	{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref} = fp/@{
+		"\[ScriptCapitalM]c", "q", "s1z", "s2z",
+		"\[Iota]", "dec", "\[Phi]", "\[Psi]", "1/dL",
 		"tc", "\[Phi]ref"
 	};
 	
 	
 	(*Test variables:*)
 	test = Thread@LessEqual[
-		{10^-3, 0, -1, -1, 0, 0, 0,0, 10^-11, -Infinity, 0},
-		{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], \[Theta], \[Phi], \[Psi], invdL, tc, \[Phi]ref},
-		{Infinity, 0.9999, 1,1, \[Pi], \[Pi], 2 \[Pi], \[Pi], 10^20,  Infinity, 2 \[Pi]}
+		{10^-3, 0, -1, -1, 0, -\[Pi]/2, 0,0, 10^-11, -Infinity, 0},
+		{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref},
+		{Infinity, 0.99999, 1, 1, \[Pi], \[Pi]/2, 2 \[Pi], \[Pi], 10^20,  Infinity, 2 \[Pi]}
 	];
 	
 	(*this collapses to True or False*)
@@ -1461,20 +1536,20 @@ RetrieveFiducial[aligned_String, fp_Association]/;(
 	
 	If[
 		Length[Keys[fp]] === 11,
-		res = {{\[Theta], \[Phi], \[Psi]}, {\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref}},
+		res = {{dec, \[Phi], \[Psi]}, {\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], invdL, tc, \[Phi]ref}},
 		
 		\[Delta]p = DeleteElements[Keys[fp], vars["Aligned"][[1;;11]]];(*check for real value*)
 		\[Delta]p = fp/@SortBy[\[Delta]p, order\[Delta]];
 		
 		If[VectorQ[\[Delta]p, RealValuedNumberQ] === False, Throw["\[Delta]pi values should be in the range -\[Infinity]< \[Delta]pi <\[Infinity]"]];
 		
-		res = {{\[Theta], \[Phi], \[Psi]}, {\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref, Sequence@@\[Delta]p}}
+		res = {{dec, \[Phi], \[Psi]}, {\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], invdL, tc, \[Phi]ref, Sequence@@\[Delta]p}}
 	]
 	
 ]
 
 
-RetrieveFiducial[precessing_String, fp_Association]/;(
+(*RetrieveFiducial[precessing_String, fp_Association]/;(
 	Length@Keys[fp] <= 30 && 
 	
 	ContainsAll[vars["Precessing"],Keys[fp]] &&
@@ -1518,7 +1593,7 @@ RetrieveFiducial[precessing_String, fp_Association]/;(
 		If[VectorQ[\[Delta]p, RealValuedNumberQ]===False, Throw["\[Delta]pi value should be in the range -\[Infinity] < \[Delta]pi <\[Infinity]"]];
 		{{\[Theta], \[Phi], \[Psi]}, {m1,m2, s1x, s1y, s1z, s2x, s2y, s2z, \[Iota],dL, tc, \[Phi]ref, Sequence@@\[Delta]p}}
 	]
-]
+]*)
 
 RetrieveFiducial[x___] := Throw[$Failed, failTag[RetrieveFiducial]]
 
@@ -1568,7 +1643,7 @@ iihphcvars["IMRPhenomPv2", fref_] = Join[
 
 
 iihphcvars["IMRPhenomD", fref_] = Join[
-	{\[ScriptCapitalM]c,\[Delta],\[Chi]s,\[Chi]a,\[Iota],invdL,tc,\[Phi]ref},
+	{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], invdL,tc,\[Phi]ref},
 	\[Delta]pi,
 	{fref, f}
 ]
@@ -1582,7 +1657,7 @@ isAligned["IMRPhenomHM"] = True
 isAligned["IMRPhenomPv2"] = False
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Fisher Matrix*)
 
 
@@ -1630,17 +1705,17 @@ iDALITensors[
 	
 	
 	
-	varsFpFc = {\[Theta], \[Phi], \[Psi], pi, Dij, f, 3};
+	varsFpFc = {dec, \[Phi], \[Psi], pi, Dij, f, 3};
 	
 	ivarshphc = Which[
 		approximant==="IMRPhenomD",
 			iL = DeleteElements[keysFP, vars["Aligned"][[1;;11]]];
 			iL = iToExpression/@SortBy[iL, order\[Delta]];
-			{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref},
+			{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], invdL, tc, \[Phi]ref},
 		approximant==="IMRPhenomHM",
 			iL = DeleteElements[keysFP, vars["Aligned"][[1;;11]]];
 			iL = iToExpression/@SortBy[iL, order\[Delta]];
-			{\[ScriptCapitalM]c, \[Delta], \[Chi]s, \[Chi]a, \[Iota], invdL, tc, \[Phi]ref},
+			{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], invdL, tc, \[Phi]ref},
 		approximant==="IMRPhenomPv2",
 			iL = DeleteElements[keysFP, vars["Precessing"][[1;;15]]]; 
 			iL = iToExpression/@SortBy[iL, order\[Delta]];
@@ -1650,7 +1725,7 @@ iDALITensors[
 	(*Extra \[Delta]p var if it exists*)
 	Quiet[\[Delta]pKeys = iL, Set::shape];
 	
-	(*this will set the variables in case Length[iL] = 0 || Length[iL] =1*)
+	(*this will set the variables in case Length[iL] = 0 || Length[iL] = 1*)
 	
 	varshphc[0] = Join[ivarshphc, {f}, {hphcVarNumber[alignedOrPrecessing]}];
 	varshphc[1] = Join[ivarshphc, iL, {f}, {hphcVarNumber[alignedOrPrecessing]+Length[iL]}];
@@ -1694,7 +1769,7 @@ iDALITensors[
 	
 	totalM = If[
 		isAligned[approximant], 
-		Fiducialhphc[[1]] ((1-Fiducialhphc[[2]]^2)/4)^(-3/5),  (*M  = \[ScriptCapitalM]c \[Eta]^(-3/5)*)
+		Fiducialhphc[[1]] (Fiducialhphc[[2]]/(1+Fiducialhphc[[2]])^2)^(-3/5),  (*M  = \[ScriptCapitalM]c \[Eta]^(-3/5)*)
 		Fiducialhphc[[1]]+Fiducialhphc[[2]]
 	];
 	

@@ -6,7 +6,7 @@ PacletObject[
     "Description" -> "Implementation of the DALI algorithm (Derivative Approximation for LIkelihoods)",
 	"Creator" -> "Felipe Barbosa",
     "Version" -> "1.0.0",
-    "WolframVersion" -> "14.0.0+",
+    "WolframVersion" -> "14.1+",
     "PublisherID" -> "FelipeBarbosa",
     "License" -> "MIT",
     "PrimaryContext" -> "FelipeBarbosa`SymDALI`",
@@ -23,14 +23,17 @@ PacletObject[
             {"FelipeBarbosa`SymDALI`DALIPolynomial`", "DALIPolynomial.wl"},
             {"FelipeBarbosa`SymDALI`Population`", "Population.wl"},
             {"FelipeBarbosa`SymDALI`Utils`", "Utils.wl"}
+        },
+        "Symbols" -> {
+            "FelipeBarbosa`SymDALI`Utils`hphcIMRPhenomHM",
+            "FelipeBarbosa`SymDALI`Utils`hphcIMRPhenomD"
         }
       },
       {
         "Documentation",
         "Root" -> "Documentation",
         "Language" -> "English"
-      },
-      {"LibraryLink"}
+      }
     }
   |>
 ]

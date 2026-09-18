@@ -108,7 +108,7 @@ Combinations[vars_List, n_Integer]/;n>0 := Module[
 ]
 
 
-derivatives = Combinations[{\[Theta], \[Phi], \[Psi]}, 3];
+derivatives = Combinations[{\[Theta], \[Phi], \[Psi]}, 4];
 
 
 PrependTo[derivatives, {}];
@@ -120,17 +120,15 @@ vars = {f, \[Theta], \[Phi], \[Psi], pi, Dij};
 Clear[FpFc]
 
 
-derivatives
-
-
 expr2 = HoldForm[Evaluate[{name, vars, derivatives}], Evaluate@expr, "IncludeZeroDerivative"->False]//.HoldForm[x_] :> x;
 
 
+expr2
+
+
 (*Remove["$x*"]*)
+Clear@name
 res = DerivativeRules@@expr2;
-
-
-Export["Detector_Ds_order_0_to_3.mx", res];
 
 
 (* ::Section:: *)
@@ -167,7 +165,7 @@ Block[
 DownValues[TestFpFc] = DownValues[TestFpFc]//.HoldForm[x_]:> x;
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Testing the Phase against lal*)
 
 
@@ -377,10 +375,71 @@ ListPlot[l[[All,1]]//Sort, PlotRange->All, ScalingFunctions->"Log10"]
 ListPlot[l[[All,2]]//Sort, PlotRange->All, ScalingFunctions->"Log10"]
 
 
+res[[4]]
+
+
 Clear@l
 
 
-(* ::Section:: *)
+res[[5;;10, 1]]
+
+
+Block[{}, 
+	
+	ClearAll[TestGradFpFc2];
+	
+	TestGradFpFc2[
+		f_, \[Theta]_, \[Phi]_, \[Psi]_,
+		p1_, p2_, p3_, D11_,D12_,D13_,D22_, D23_, D33_
+	] = res[[5;;10, 2]];
+
+]
+DownValues[TestGradFpFc2] = DownValues[TestGradFpFc2]//.HoldForm[x_]:> x;
+
+
+Clear@Test
+Test := Module[
+	{
+		\[Theta], \[Phi], \[Psi], f, vars, Symbolic, Numeric, r1, r2,LI = SymmetrizedIndependentComponents[{3,3}, Symmetric[All]]
+	},
+	
+	f = RandomReal[{10.,1024}];
+	{\[Theta], \[Psi]}=RandomReal[{0, \[Pi]},2];
+	\[Phi] = RandomReal[{0, 2 \[Pi]}];
+	
+	Symbolic = TestGradFpFc2[
+		f, \[Theta], \[Phi], \[Psi],
+		Sequence@@Vertex["H1"],
+		Sequence@@iDetectorTensor["H1"]
+	];
+	vars = {f, \[Theta], \[Phi], \[Psi], Sequence@@Vertex["H1"], Sequence@@iDetectorTensor["H1"]};
+	
+	Numeric = Extract[NGrad[TestGradFpFc, vars, 2, 4], LI];
+	
+	r1 = RelativeDiff@@{Symbolic[[All, 1]], Numeric[[All,1]]}; (*diff between the Fp derivatives*)
+	r2 = RelativeDiff@@{Symbolic[[All, 2]], Numeric[[All,2]]}; (*diff between the Fc derivatives*)
+	
+	Max/@{r1,r2} (*get only the max diffs*)
+	
+
+	
+]
+
+
+Test//ScientificForm
+
+
+l = Table[Test, {5 10^4}];
+
+
+ListPlot[l[[All,1]]//Sort, PlotRange->All, ScalingFunctions->"Log10"]
+ListPlot[l[[All,2]]//Sort, PlotRange->All, ScalingFunctions->"Log10"]
+
+
+Test
+
+
+(* ::Section::Closed:: *)
 (*Compiling*)
 
 
@@ -418,9 +477,6 @@ compileThis[x_HoldForm] := Module[
 ]
 
 
-<<CompiledFunctionTools`
-
-
 compiledDs = MapAt[
 	compileThis,
 	Ds, 
@@ -428,26 +484,119 @@ compiledDs = MapAt[
 ];
 
 
-<<CCompilerDriver`
+Do[
+	compiledDs[[i]][[2, -2]] = Function[{f, \[Theta], \[Phi], \[Psi], pi, Dij}, X]//.{X -> ToString[compiledDs[[i, 1]][[All,1]]]},
+	{i, Length@compiledDs}
+]
 
 
-$CCompilerDefaultDirectory = FileNameJoin[{
-	ParentDirectory[NotebookDirectory[], 2],
-	"/LibraryResources/",
-	$SystemID, 
-	"/DerivativeRules/Detectors/NRules/"
+Module[
+	{list = compiledDs[[2;;-1]]},
+	
+	list[[All,1]] = list[[All,1, 0]];
+	
+	list = list//.Rule->RuleDelayed;
+	list = MapAt[
+		HoldPattern, 
+		list, 
+		{All,1}
+	];
+	UpValues@name = {};
+	
+	UpValues@name = list;
+]
 
-}]
+
+(* ::Text:: *)
+(*Set DownValues:*)
 
 
-Needs["CCodeGenerator`"]
+name[f_, \[Theta]_, \[Phi]_, \[Psi]_, pi_, Dij_] = compiledDs[[1, 2]][f, \[Theta], \[Phi], \[Psi], pi, Dij];
 
 
-MapIndexed[
-	LibraryGenerate[#1[[2]], "D" <> ToString[#2//First], {
-	"SystemCompileOptions" -> "-march=native -O3 -finline-functions -funroll-loops -flto -ftree-vectorize -fno-fast-math -fPIC"}]&,
-	compiledDs
+compiledDs[[4, 2]]
+
+
+(* ::Section::Closed:: *)
+(*Saving*)
+
+
+newVars = {
+	f, \[Theta], \[Phi], \[Psi], pi, Dij
+}//.x_Symbol/; Context[x] ==="Global`" :> ToExpression[
+	"FelipeBarbosa`SymDALI`DALICoefficients`Private`"<>ToString[x]
+]
+
+
+newHeads = {
+			name
+}//.x_Symbol/; Context[x] ==="Global`" :> ToExpression[
+	"FelipeBarbosa`SymDALI`DALICoefficients`Private`"<>ToString[x]
+]
+
+
+varRules = MapThread[
+	Rule, 
+	{
+		{f, \[Theta], \[Phi], \[Psi], pi, Dij},
+		newVars
+	}
 ];
+
+
+HeadRules = {name -> FelipeBarbosa`SymDALI`DALICoefficients`Private`name}
+
+
+ChangeContext//Clear
+
+
+ChangeContext[x_Symbol] := Module[
+	{
+		newSymbol, newContext = "FelipeBarbosa`SymDALI`DALICoefficients`Private`",
+		newDownValues, newUpValues
+	},
+	
+	newSymbol = newContext <> ToString[x]//ToExpression;
+	
+	newDownValues = DownValues[x]//.Join[
+		varRules, HeadRules
+	];
+	
+	(Hold[DownValues[ss] = newDownValues]//.ss->newSymbol)//ReleaseHold;
+	
+	newUpValues = UpValues[x]//.Join[
+		varRules, HeadRules
+	];
+	
+	(Hold[UpValues[ss] = newUpValues]//.ss->newSymbol)//ReleaseHold;
+	
+]
+
+
+ChangeContext[name]
+
+
+Module[
+	{SymDALIDir = NotebookDirectory[]//ParentDirectory[#, 2]&, fileName, file},
+	
+	
+	fileName = FileNameJoin[{
+		SymDALIDir, 
+		"LibraryResources",
+		$SystemID,
+		"DerivativeRules/Detectors/MMA/Defs.mx"
+	}];
+	
+	file = CreateFile[fileName];
+	
+	DumpSave[
+		file,
+		{
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`name
+		}
+	]
+	
+]
 
 
 (* ::Section::Closed:: *)

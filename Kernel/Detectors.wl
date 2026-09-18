@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Package Header*)
 
 
@@ -67,6 +67,9 @@ ArmDirection::usage="```ArmDirection[{\[CurlyPhi], \[Lambda]}, {{\[Omega]1, \[Ps
 \[Psi]i: Azimuth of arm i [radians] 
 
 coordinates follow WGS-84 model used in \!\(\*TemplateBox[{\"\\\"LALDetectors.h\\\"\", \"https://lscsoft.docs.ligo.org/lalsuite/lal/_l_a_l_detectors_8h_source.html\"},\n\"HyperlinkURL\"]\)";
+
+
+?ArmDirection
 
 
 FromGeocentricCoordinates::usage="```FromGeocentricCoordinates[{h, \[CurlyPhi], \[Lambda]}]``` returns the {x,y,z} position of the detector.

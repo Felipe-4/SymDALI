@@ -146,7 +146,7 @@ CompareComplexVectors[{v1_, v2_}, {name1_, name2_}, dataRange_, plotRange_]/;(
 ]
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Amplitude*)
 
 
@@ -246,7 +246,7 @@ Expr = $Block@@@(HoldForm[Evaluate@Expr]);
 HM\[ScriptCapitalA]Ins//ClearAll
 
 expr = Hold[
-	{HM\[ScriptCapitalA]Ins, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 4},
+	{HM\[ScriptCapitalA]Ins, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 5},
 	Evaluate@Expr
 ]//.HoldForm[X_] :> X;
 
@@ -566,8 +566,11 @@ Clear@aeff
 aeff[\[Eta]_, \[Chi]s_, \[Chi]a_] = Block[
 	{S, \[Delta]=Sqrt[1-4 \[Eta]]},
 	(*S = 1/4 (1+\[Delta])^2 \[Chi]1 + 1/4 (1-\[Delta])^2 \[Chi]2;*)
+	
 	S = \[Chi]s/2 + \[Chi]a \[Delta] + \[Delta]^2 \[Chi]s/2;
+	
 	S + 2 Sqrt[3.] \[Eta] + (-0.085` S+0.102` S^2-1.355` S^3-0.868` S^4) \[Eta]-4.399` \[Eta]^2+(-5.837` S-2.097` S^2+4.109` S^3+2.064` S^4) \[Eta]^2+9.397` \[Eta]^3-13.181` \[Eta]^4(*//.\[Eta]-> (1-\[Delta]^2)/4*)
+
 ]//Simplify;
 
 
@@ -602,7 +605,7 @@ Expr = $Block@@@(HoldForm[Evaluate@Expr]);
 HM\[ScriptCapitalA]MR//ClearAll
 
 expr = Hold[
-	{HM\[ScriptCapitalA]MR, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 4},
+	{HM\[ScriptCapitalA]MR, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 5},
 	Evaluate@Expr
 ]//.HoldForm[X_] :> X;
 
@@ -843,7 +846,7 @@ Expr = $Block@@@(HoldForm[Evaluate@Expr]);
 HM\[ScriptCapitalA]Int//ClearAll
 
 expr = Hold[
-	{HM\[ScriptCapitalA]Int, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 3},
+	{HM\[ScriptCapitalA]Int, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 4},
 	Evaluate@Expr
 ]//.HoldForm[X_] :> X;
 
@@ -1016,7 +1019,7 @@ Expr = $Block@@@(HoldForm[Evaluate@Expr]);
 HM\[ScriptCapitalA]IMR//Clear
 
 expr = Hold[
-	{HM\[ScriptCapitalA]IMR, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 3},
+	{HM\[ScriptCapitalA]IMR, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 4},
 	Evaluate@Expr
 ]//.HoldForm[X_] :> X;
 
@@ -1201,11 +1204,11 @@ H43[\[Omega]_, \[Eta]_, m_] := Module[
 H43[\[Omega], \[Eta], 3]/H43[2 \[Omega]/3, \[Eta], 3]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*g[\[Iota]]*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Y *)
 
 
@@ -1330,7 +1333,7 @@ python = StartExternalSession[{
 
 ExternalEvaluate[python,"
 import numpy as np
-from GWDALI_v1.lib.IMRPhenomHM import josiel_Amp
+from GWDALI.lib.IMRPhenomHM import josiel_Amp
 
 freq = np.linspace(1, 1024,1024)
 "]
@@ -1489,7 +1492,7 @@ Make
 (*Inspiral*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*PPN-parameters:*)
 
 
@@ -1610,7 +1613,10 @@ Clear["\[CapitalSigma]*"]
 
 
 Expr = HoldComplete[
-	{{\[CapitalPhi]0, \[CapitalPhi]2, \[CapitalPhi]3, \[CapitalPhi]4, \[CapitalPhi]5, \[CapitalPhi]5l, \[CapitalPhi]6, \[CapitalSigma]1, \[CapitalSigma]2, \[CapitalSigma]3, \[CapitalSigma]4}},
+	{{
+		\[CapitalPhi]0, \[CapitalPhi]2, \[CapitalPhi]3, \[CapitalPhi]4, \[CapitalPhi]5, \[CapitalPhi]5l, \[CapitalPhi]6, \[CapitalPhi]6l, \[CapitalPhi]7,
+		\[CapitalSigma]1, \[CapitalSigma]2, \[CapitalSigma]3, \[CapitalSigma]4
+	}},
 	
 	\[CapitalPhi]0[\[Eta]_] := p0;
 	\[CapitalPhi]2[\[Eta]_] := p2;
@@ -1648,7 +1654,7 @@ Expr = $Block@@@(HoldForm[Evaluate@Expr]);
 HM\[CapitalPhi]Ins//ClearAll
 
 expr = Hold[
-	{HM\[CapitalPhi]Ins, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 4},
+	{HM\[CapitalPhi]Ins, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 5},
 	Evaluate@Expr
 ]//.HoldForm[X_] :> X;
 
@@ -1691,7 +1697,7 @@ compileThis[x_HoldForm] := Module[
 	Compile@@dummy
 ]
 
-compileThis[x_Integer] := ZeroFunction
+compileThis[x_Integer] := HMZeroFunction
 
 
 c\[CapitalPhi]resInspiral = MapAt[
@@ -1720,7 +1726,7 @@ T[i_] := Block[
 ]
 
 
-Table[T[i], {i, Length@resInspiral}];//RepeatedTiming
+Table[T[i], {i, Length@resInspiral}]//RepeatedTiming
 
 
 (* ::Text:: *)
@@ -1789,7 +1795,7 @@ Expr = $Block@@@(HoldForm[Evaluate@Expr]);
 
 HM\[CapitalPhi]Int//ClearAll
 expr = Hold[
-	{HM\[CapitalPhi]Int, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 4},
+	{HM\[CapitalPhi]Int, {\[Omega], \[Eta], \[Chi]s, \[Chi]a}, 5},
 	Evaluate@Expr
 ]//.HoldForm[X_] :> X;
 
@@ -1811,6 +1817,9 @@ T[i_] := Block[
 
 
 Table[T[i], {i, Length@\[CapitalPhi]resInt}]//RepeatedTiming
+
+
+%[[2]]//Total
 
 
 (*Function to take HoldForm[Block[...]] and make library functions*)
@@ -1862,6 +1871,9 @@ T[i_] := Block[
 
 
 Table[T[i], {i, Length@c\[CapitalPhi]resInt}]//RepeatedTiming
+
+
+%[[2]]//Total
 
 
 (* ::Text:: *)
@@ -2116,7 +2128,7 @@ Expr = $Block@@@(HoldForm[Evaluate@Expr]);
 
 ClearAll@HM\[CapitalPhi]MR
 expr = Hold[
-	{HM\[CapitalPhi]MR, {\[Omega], \[Eta], \[Chi]s, \[Chi]a, \[Rho]lm, \[Tau]lm}, 4},
+	{HM\[CapitalPhi]MR, {\[Omega], \[Eta], \[Chi]s, \[Chi]a, \[Rho]lm, \[Tau]lm}, 5},
 	Evaluate@Expr
 ]//.HoldForm[X_] :> X;
 
@@ -2140,6 +2152,9 @@ T[i_] := Block[
 
 
 Table[T[i], {i, Length@\[CapitalPhi]resMR}]//RepeatedTiming
+
+
+%[[2]]//Total
 
 
 (*Function to take HoldForm[Block[...]] and make library functions*)
@@ -2187,6 +2202,9 @@ T[i_] := Block[
 
 
 Table[T[i], {i, Length@c\[CapitalPhi]resMR}]//RepeatedTiming
+
+
+%[[2]]//Total
 
 
 (* ::Text:: *)
@@ -2270,7 +2288,7 @@ Expr = $Block@@@(HoldForm[Evaluate@Expr]);
 
 HM\[CapitalPhi]IMR//ClearAll
 expr = Hold[
-	{HM\[CapitalPhi]IMR, {\[Omega], \[Eta], \[Chi]s, \[Chi]a, \[Rho]lm, \[Tau]lm}, 3},
+	{HM\[CapitalPhi]IMR, {\[Omega], \[Eta], \[Chi]s, \[Chi]a, \[Rho]lm, \[Tau]lm}, 4},
 	Evaluate@Expr
 ]//.HoldForm[X_] :> X;
 
@@ -2325,6 +2343,9 @@ T[i_] := Block[
 Table[T[i], {i, Length@\[CapitalPhi]resIMR2}]//RepeatedTiming
 
 
+%[[2]]//Total
+
+
 (*Function to take HoldForm[Block[...]] and make library functions*)
 compileThis//ClearAll
 compileThis[x_HoldForm] := Module[
@@ -2370,6 +2391,9 @@ T[i_] := Block[
 
 
 Table[T[i], {i, Length@c\[CapitalPhi]resIMR}]//RepeatedTiming
+
+
+%[[2]]//Total
 
 
 (* ::Text:: *)
@@ -2472,7 +2496,7 @@ Combinations[vars_List, n_Integer]/;n>0 := Module[
 ]
 
 
-derivatives = Combinations[{\[Omega], \[Eta], \[Chi]s, \[Chi]a, \[Omega]rdlm, \[Omega]damplm}, 3];
+derivatives = Combinations[{\[Omega], \[Eta], \[Chi]s, \[Chi]a, \[Omega]rdlm, \[Omega]damplm}, 4];
 PrependTo[derivatives, {}];
 
 
@@ -2491,12 +2515,13 @@ expr = Hold[
 Module[
 	{rule, exprs, temp},
 	
+	(*JUST FIND THE $X... OF THE EXPRESSION IN THE FIRST LINE*)
 	exprs ={
 		(0.036` \[Omega]rdlm)/(m $x2568), 
 		$x2568, 
 		(\[Omega]rdlm (-((0.036` \[Omega]rdlm)/(m $x2568))+$x2568))/(\[Omega]rdlm-(0.018` \[Omega]rdlm)/$x2568)+(0.018` \[Omega]rdlm (2/m-(-((0.036` \[Omega]rdlm)/(m $x2568))+$x2568)/(\[Omega]rdlm-(0.018` \[Omega]rdlm)/$x2568)))/$x2568, 
 		(0.018` \[Omega]rdlm (-((0.036` \[Omega]rdlm)/(m $x2568))+$x2568))/((\[Omega]rdlm-(0.018` \[Omega]rdlm)/$x2568) $x2568)+(0.018` \[Omega]rdlm (2/m-(-((0.036` \[Omega]rdlm)/(m $x2568))+$x2568)/(\[Omega]rdlm-(0.018` \[Omega]rdlm)/$x2568)))/$x2568
-	}//.{$x2568->$x4476};
+	}//.{$x2568->$x11254};
 	
 	rule = {
 		Derivative[n__][U\[CapitalPhi]IMR][x__] -> $D[{n}, U\[CapitalPhi]IMR][x],
@@ -2538,6 +2563,9 @@ T[i_] := Block[
 
 
 Table[T[i], {i, Length@\[CapitalPsi]reslm2}]//RepeatedTiming
+
+
+%[[2]]//Total
 
 
 (*Function to take HoldForm[Block[...]] and make library functions*)
@@ -3190,7 +3218,7 @@ ClearAll[hphcres3]
 HMhphc//ClearAll
 
 expr = Hold[
-	{HMhphc, {\[Omega], \[Omega]ref, \[Eta], \[Chi]s, \[Chi]a, \[Iota], \[Phi]Ref}, 3},
+	{HMhphc, {\[Omega], \[Omega]ref, \[Eta], \[Chi]s, \[Chi]a, \[Iota], \[Phi]Ref}, 4},
 	Evaluate@Expr
 ]//.HoldForm[X_] :> X;
 
@@ -3239,7 +3267,7 @@ T[i_] := Block[
 		HoldForm[X_] :> X, \[Omega]$->\[Omega], \[Eta]$->\[Eta], \[Chi]s$->\[Chi]s, \[Chi]a$->\[Chi]a, \[Omega]ref$->\[Omega]ref, \[Iota]$->\[Iota], \[Phi]Ref$->\[Phi]Ref
 	};
 	
-	test[Range[10^-4, 0.124, 10^-4], 0.02, 0.1, 0.2, 0.12, 1., 1.]
+	test[Range[10^-4, 0.124, 10 10^-4], 0.02, 0.1, 0.2, 0.12, 1., 1.]
 ]
 
 
@@ -3291,8 +3319,11 @@ T[i_] := Block[
 ]
 
 
-(*All or3 gradients included*)
+(*All or4 gradients included*)
 Table[T[i], {i, Length@chphcres}]//AbsoluteTiming
+
+
+T[-3]
 
 
 (* ::Text:: *)
@@ -3305,6 +3336,7 @@ Module[
 	list[[All,1]] = list[[All,1, 0]];
 	
 	list = list//.Rule->RuleDelayed;
+	
 	list = MapAt[
 		HoldPattern, 
 		list, 
@@ -3349,7 +3381,7 @@ MMA[\[ScriptCapitalM]c_, \[Eta]_, \[Chi]1_, \[Chi]2_, \[Iota]_, \[Phi]Ref_] := M
 	\[Chi]a = (\[Chi]1-\[Chi]2)/2;
 	
 	
-	freq =Range[1., 1024., 1];
+	freq =Range[5., 1024., 1];
 	
 	M = \[ScriptCapitalM]c \[Eta]^(-3/5);
 	
@@ -3522,47 +3554,74 @@ Test[M_] := Module[
 	\[Iota] = RandomReal[{0, \[Pi]}];
 	
 	fmax =  1024;
-	fmin=1;
+	fmin=5;
 	
 	lalRes = lal[m1, m2, s1z, s2z, 10^3, \[Iota], \[Phi]Ref, 1, fmin, fmax, fmin, "IMRPhenomHM"]//Normal;
-	myDef = hphcIMRPhenomHM[
+	
+	(*myDef = hphcIMRPhenomHM[
 		Range[1, 1024], 
 		mc, 
 		Sqrt[1-4 eta], (s1z+s2z)/2, (s1z-s2z)/2, \[Iota], 0, \[Phi]Ref, 
 		1
-	];
+	];*)
 	
 	
 	{
 		
-		josiel[mc, eta, s1z, s2z, \[Iota]]//Normal,
-		{lalRes[[1, 2;;1025]], lalRes[[2, 2;;1025]]},
-		(*MMA[mc, eta, s1z, s2z, \[Iota], \[Phi]Ref]*)
-		myDef
+		(*josiel[mc, eta, s1z, s2z, \[Iota]]//Normal,*)
+		{lalRes[[1, 6;;1025]], lalRes[[2, 6;;1025]]},
+		MMA[mc, eta, s1z, s2z, \[Iota], \[Phi]Ref]
+		(*myDef*)
 	}
 	
 ]
 
 
-plot[a_, M_] := Module[
-	{fcutoff},
+plothp[a_, M_] := Module[
+	{fcutoff, G =  4.925490947641267`*^-6},
 	fcutoff = 0.1/(G M);
 (*all hp comparisons:*)
 	{
-(*josielvslal*)CompareComplexVectors[Extract[a, {{1,1}, {2,1}}], {"josiel", "lal"}, Range[1, 1024, 1], {1, fcutoff}],
-(*josielvsmine*)CompareComplexVectors[Extract[a, {{1,1}, {3,1}}], {"josiel", "MMA"}, Range[1, 1024, 1], {1, fcutoff}]
-(*lalvsmine*)CompareComplexVectors[Extract[a, {{2,1}, {3,1}}], {"lal", "MMA"}, Range[1, 1024, 1], {1, fcutoff}]
+(*josielvslal*)(*CompareComplexVectors[Extract[a, {{1,1}, {2,1}}], {"josiel", "lal"}, Range[1, 1024, 1], {1, fcutoff}],*)
+(*josielvsmine*)(*CompareComplexVectors[Extract[a, {{1,1}, {3,1}}], {"josiel", "MMA"}, Range[1, 1024, 1], {1, fcutoff}]*)
+(*lalvsmine*)CompareComplexVectors[Extract[a, {{1,1}, {2,1}}], {"lal", "MMA"}, Range[5, 1024, 1], {1, fcutoff}]
 	}
 ]
 
 
-Make:= Module[
-	{M = RandomReal[{50,100(*450*)}],a},
+
+plothc[a_, M_] := Module[
+	{fcutoff, G =  4.925490947641267`*^-6},
+	fcutoff = 0.1/(G M);
+(*all hp comparisons:*)
+	{
+(*josielvslal*)(*CompareComplexVectors[Extract[a, {{1,1}, {2,1}}], {"josiel", "lal"}, Range[1, 1024, 1], {1, fcutoff}],*)
+(*josielvsmine*)(*CompareComplexVectors[Extract[a, {{1,1}, {3,1}}], {"josiel", "MMA"}, Range[1, 1024, 1], {1, fcutoff}]*)
+(*lalvsmine*)CompareComplexVectors[Extract[a, {{1,2}, {2,2}}], {"lal", "MMA"}, Range[5, 1024, 1], {1, fcutoff}]
+	}
+]
+
+
+Makehp:= Module[
+	{M = RandomReal[{50,100(*450*)}],a, G =  4.925490947641267`*^-6},
 	Echo[M];
 	Echo[0.014/(G M)];
 	a = Test[M];
-	plot[a, M]
+	plothp[a, M]
 ]
+
+
+Makehc:= Module[
+	{M = RandomReal[{50,100(*450*)}],a, G =  4.925490947641267`*^-6},
+	Echo[M];
+	Echo[0.014/(G M)];
+	a = Test[M];
+	plothc[a, M]
+]
+
+
+Makehp
+Makehc
 
 
 (* ::Text:: *)
@@ -3804,7 +3863,7 @@ Test//ScientificForm
 Table[Round@Test, {100}]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Third Order*)
 
 
@@ -3834,12 +3893,12 @@ iSymmetricTestGradOrder2[\[Omega]_, \[Omega]ref_, \[Eta]_, \[Chi]s_, \[Chi]a_, \
 
 ClearAll[TestGrad\[ScriptCapitalA]O3];
 
-TestGrad\[ScriptCapitalA]O3[\[Omega]_, \[Omega]ref_, \[Eta]_, \[Chi]s_, \[Chi]a_, \[Iota]_, \[Phi]Ref_] = hphcres3[[37;;-1, 2]];
+TestGrad\[ScriptCapitalA]O3[\[Omega]_, \[Omega]ref_, \[Eta]_, \[Chi]s_, \[Chi]a_, \[Iota]_, \[Phi]Ref_] = hphcres3[[37;;120, 2]];
 
 DownValues[TestGrad\[ScriptCapitalA]O3] = DownValues[TestGrad\[ScriptCapitalA]O3]//.HoldForm[x_]:> x;
 
 
-hphcres3[[37;;-1, 1]]//Length
+hphcres3[[37;;120, 1]]//Length
 
 
 Clear@Test
@@ -3848,6 +3907,7 @@ Test := Module[
 	{
 		chi1, chi2, m1, m2, \[Chi]1, \[Chi]2, f,\[Omega], \[Eta], Symbolic,Numeric, RRe, MMARe, RIm, MMAIm, \[Chi]s, \[Chi]a,diff,
 		li = SymmetrizedIndependentComponents[{7,7,7}, Symmetric[All]], M, \[ScriptCapitalM]c, \[Iota],
+		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]],
 		vars, \[Phi]Ref
 	},
 	
@@ -3878,6 +3938,98 @@ Test := Module[
 
 	
 	Numeric = Extract[NGrad[iSymmetricTestGradOrder2, vars, 0], li];
+	
+	{
+		RelativeDiff@@{Symbolic[[All,1]], Numeric[[All,1]]}, (*hp*)
+		RelativeDiff@@{Symbolic[[All,2]], Numeric[[All,2]]} (*hc*)
+	}
+]
+
+
+Round@Test//ScientificForm
+
+
+Table[Round@Test, {10}]//EchoTiming
+
+
+list = %;
+
+
+(* ::Subsubsection:: *)
+(*Fourth order*)
+
+
+(* ::Text:: *)
+(*Second order checks out so we can use the symbolic gradient of second order and compare its numerical derivatives against the symbolic gradients of order 3.*)
+
+
+SymmetricTestGradOrder3[x__] := Module[
+	{
+		li = SymmetrizedIndependentComponents[{7, 7, 7, 2}, Symmetric[{1, 2, 3}]], 
+		rule, symbolicO2,
+		(*values = TestGrad\[ScriptCapitalA]O2[x][[All, 1]], *)
+		rules
+	},
+	symbolicO2 = TestGrad\[ScriptCapitalA]O3[x];
+	
+	symbolicO2 = ArrayReshape[symbolicO2, {84, 2}];
+	
+	rules = MapThread[Rule, {li, Flatten[symbolicO2]}];
+	
+	SymmetrizedArray[rules, {7, 7, 7, 2}, Symmetric[{1, 2, 3}]]
+]
+
+
+iSymmetricTestGradOrder3[\[Omega]_, \[Omega]ref_, \[Eta]_, \[Chi]s_, \[Chi]a_, \[Iota]_, \[Phi]Ref_] := SymmetricTestGradOrder3[{\[Omega]}, \[Omega]ref, \[Eta], \[Chi]s, \[Chi]a, \[Iota], \[Phi]Ref]
+
+
+ClearAll[TestGrad\[ScriptCapitalA]O4];
+
+TestGrad\[ScriptCapitalA]O4[\[Omega]_, \[Omega]ref_, \[Eta]_, \[Chi]s_, \[Chi]a_, \[Iota]_, \[Phi]Ref_] = hphcres3[[121;;-1, 2]];
+
+DownValues[TestGrad\[ScriptCapitalA]O4] = DownValues[TestGrad\[ScriptCapitalA]O4]//.HoldForm[x_]:> x;
+
+
+hphcres3[[121;;-1, 1]]//Length
+
+
+Clear@Test
+
+Test := Module[
+	{
+		chi1, chi2, m1, m2, \[Chi]1, \[Chi]2, f,\[Omega], \[Eta], Symbolic,Numeric, RRe, MMARe, RIm, MMAIm, \[Chi]s, \[Chi]a,diff,
+		li = SymmetrizedIndependentComponents[{7,7,7,7}, Symmetric[All]], M, \[ScriptCapitalM]c, \[Iota],
+		G = UnitConvert[("GravitationalConstant")/("SpeedOfLight")^3, ("Seconds")/("SolarMass")][[1]],
+		vars, \[Phi]Ref
+	},
+	
+	\[Eta] = RandomReal[{0.1, 0.249}];
+	
+	M  = RandomReal[{5, 100}];
+	
+	
+	{chi1, chi2} = RandomReal[{-1,1}, 2];
+	\[Chi]s = (chi1+chi2)/2; \[Chi]a = (chi1-chi2)/2;
+	
+	\[Iota] = RandomReal[{0,\[Pi]}];
+	\[Phi]Ref = RandomReal[{0, 2 \[Pi]}];
+	
+	
+	
+	\[Omega] = RandomReal[{1, 1024}] G M;
+	
+	Symbolic = TestGrad\[ScriptCapitalA]O4[{\[Omega]}, G M, \[Eta], \[Chi]s, \[Chi]a, \[Iota], \[Phi]Ref];
+	
+	Symbolic= ArrayReshape[Symbolic, {210, 2}];
+	
+	
+	
+	vars = {\[Omega], G M, \[Eta], \[Chi]s, \[Chi]a, \[Iota], \[Phi]Ref};
+	
+	
+
+	
+	Numeric = Extract[NGrad[iSymmetricTestGradOrder3, vars, 0], li];
 	
 	{
 		RelativeDiff@@{Symbolic[[All,1]], Numeric[[All,1]]}, (*hp*)
