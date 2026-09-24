@@ -15,27 +15,30 @@ ClearAll[DetectorTensor, DetectorVertex, ASD, ArmDirection, FromGeocentricCoordi
 
 DetectorTensor::usage = "```DetectorTensor[\"det\"]``` returns the detector tensor \!\(\*SubscriptBox[\(D\), \(ij\)]\) = 0.5 (\!\(\*SubscriptBox[\(nx\), \(i\)]\) \!\(\*SubscriptBox[\(nx\), \(j\)]\) - \!\(\*SubscriptBox[\(ny\), \(j\)]\) \!\(\*SubscriptBox[\(ny\), \(i\)]\)),
 in the form of a 3x3 matrix.
-availabe \"det\": 
-	{\"H1\", \"L1\", \"V1\", \"K\", \"ET1\", \"ET2\", \"ET3\", \"I1\"}   (standards from \!\(\*TemplateBox[{\"\\\"LALDetectors.h\\\"\", \"https://lscsoft.docs.ligo.org/lalsuite/lal/_l_a_l_detectors_8h_source.html\"},\n\"HyperlinkURL\"]\)).
 
-	\"ET-S-L\":  L-Shaped Detector in Sardinia (lat  = 40\[Degree] 31',  lon  = 9\[Degree] 25').
-	\"ETi-S\":   Arms of the triangle configuration in Sardinia, with i=1,2,3 (assuming colocated vertices).
-	\"ET-MR-L-0\":  L-Shaped Detector in Meuse-Rhine with \[Alpha]=0\[Degree] regarding \"ET-S-L\" , see \!\(\*TemplateBox[{\"\\\"2303.15923\\\"\", \"https://arxiv.org/pdf/2303.15923\"},\n\"HyperlinkURL\"]\) (lat = 50\[Degree] 43' 23'', lon = 5\[Degree] 55' 14'').
-	\"ET-MR-L-45\":  L-Shaped Detector in Meuse-Rhine with \[Alpha]=45\[Degree] regarding \"ET-S-L\" , see \!\(\*TemplateBox[{\"\\\"2303.15923\\\"\", \"https://arxiv.org/pdf/2303.15923\"},\n\"HyperlinkURL\"]\).
-	\"CE-I\": CE L-shaped Detector in Idaho (see Table III \!\(\*TemplateBox[{\"\\\"2010.15202\\\"\", \"https://arxiv.org/pdf/2010.15202\"},\n\"HyperlinkURL\"]\)).
-	\"CE-NM\": CE L-shaped Detector in New Mexico (see Table III \!\(\*TemplateBox[{\"\\\"2010.15202\\\"\", \"https://arxiv.org/pdf/2010.15202\"},\n\"HyperlinkURL\"]\)).
+availabe \"det\": 
+
+{\"H1\", \"L1\", \"V1\", \"K\", \"ET1\", \"ET2\", \"ET3\", \"I1\"}   (standards from \!\(\*TemplateBox[{\"\\\"LALDetectors.h\\\"\", \"https://lscsoft.docs.ligo.org/lalsuite/lal/_l_a_l_detectors_8h_source.html\"},\n\"HyperlinkURL\"]\)).
+
+\"ET-S-L\":  L-Shaped Detector in Sardinia (lat  = 40\[Degree] 31',  lon  = 9\[Degree] 25').
+\"ETi-S\":   Arms of the triangle configuration in Sardinia, with i=1,2,3 (assuming colocated vertices).
+\"ET-MR-L-0\":  L-Shaped Detector in Meuse-Rhine with \[Alpha]=0\[Degree] regarding \"ET-S-L\" , see \!\(\*TemplateBox[{\"\\\"2303.15923\\\"\", \"https://arxiv.org/pdf/2303.15923\"},\n\"HyperlinkURL\"]\) (lat = 50\[Degree] 43' 23'', lon = 5\[Degree] 55' 14'').
+\"ET-MR-L-45\":  L-Shaped Detector in Meuse-Rhine with \[Alpha]=45\[Degree] regarding \"ET-S-L\" , see \!\(\*TemplateBox[{\"\\\"2303.15923\\\"\", \"https://arxiv.org/pdf/2303.15923\"},\n\"HyperlinkURL\"]\).
+\"CE-I\": CE L-shaped Detector in Idaho (see Table III \!\(\*TemplateBox[{\"\\\"2010.15202\\\"\", \"https://arxiv.org/pdf/2010.15202\"},\n\"HyperlinkURL\"]\)).
+\"CE-NM\": CE L-shaped Detector in New Mexico (see Table III \!\(\*TemplateBox[{\"\\\"2010.15202\\\"\", \"https://arxiv.org/pdf/2010.15202\"},\n\"HyperlinkURL\"]\)).
 
 Check  ```ArmDirection``` if you need to define a new Dij.";
 
 
 DetectorVertex::usage="```DetectorVertex[\"det\"]``` returns the vertex position {x,y,z} [meters].
-availabe \"det\": 
-	{\"H1\", \"L1\", \"V1\", \"K\", \"ET1\", \"ET2\", \"ET3\", \"I1\"}  (standards from \!\(\*TemplateBox[{\"\\\"LALDetectors.h\\\"\", \"https://lscsoft.docs.ligo.org/lalsuite/lal/_l_a_l_detectors_8h_source.html\"},\n\"HyperlinkURL\"]\)).
 
-	\"ET-S\": ET Sardinia location  (lat  = 40\[Degree] 31',  lon  = 9\[Degree] 25').
-	\"ET-MR\": ET Meuse-Rhine location  (lat = 50\[Degree] 43' 23'', lon = 5\[Degree] 55' 14'').
-	\"CE-I\": CE Idaho location (see Table III \!\(\*TemplateBox[{\"\\\"2010.15202\\\"\", \"https://arxiv.org/pdf/2010.15202\"},\n\"HyperlinkURL\"]\)).
-	\"CE-NM\": CE New Mexico location (see Table III \!\(\*TemplateBox[{\"\\\"2010.15202\\\"\", \"https://arxiv.org/pdf/2010.15202\"},\n\"HyperlinkURL\"]\)).
+availabe \"det\": 
+{\"H1\", \"L1\", \"V1\", \"K\", \"ET1\", \"ET2\", \"ET3\", \"I1\"}  (standards from \!\(\*TemplateBox[{\"\\\"LALDetectors.h\\\"\", \"https://lscsoft.docs.ligo.org/lalsuite/lal/_l_a_l_detectors_8h_source.html\"},\n\"HyperlinkURL\"]\)).
+	
+\"ET-S\": ET Sardinia location  (lat  = 40\[Degree] 31',  lon  = 9\[Degree] 25').
+\"ET-MR\": ET Meuse-Rhine location  (lat = 50\[Degree] 43' 23'', lon = 5\[Degree] 55' 14'').
+\"CE-I\": CE Idaho location (see Table III \!\(\*TemplateBox[{\"\\\"2010.15202\\\"\", \"https://arxiv.org/pdf/2010.15202\"},\n\"HyperlinkURL\"]\)).
+\"CE-NM\": CE New Mexico location (see Table III \!\(\*TemplateBox[{\"\\\"2010.15202\\\"\", \"https://arxiv.org/pdf/2010.15202\"},\n\"HyperlinkURL\"]\)).
 
 Check  ```FromGeocentricCoordinates```  if you need to define a new vertex.";
 
@@ -45,31 +48,34 @@ Attributes[ASD] = {ReadProtected};
 
 
 ASD::usage="```ASD[\"name\"]``` returns \!\(\*SqrtBox[\(\*SubscriptBox[\(S\), \(n\)] \((f)\)\)]\) in the form of an ```InterpolationFunction```.
+
 available \"names\":
-	\"ET-D\":  public ET-D (https://www.et-gw.eu/index.php/etsensitivities).
-	\"CE-20\":  baseline 20 km detector, \"compact binary tuned\" (https://dcc.cosmicexplorer.org/CE-T2000017/public).
-	\"CE-20-pm\":  20 km detector tuned for post-merger signals (https://dcc.cosmicexplorer.org/CE-T2000017/public).
-	\"CE-40\":  baseline 40 km detector (https://dcc.cosmicexplorer.org/CE-T2000017/public).
-	\"CE-40-lf\": 40 km detector tuned for low-freqency signals (https://dcc.cosmicexplorer.org/CE-T2000017/public).
-	\"ET-n-hf\": 'n' can be 10,15 or 20 (arm length kms). 'hf' means high-frequency (https://apps.et-gw.eu/tds/?r=18213).
-	\"ET-n-lf\": 'n' can be 10,15 or 20 (arm length kms). 'lf' means low-frequency (https://apps.et-gw.eu/tds/?r=18213).
-	\"ET-n-lfhf\": 'n' can be 10, 15 or 20 (arm length kms). 'lfhf means combined, xylophone, configuration (https://apps.et-gw.eu/tds/?r=18213).
-	\"L1H1-05\":  LIGO A+ Design target for O5 (https://dcc.ligo.org/LIGO-T2000012/public).
-	\"K-80Mpc\": Kagra for O5 simullations 80 Mpc (https://dcc.ligo.org/LIGO-T2000012/public).
-	\"V1-O5\": Virgo target sensitivity O5 low noise (https://dcc.ligo.org/LIGO-T2000012/public).
-";
+
+\"ET-D\":  public ET-D (https://www.et-gw.eu/index.php/etsensitivities).
+\"CE-20\":  baseline 20 km detector, \"compact binary tuned\" (https://dcc.cosmicexplorer.org/CE-T2000017/public).
+\"CE-20-pm\":  20 km detector tuned for post-merger signals (https://dcc.cosmicexplorer.org/CE-T2000017/public).
+\"CE-40\":  baseline 40 km detector (https://dcc.cosmicexplorer.org/CE-T2000017/public).
+\"CE-40-lf\": 40 km detector tuned for low-freqency signals (https://dcc.cosmicexplorer.org/CE-T2000017/public).
+\"ET-n-hf\": 'n' can be 10,15 or 20 (arm length kms). 'hf' means high-frequency (https://apps.et-gw.eu/tds/?r=18213).
+\"ET-n-lf\": 'n' can be 10,15 or 20 (arm length kms). 'lf' means low-frequency (https://apps.et-gw.eu/tds/?r=18213).
+\"ET-n-lfhf\": 'n' can be 10, 15 or 20 (arm length kms). 'lfhf means combined, xylophone, configuration (https://apps.et-gw.eu/tds/?r=18213).
+\"L1H1-05\":  LIGO A+ Design target for O5 (https://dcc.ligo.org/LIGO-T2000012/public).
+\"K-80Mpc\": Kagra for O5 simullations 80 Mpc (https://dcc.ligo.org/LIGO-T2000012/public).
+\"V1-O5\": Virgo target sensitivity O5 low noise (https://dcc.ligo.org/LIGO-T2000012/public).";
 
 
 ArmDirection::usage="```ArmDirection[{\[CurlyPhi], \[Lambda]}, {{\[Omega]1, \[Psi]1}, {\[Omega]2, \[Psi]2}}]``` returns ```{n1,n2}``` where ```ni = {nix,niy,niz}```, the unit vector in the direction of the arm i.
+
 \[CurlyPhi]: vertex latitude [radians]
 \[Lambda]: vertex longitude [radians]
-\[Omega]i: Altitude of the arm i [radians]
+\[Omega]i: Altitude of the arm i [radians] 
 \[Psi]i: Azimuth of arm i [radians] 
 
+
+\[Omega]i is the angle the direction vector makes with the local horizontal plane, \[Omega]i>0 means above the horizontal.
+\[Psi]i is the angle measured clockwise from north of the direction vector.
+
 coordinates follow WGS-84 model used in \!\(\*TemplateBox[{\"\\\"LALDetectors.h\\\"\", \"https://lscsoft.docs.ligo.org/lalsuite/lal/_l_a_l_detectors_8h_source.html\"},\n\"HyperlinkURL\"]\)";
-
-
-?ArmDirection
 
 
 FromGeocentricCoordinates::usage="```FromGeocentricCoordinates[{h, \[CurlyPhi], \[Lambda]}]``` returns the {x,y,z} position of the detector.
@@ -78,7 +84,8 @@ h: displacement along the local vertical [meters]
 \[CurlyPhi]: latitude [radians]
 \[Lambda]: longitude [radians]
 
-coordinates follow WGS-84 model used in \!\(\*TemplateBox[{\"\\\"LALDetectors.h\\\"\", \"https://lscsoft.docs.ligo.org/lalsuite/lal/_l_a_l_detectors_8h_source.html\"},\n\"HyperlinkURL\"]\)";
+coordinates follow WGS-84 model used in \!\(\*TemplateBox[{\"\\\"LALDetectors.h\\\"\", \"https://lscsoft.docs.ligo.org/lalsuite/lal/_l_a_l_detectors_8h_source.html\"},\n\"HyperlinkURL\"]\)
+For simpler estimates just use h=0.";
 
 
 Begin["`Private`"];

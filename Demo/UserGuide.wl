@@ -418,7 +418,7 @@ testhc := Module[
 
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*check plots: *)
 
 
@@ -1016,7 +1016,7 @@ ListPlot[Flatten[a]//Sort, ScalingFunctions->"Log10", PlotRange->All]
 (*OBSERVE THAT DELTA_T ENTERS WITH OPPOSITE SIGN IN THE DEFINITIONS NOW, (BCS bilby USES THE OPPPOSITE SIGN OF GWFAST. THIS WILL CAUSE DISAGREEMENTS ON THE SKYPOSITION-ELEMENTS)*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Fisher defs: *)
 
 
@@ -1226,7 +1226,7 @@ Flatten[{\[Theta], \[Phi], \[Psi], Mc, \[Eta], s1z, s2z, \[Iota], Dl, tc, \[Phi]
 ExternalEvaluate[python, "IMRPhenomD().ParNums"] +1
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test*)
 
 
@@ -1335,7 +1335,7 @@ a = DALITensors[
 	"IMRPhenomD", 
 	fp, 
 	{L1, H1, V1}, 
-	3, 
+	4, 
 	"fmin"->20, "fmax"->1024, 
 	"res"->1000
 ];//AbsoluteTiming//ScientificForm
@@ -1380,7 +1380,7 @@ l
 (*Testing Fisher matrix performance PhenomHM*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*MMA: *)
 
 
@@ -1418,10 +1418,13 @@ a = DALITensors[
 	"IMRPhenomHM", 
 	fp, 
 	{L1, H1, V1}, 
-	3, 
+	4, 
 	"fmin"->20, "fmax"->1024,
 	"res"->1000
 ];//EchoTiming
+
+
+a[[4,4]]//Total
 
 
 (* ::Text:: *)
@@ -1464,7 +1467,7 @@ MemoryInUse[]
 (*Testing SNRs against GWFAST:*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*IMRPhenomD*)
 
 
@@ -1699,7 +1702,7 @@ test
 Table[test, 1000]//MinMax
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*IMRPhenomHM*)
 
 
@@ -1831,7 +1834,7 @@ def SNR(vec):
 (*Order of elements in the Fisher matrix of IMRPhenomD: *)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*MMA: *)
 
 
@@ -1874,7 +1877,7 @@ MMASNR[fp_Association] := Module[
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Test*)
 
 

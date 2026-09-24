@@ -11,8 +11,10 @@ Unprotect@TaylorForm;
 
 TaylorForm//ClearAll
 
-TaylorForm::usage="TaylorForm[DALITensors_List] given the output of DALITensors, this function returns the Taylor form 
-of the expansion";
+TaylorForm::usage="TaylorForm[out] given the output \"out\" of ```DALITensors```, this function returns the Taylor form 
+of the expansion.
+
+see documentation for details.";
 
 
 (*Unprotect@ProcessDALITensors;

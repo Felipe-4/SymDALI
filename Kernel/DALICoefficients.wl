@@ -11,6 +11,22 @@ Unprotect@DALITensors;
 ClearAll@DALITensors
 
 
+DALITensors::usage="DALITensors[Appr, fp, {det1, det2,...}, n] returns the network DALITensors up to order \"n\" of detectors \"{det1, det2,...}\"
+for the fiducial \"fp\" using the waveform approximant \"Appr\".
+
+Appr: \"IMRPhenomD\" or \"IMRPhenomHM\";
+fp: fiducial in the form of an Association see ```EmptyAssociation[\"Aligned\"]```;
+det_i: detector information in the form of an Association, see ```EmptyAssociation[\"Detector\"]```;
+n: integer number representing the desired DALI order \[Element] [1,4] (n==1 returns Fisher matrix).
+
+Options: 
+
+\"res\": resolution of the frequency grid, defaults to 1000;
+\"fmin\": smallest frequency in the grid [Hz], defaults to 10;
+\"fmax\": largest frequency in the grid [Hz], defaults to 1024;
+\"AllFisherMatrices\": whether to return the DALI tensors of different detectors separatelly (boolean), defaults to False.";
+
+
 Begin["`Private`"];
 
 
@@ -32,7 +48,6 @@ ClearAll[
 ]
 
 
-<<Developer`
 ToSymbol[a_String,i_Integer] := ToExpression[a <> ToString[i]]
 ToSymbol[a_String] := ToExpression[a]
 SymbolConcatenate[sym_Symbol, i_Integer] := ToExpression[ToString[sym] <>  ToString[i]]
@@ -1329,7 +1344,7 @@ NRules2 = Join[
 Protect[SymRules, NRules];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*ihphc, iFpFc*)
 
 
@@ -1416,7 +1431,7 @@ iFpFc[
 Protect[ihphcIMRPhenomD, ihphcIMRPhenomHM, iFpFc];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Utils for Fisher Matrix*)
 
 
@@ -1657,7 +1672,7 @@ isAligned["IMRPhenomHM"] = True
 isAligned["IMRPhenomPv2"] = False
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Fisher Matrix*)
 
 

@@ -1235,7 +1235,7 @@ DerivativeRulesLoadMMA[theory_String, hphcHead_String] := Module[
 	
 	Pacletdirectory = FindFile["FelipeBarbosa`SymDALI`"]//FileNameDrop[#, -2]&;
 	
-	MMADirec = FileNameJoin[{Pacletdirectory,"LibraryResources", operatingsystem, "DerivativeRules", theory, "MMA"}];
+	MMADirec = FileNameJoin[{Pacletdirectory, "LibraryResources", (*operatingsystem, "DerivativeRules",*) theory (*, "MMA"*)}];
 	
 	(*LOAD THE DEFINITIONS OF THE WAVEFORM/DETECTOR*)
 	Get[MMADirec <> "/Defs.mx"];

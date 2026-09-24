@@ -17,15 +17,42 @@ ClearAll[
 
 
 PatternFunctions::usage="PatternFunctions[f, \[Delta], \[Phi], \[Psi], pi, Dij] returns the pattern functions 
-{\!\(\*SubscriptBox[\(F\), \(+\)]\), \!\(\*SubscriptBox[\(F\), \(x\)]\)}.";
+{\!\(\*SubscriptBox[\(F\), \(+\)]\), \!\(\*SubscriptBox[\(F\), \(x\)]\)}.
+
+f: frequency vector, f[[i]] is in [Hz];
+\[Delta]: declination \[Element] [-\[Pi]/2, \[Pi]/2];
+\[Phi]: azimuthal angle \[Element] [0, 2 \[Pi]];
+\[Psi]: polarization angle \[Element] [0, \[Pi]];
+pi: position vector of the detector, see ```DetectorVertex```;
+Dij: 3x3 detector tensor, see ```DetectorTensor```.";
 
 
-hphcIMRPhenomD::usage="hphcIMRPhenomD[f, \[ScriptCapitalM]c, q, s1z, s2z, \[Iota], tc, \[Phi]ref, invdL] returns the plus and cross 
-polarizations for the \"IMRPhenomD\" approximant.";
+hphcIMRPhenomD::usage="hphcIMRPhenomD[f, \[ScriptCapitalM]c, q, s1z, s2z, \[Iota], tc, \[Phi]ref, invdL] returns the polarizations
+{\!\(\*SubscriptBox[\(h\), \(+\)]\), \!\(\*SubscriptBox[\(h\), \(x\)]\)} of the \"IMRPhenomD\" approximant.
+
+f: frequency vector, f[[i]] is in [Hz];
+\[ScriptCapitalM]c: chirp mass, [solar mass];
+q: mass ratio, (0,1];
+s1z: aligned spin \[Element] (-1,1);
+s2z: aligned spin \[Element] (-1,1);
+\[Iota]: inclination angle \[Element] [0, \[Pi]];
+tc: coalescence time [s];
+\[Phi]ref: reference phase \[Element] [0, 2 \[Pi]];
+invdL: inverse of luminosity distance [1/Gpc].";
 
 
-hphcIMRPhenomHM::usage="hphcIMRPhenomHM[f, \[ScriptCapitalM]c, q, s1z, s2z, \[Iota], tc, \[Phi]ref, invdL] returns the plus and cross 
-polarizations for the IMRPhenomHM approximant.";
+hphcIMRPhenomHM::usage="hphcIMRPhenomHM[f, \[ScriptCapitalM]c, q, s1z, s2z, \[Iota], tc, \[Phi]ref, invdL] returns the polarizations
+{\!\(\*SubscriptBox[\(h\), \(+\)]\), \!\(\*SubscriptBox[\(h\), \(x\)]\)} of the \"IMRPhenomHM\" approximant.
+
+f: frequency vector, f[[i]] is in [Hz];
+\[ScriptCapitalM]c: chirp mass, [solar mass];
+q: mass ratio, (0,1];
+s1z: aligned spin \[Element] (-1,1);
+s2z: aligned spin \[Element] (-1,1);
+\[Iota]: inclination angle \[Element] [0, \[Pi]];
+tc: coalescence time [s];
+\[Phi]ref: reference phase \[Element] [0, 2 \[Pi]];
+invdL: inverse of luminosity distance [1/Gpc].";
 
 
 EmptyAssociation::usage="EmptyAssociation[name] returns an association with the correct syntax for the 
@@ -38,8 +65,15 @@ SNR::usage="SNR[Appr, fp, {det1, det2,...}] returns the network SNR of detectors
 for the fiducial \"fp\" using the waveform approximant \"Appr\".
 
 Appr: \"IMRPhenomD\" or \"IMRPhenomHM\";
-fp: See ```EmptyAssociation``` for syntax;
-det: See ```EmptyAssociation``` for syntax";
+fp: fiducial in the form of an Association see ```EmptyAssociation[\"Aligned\"]```;
+det_i: detector information in the form of an Association, see ```EmptyAssociation[\"Detector\"]```.
+
+Options: 
+
+\"res\": resolution of the frequency grid, defaults to 1000;
+\"fmin\": smallest frequency in the grid [Hz], defaults to 10;
+\"fmax\": largest frequency in the grid [Hz], defaults to 1024;
+\"AllSNRs\": whether to return the SNR of different detectors separatelly (boolean), defaults to False.";
 
 
 Begin["Private`"];
@@ -270,7 +304,7 @@ RetrieveFiducial["Aligned", fp_Association]/;(
 LIDij = SymmetrizedIndependentComponents[{3,3}, Symmetric[All]];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*SNR*)
 
 
