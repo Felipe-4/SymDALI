@@ -1376,11 +1376,11 @@ l
 46.1 60
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing Fisher matrix performance PhenomHM*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*MMA: *)
 
 
@@ -1463,7 +1463,7 @@ MemoryInUse[]
 MemoryInUse[]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing SNRs against GWFAST:*)
 
 

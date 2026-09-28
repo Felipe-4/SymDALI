@@ -140,7 +140,7 @@ FromGeocentricCoordinates[{h_, \[CurlyPhi]_, \[Lambda]_}] := Module[
 Protect[ArmDirection]; Protect[FromGeocentricCoordinates];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*DetectorTensor*)
 
 
@@ -356,13 +356,13 @@ Module[
 Protect[DetectorVertex];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*ASDs*)
 
 
 ASDdir = With[
 	{pacletDir= FindFile["FelipeBarbosa`SymDALI`"]//FileNameDrop[#,-2]&},
-	FileNameJoin[{pacletDir, "/Data/ASD"}]
+	FileNameJoin[{pacletDir, "/Assets/ASD"}]
 ];
 
 
@@ -373,7 +373,7 @@ Module[
 	{data},
 	
 	(*ET-D*)
-	data = Import[FileNameJoin[{ASDdir,"ET-0000A-18_ETDSensitivityCurveTxtFile.txt"}], "Data"]//N;
+	data = Import[FileNameJoin[{ASDdir, "ET-0000A-18_ETDSensitivityCurveTxtFile.txt"}], "Data"]//N;
 	data = data[[All,{1,4}]];
 	ASD["ET-D"] = Interpolation[data];
 	
