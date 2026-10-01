@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Detectors &#8212; SymDALI 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Waveform" href="Waveform.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="detectors">
+<h1>Detectors<a class="headerlink" href="#detectors" title="Link to this heading">¶</a></h1>
+<p>Here we describe how the Wolfram Language code characterizes a detector, how to access
+the built-in detectors and how to define a new detector.</p>
+<section id="characterization">
+<h2>Characterization<a class="headerlink" href="#characterization" title="Link to this heading">¶</a></h2>
+<p>A detector is specified by three properties: its location, orientation, and
+noise power spectral density <span class="math notranslate nohighlight">\(S_n(f)\)</span>. Our convention
+is to use the WGS-84 model to define the detector’s position and orientation.</p>
+<p>The position is given by the Cartesian coordinates of the detector’s vertex
+in meters. For example, the LIGO Livingston detector position vector is:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">PosL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mf">-74276.</span><span class="p">,</span><span class="w"> </span><span class="mf">-5.49628</span><span class="o">*</span><span class="mi">10</span><span class="o">^</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mf">3.22426</span><span class="o">*</span><span class="mi">10</span><span class="o">^</span><span class="mi">6</span><span class="p">};</span>
+</pre></div>
+</div>
+<p>The orientation is given by the detector tensor:</p>
+<div class="math notranslate nohighlight">
+\[D_{ij} = \frac{1}{2} \left(nx_i nx_j - ny_i ny_j\right),\]</div>
+<p>where <span class="math notranslate nohighlight">\(nx\)</span> and <span class="math notranslate nohighlight">\(ny\)</span> are the unit vectors along the two detector
+arms. For the LIGO Livingston detector, the orientation is given by the
+matrix:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">DL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">0.411318</span><span class="p">,</span><span class="w"> </span><span class="mf">0.14021</span><span class="p">,</span><span class="w"> </span><span class="mf">0.247279</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">0.14021</span><span class="p">,</span><span class="w"> </span><span class="mf">-0.108998</span><span class="p">,</span><span class="w"> </span><span class="mf">-0.181597</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">0.247279</span><span class="p">,</span><span class="w"> </span><span class="mf">-0.181597</span><span class="p">,</span><span class="w"> </span><span class="mf">-0.302236</span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>The noise properties are represented by an
+<code class="docutils literal notranslate"><span class="pre">InterpolatingFunction</span></code> of the amplitude spectral density (ASD),
+<span class="math notranslate nohighlight">\(\sqrt{S_n(f)}\)</span>, which can be generated using <code class="docutils literal notranslate"><span class="pre">Interpolation</span></code>:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Import</span><span class="p">[</span><span class="s">"AplusDesign.txt"</span><span class="p">,</span><span class="w"> </span><span class="s">"Data"</span><span class="p">];</span>
+<span class="n">ASDL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Interpolation</span><span class="p">[</span><span class="n">data</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>The functions in <code class="docutils literal notranslate"><span class="pre">SymDALI</span></code> require detectors to be specified by quantities
+such as <code class="docutils literal notranslate"><span class="pre">PosL1</span></code>, <code class="docutils literal notranslate"><span class="pre">DL1</span></code>, and <code class="docutils literal notranslate"><span class="pre">ASDL1</span></code>. These quantities can be defined
+for any detector.</p>
+</section>
+<section id="buit-in-detectors">
+<h2>Buit-in detectors<a class="headerlink" href="#buit-in-detectors" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SymDALI</span></code> has built-in support for the
+LIGO-Virgo-KAGRA (LVK) network, Einstein Telescope (ET), and Cosmic Explorer
+(CE). Predefined detector positions are provided by <code class="docutils literal notranslate"><span class="pre">DetectorVertex</span></code>. Predefined
+orientations are provided by <code class="docutils literal notranslate"><span class="pre">DetectorTensor</span></code>, and built-in ASDs are
+provided by <code class="docutils literal notranslate"><span class="pre">ASD</span></code>. The usage messages of these three functions (for instance <code class="docutils literal notranslate"><span class="pre">?DetectorVertex</span></code>) provide
+a list of the available detectors and their corresponding names.</p>
+<p>For example, the previous definitions can instead be generated with:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">PosL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DetectorVertex</span><span class="p">[</span><span class="s">"L1"</span><span class="p">];</span>
+<span class="n">DL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DetectorTensor</span><span class="p">[</span><span class="s">"L1"</span><span class="p">];</span>
+<span class="n">ASDL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ASD</span><span class="p">[</span><span class="s">"L1H1-O5"</span><span class="p">];</span>
+</pre></div>
+</div>
+</section>
+<section id="defining-a-new-detector">
+<h2>Defining a new detector<a class="headerlink" href="#defining-a-new-detector" title="Link to this heading">¶</a></h2>
+<p>To define the position and orientation of a new detector, we can use the functions
+<code class="docutils literal notranslate"><span class="pre">FromGeocentricCoordinates</span></code> and <code class="docutils literal notranslate"><span class="pre">ArmDirection</span></code>.</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">FromGeocentricCoordinates</span><span class="p">[{</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">lon</span><span class="p">}]</span>
+</pre></div>
+</div>
+<p>Returns the Cartesian coordinates <code class="docutils literal notranslate"><span class="pre">{x,</span> <span class="pre">y,</span> <span class="pre">z}</span></code> of a point.</p>
+<p><strong>Parameters</strong>:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">h</span></code> :Height of the vertex above the reference ellipsoid, in meters. A value of zero can be used for simplicity.</p>
+<p><code class="docutils literal notranslate"><span class="pre">lat</span></code>: Vertex latitude in radians.</p>
+<p><code class="docutils literal notranslate"><span class="pre">lon</span></code>: Vertex longitude in radians.</p>
+</div></blockquote>
+<dl class="simple">
+<dt><strong>Returns</strong>:</dt><dd><p>The Cartesian coordinates <code class="docutils literal notranslate"><span class="pre">{x,</span> <span class="pre">y,</span> <span class="pre">z}</span></code> of the point, in meters.</p>
+</dd>
+</dl>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">ArmDirection</span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">lon</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{{</span><span class="n">altitudex</span><span class="p">,</span><span class="w"> </span><span class="n">azimuthx</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="n">altitudey</span><span class="p">,</span><span class="w"> </span><span class="n">azimuthy</span><span class="p">}}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Returns the unit vectors along the two detector arms.</p>
+<p><strong>Parameters</strong>:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">lat</span></code>: Vertex latitude in radians.</p>
+<p><code class="docutils literal notranslate"><span class="pre">lon</span></code>: Vertex longitude in radians.</p>
+<p><code class="docutils literal notranslate"><span class="pre">altitudex</span></code>: Altitude angle of the first arm, in radians.</p>
+<p><code class="docutils literal notranslate"><span class="pre">azimuthx</span></code>: Azimuth angle of the first arm, in radians.</p>
+<p><code class="docutils literal notranslate"><span class="pre">altitudey</span></code>: Altitude angle of the second arm, in radians.</p>
+<p><code class="docutils literal notranslate"><span class="pre">azimuthy</span></code>: Azimuth angle of the second arm, in radians.</p>
+</div></blockquote>
+<dl class="simple">
+<dt><strong>Returns</strong>:</dt><dd><p>The unit vectors <code class="docutils literal notranslate"><span class="pre">{nx,</span> <span class="pre">ny}</span></code> along the two detector arms.</p>
+</dd>
+</dl>
+<p>The altitude and azimuth angles follow the convention used in
+<a class="reference external" href="https://git.ligo.org/lscsoft/lalsuite/-/blob/master/lal/lib/tools/LALDetectors.h">LALDetectors.h</a>:</p>
+<p><strong>Azimuth</strong>: Angle measured clockwise from north of the direction vector.</p>
+<p><strong>Altitude</strong>: The angle the direction vector makes with the local horizontal plane. Positive values indicate directions above the horizontal.</p>
+<p>The following example shows how to define the position and orientation of
+LIGO Livingston using these functions. The reference values are taken from
+<a class="reference external" href="https://git.ligo.org/lscsoft/lalsuite/-/blob/master/lal/lib/tools/LALDetectors.h">LALDetectors.h</a>:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">PosL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FromGeocentricCoordinates</span><span class="p">[{</span><span class="mf">-6.574</span><span class="p">,</span><span class="w"> </span><span class="mf">0.53342313506</span><span class="p">,</span><span class="w"> </span><span class="mf">-1.58430937078</span><span class="p">}];</span>
+
+<span class="p">{</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ArmDirection</span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">0.53342313506</span><span class="p">,</span><span class="w"> </span><span class="mf">-1.58430937078</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="p">{</span><span class="mf">-0.00031210000</span><span class="p">,</span><span class="w"> </span><span class="mf">4.40317772346</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="mf">-0.00061070000</span><span class="p">,</span><span class="w"> </span><span class="mf">2.83238139666</span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">];</span>
+
+<span class="n">DL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">TensorProduct</span><span class="p">[</span><span class="n">nx</span><span class="p">,</span><span class="w"> </span><span class="n">nx</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">TensorProduct</span><span class="p">[</span><span class="n">ny</span><span class="p">,</span><span class="w"> </span><span class="n">ny</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>A new ASD can be defined by importing the corresponding data and applying
+<code class="docutils literal notranslate"><span class="pre">Interpolation</span></code>.</p>
+</section>
+<section id="detector-association">
+<h2>Detector association<a class="headerlink" href="#detector-association" title="Link to this heading">¶</a></h2>
+<p>The functions <code class="docutils literal notranslate"><span class="pre">SNR</span></code> and <code class="docutils literal notranslate"><span class="pre">DALITensors</span></code> take a list of one or more
+detectors as one of their inputs. Each detector is specified by an
+association with the following keys:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">L1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">    </span><span class="s">"Position"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">PosL1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"Orientation"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">DL1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"ASD"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">ASDL1</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="pattern-functions">
+<h2>Pattern functions<a class="headerlink" href="#pattern-functions" title="Link to this heading">¶</a></h2>
+<p>aaaaa</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SymDALI</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Waveform.html">Waveform</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Detectors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#characterization">Characterization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#buit-in-detectors">Buit-in detectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#defining-a-new-detector">Defining a new detector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detector-association">Detector association</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pattern-functions">Pattern functions</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Waveform.html" title="previous chapter">Waveform</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Felipe Barbosa.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/Detectors.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

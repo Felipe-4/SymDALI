@@ -34,7 +34,7 @@ Begin["`Private`"];
 PacletDirectoryLoad["/Users/felipe/Documents/GitHub"];*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Definitions*)
 
 
@@ -822,12 +822,22 @@ GradientsList[{gradients__Association}, {varnumbers__Integer}, n_Integer] :=Modu
 GradientsList[x___] := Throw[$Failed, failTag[GradientsList]]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Make DALI Tensors*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*GenDaliTerm*)
+
+
+Needs["CCompilerDriver`"]
+
+compiler = Module[
+	{list = CCompilerDriver`CCompilers[]},
+	
+	(*Check if there are C compilers in the system*)
+	If[Length[list]==0, "WVM", "C"]
+];
 
 
 (*
@@ -844,7 +854,7 @@ CiGenDaliTerm = Compile[
 		{i, 1, Length@gradList1}
 	],
 	
-	CompilationTarget->"C",
+	Evaluate[CompilationTarget->compiler],
 	RuntimeOptions->"Speed"
 ]
 
@@ -1222,7 +1232,7 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 (*DALITensors*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*SymRules and NRules*)
 
 
@@ -1672,11 +1682,8 @@ isAligned["IMRPhenomHM"] = True
 isAligned["IMRPhenomPv2"] = False
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Fisher Matrix*)
-
-
-ClearAll[DALITensors]
 
 
 make1[0] := 0;

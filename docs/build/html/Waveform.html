@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Waveform &#8212; SymDALI 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="waveform">
+<h1>Waveform<a class="headerlink" href="#waveform" title="Link to this heading">¶</a></h1>
+<p>The Wolfram Language code has support for the following waveform models:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code>: non-precessing, aligned-spin, inspiral-merger-ringdown
+waveform model for binary black holes (BBH), see <a class="reference external" href="https://arxiv.org/abs/1508.07250">1508.07250</a> and <a class="reference external" href="https://arxiv.org/abs/1508.07253">1508.07253</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IMRPhenomHM</span></code>: non-precessing, aligned-spin, inspiral-merger-ringdown
+waveform model for BBH with higher modes, see <a class="reference external" href="https://arxiv.org/abs/1708.00404">1708.00404</a>.</p></li>
+</ul>
+<p>These waveform models are implemented as functions that return the plus and
+cross polarizations of the GW signal, given a set of parameters.</p>
+<section id="hphcimrphenomd">
+<h2><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomD</span></code><a class="headerlink" href="#hphcimrphenomd" title="Link to this heading">¶</a></h2>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">hphcIMRPhenomD</span><span class="p">[</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">Mc</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">s1z</span><span class="p">,</span><span class="w"> </span><span class="n">s2z</span><span class="p">,</span><span class="w"> </span><span class="n">iota</span><span class="p">,</span><span class="w"> </span><span class="n">tc</span><span class="p">,</span><span class="w"> </span><span class="n">phiRef</span><span class="p">,</span><span class="w"> </span><span class="n">invdL</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Calculates the polarizations <span class="math notranslate nohighlight">\(\{h_+, h_\times\}\)</span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code> approximant.</p>
+<p><strong>Parameters</strong>:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">f</span></code>: Frequency vector, where <code class="docutils literal notranslate"><span class="pre">f[[i]]</span></code> is in [Hz].</p>
+<p><code class="docutils literal notranslate"><span class="pre">Mc</span></code>: Chirp mass [solar mass].</p>
+<p><code class="docutils literal notranslate"><span class="pre">q</span></code>: Mass ratio in (0,1].</p>
+<p><code class="docutils literal notranslate"><span class="pre">s1z</span></code>: Aligned spin, in (-1,1).</p>
+<p><code class="docutils literal notranslate"><span class="pre">s2z</span></code>: Aligned spin, in (-1,1).</p>
+<p><code class="docutils literal notranslate"><span class="pre">iota</span></code>: Inclination angle, in [0, <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">tc</span></code>: Coalescence time [s].</p>
+<p><code class="docutils literal notranslate"><span class="pre">phiRef</span></code>: Reference phase, in [0, 2 <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">invdL</span></code>: Inverse luminosity distance [1/Gpc].</p>
+</div></blockquote>
+<dl class="simple">
+<dt><strong>Returns</strong>:</dt><dd><p>The polarizations <span class="math notranslate nohighlight">\(\{h_+, h_\times\}\)</span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code> approximant.
+The output has dimensions <code class="docutils literal notranslate"><span class="pre">{2,</span> <span class="pre">N}</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">Length[f]</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="hphcimrphenomhm">
+<h2><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomHM</span></code><a class="headerlink" href="#hphcimrphenomhm" title="Link to this heading">¶</a></h2>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">hphcIMRPhenomHM</span><span class="p">[</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">Mc</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">s1z</span><span class="p">,</span><span class="w"> </span><span class="n">s2z</span><span class="p">,</span><span class="w"> </span><span class="n">iota</span><span class="p">,</span><span class="w"> </span><span class="n">tc</span><span class="p">,</span><span class="w"> </span><span class="n">phiRef</span><span class="p">,</span><span class="w"> </span><span class="n">invdL</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Calculates the polarizations <span class="math notranslate nohighlight">\(\{h_+, h_\times\}\)</span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomHM</span></code> approximant.</p>
+<p><strong>Parameters</strong>:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">f</span></code>: Frequency vector, where <code class="docutils literal notranslate"><span class="pre">f[[i]]</span></code> is in [Hz].</p>
+<p><code class="docutils literal notranslate"><span class="pre">Mc</span></code>: Chirp mass [solar mass].</p>
+<p><code class="docutils literal notranslate"><span class="pre">q</span></code>: Mass ratio in (0,1].</p>
+<p><code class="docutils literal notranslate"><span class="pre">s1z</span></code>: Aligned spin, in (-1,1).</p>
+<p><code class="docutils literal notranslate"><span class="pre">s2z</span></code>: Aligned spin, in (-1,1).</p>
+<p><code class="docutils literal notranslate"><span class="pre">iota</span></code>: Inclination angle, in [0, <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">tc</span></code>: Coalescence time [s].</p>
+<p><code class="docutils literal notranslate"><span class="pre">phiRef</span></code>: Reference phase, in [0, 2 <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">invdL</span></code>: Inverse luminosity distance [1/Gpc].</p>
+</div></blockquote>
+<dl class="simple">
+<dt><strong>Returns</strong></dt><dd><p>The polarizations <span class="math notranslate nohighlight">\(\{h_+, h_\times\}\)</span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomHM</span></code> approximant.
+The output has dimensions <code class="docutils literal notranslate"><span class="pre">{2,</span> <span class="pre">N}</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">Length[f]</span></code>.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SymDALI</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Waveform</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hphcimrphenomd"><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hphcimrphenomhm"><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomHM</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Felipe Barbosa.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/Waveform.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

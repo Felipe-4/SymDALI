@@ -34,6 +34,8 @@ it has been shown that sampling the Fisher likelihood with exact priors produces
    :caption: Contents
 
    installation
+   Waveform
+   Detectors
    quickstart
    user_guide
    examples

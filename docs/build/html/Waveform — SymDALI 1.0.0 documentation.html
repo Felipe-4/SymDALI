@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en" data-content_root="./"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Waveform — SymDALI 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="Waveform%20%E2%80%94%20SymDALI%201.0.0%20documentation_files/pygments_v9Mr.css">
+    <link rel="stylesheet" type="text/css" href="Waveform%20%E2%80%94%20SymDALI%201.0.0%20documentation_files/basic_v9Mr.css">
+    <link rel="stylesheet" type="text/css" href="Waveform%20%E2%80%94%20SymDALI%201.0.0%20documentation_files/alabaster_v9Mr.css">
+    <script src="Waveform%20%E2%80%94%20SymDALI%201.0.0%20documentation_files/documentation_options_v9Mr.js"></script>
+    <script src="Waveform%20%E2%80%94%20SymDALI%201.0.0%20documentation_files/doctools_v9Mr.js"></script>
+    <script src="Waveform%20%E2%80%94%20SymDALI%201.0.0%20documentation_files/sphinx_highlight_v9Mr.js"></script>
+    <script defer="defer" src="Waveform%20%E2%80%94%20SymDALI%201.0.0%20documentation_files/tex-mml-chtml_v9Mr.js"></script>
+    <link rel="index" title="Index" href="file:///Users/felipe/Documents/GitHub/SymDALI/docs/build/html/genindex.html">
+    <link rel="search" title="Search" href="file:///Users/felipe/Documents/GitHub/SymDALI/docs/build/html/search.html">
+    <link rel="prev" title="Installation" href="file:///Users/felipe/Documents/GitHub/SymDALI/docs/build/html/installation.html">
+   
+  <link rel="stylesheet" href="Waveform%20%E2%80%94%20SymDALI%201.0.0%20documentation_files/custom_v9Mr.css" type="text/css">
+  
+
+  
+  
+
+  <style id="MJX-sx-styles">:root {
+  --mjx-fg-red: 255, 0, 0;
+  --mjx-fg-green: 0, 255, 0;
+  --mjx-fg-blue: 0, 0, 255;
+  --mjx-fg-yellow: 255, 255, 0;
+  --mjx-fg-cyan: 0, 255, 255;
+  --mjx-fg-magenta: 255, 0, 255;
+  --mjx-fg-white: 255, 255, 255;
+  --mjx-fg-black: 0, 0, 0;
+  --mjx-bg-red: 255, 0, 0;
+  --mjx-bg-green: 0, 255, 0;
+  --mjx-bg-blue: 0, 0, 255;
+  --mjx-bg-yellow: 255, 255, 0;
+  --mjx-bg-cyan: 0, 255, 255;
+  --mjx-bg-magenta: 255, 0, 255;
+  --mjx-bg-white: 255, 255, 255;
+  --mjx-bg-black: 0, 0, 0;
+  --mjx-live-bg-color: white;
+  --mjx-live-shadow-color: #888;
+  --mjx-live-border-color: #CCCCCC;
+  --mjx-bg1-color: rgba(var(--mjx-bg-blue), var(--mjx-bg1-alpha));
+  --mjx-fg1-color: rgba(var(--mjx-fg-black), 1);
+  --mjx-bg2-color: rgba(var(--mjx-bg-red), 1);
+  --mjx-fg2-color: rgba(var(--mjx-fg-black), 1);
+  --mjx-bg1-alpha: 0.2;
+  --mjx-fg1-alpha: 1;
+  --mjx-bg2-alpha: 1;
+  --mjx-fg2-alpha: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --mjx-bg-blue: 132, 132, 255;
+      --mjx-bg-white: 0, 0, 0;
+      --mjx-bg-black: 255, 255, 255;
+      --mjx-fg-white: 0, 0, 0;
+      --mjx-fg-black: 255, 255, 255;
+      --mjx-live-bg-color: #222025;
+      --mjx-live-shadow-color: black;
+      --mjx-live-border-color: #7C7C7C;
+      --mjx-bg1-alpha: 0.3;
+      --mjx-fg1-alpha: 1;
+      --mjx-bg2-alpha: 1;
+      --mjx-fg2-alpha: 1;
+  }
+}
+
+.MJX_LiveRegion {
+  position: absolute;
+  top: 0;
+  display: none;
+  width: auto;
+  height: auto;
+  padding: 0;
+  opacity: 1;
+  z-index: 202;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  background-color: var(--mjx-live-bg-color);
+  box-shadow: 0px 5px 20px var(--mjx-live-shadow-color);
+  border: 2px solid var(--mjx-live-border-color);
+}
+
+.MJX_LiveRegion_Show {
+  display: block;
+}
+
+.MJX_LiveRegion > div {
+  color: var(--mjx-fg1-color);
+  background-color: var(--mjx-bg1-color);
+}
+
+mjx-container [data-sre-highlight-1]:not([data-mjx-collapsed], rect) {
+  color: var(--mjx-fg1-color) ! important;
+  fill: var(--mjx-fg1-color) ! important;
+}
+
+mjx-container:not([data-mjx-clone-container]) [data-sre-highlight-1]:not([data-sre-enclosed], rect) {
+  background-color: var(--mjx-bg1-color) ! important;
+}
+
+mjx-container rect[data-sre-highlight-1]:not([data-sre-enclosed]) {
+  fill: var(--mjx-bg1-color) ! important;
+}
+
+mjx-container [data-sre-highlight-2] {
+  color: var(--mjx-fg2-color) ! important;
+  background-color: var(--mjx-bg2-color) ! important;
+  fill: var(--mjx-fg2-color) ! important;
+}
+
+mjx-container rect[data-sre-highlight-2] {
+  fill: var(--mjx-bg2-color) ! important;
+}</style><style id="MJX-rx-styles">.MJX_HoverRegion {
+  display: block;
+  position: absolute;
+  width: max-content;
+  height: auto;
+  padding: 0;
+  opacity: 1;
+  z-index: 202;
+  margin: 0 auto;
+  background-color: white;
+  line-height: 0;
+  box-shadow: 0px 10px 20px #888;
+  border: 2px solid #CCCCCC;
+}
+
+.MJX_HoverRegion > div {
+  overflow: hidden;
+  color: var(--mjx-fg1-color);
+  background-color: var(--mjx-bg1-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  .MJX_HoverRegion {
+    background-color: #222025;
+      box-shadow: 0px 5px 20px #000;
+      border: 1px solid #7C7C7C;
+  }
+}
+
+mjx-container[data-mjx-clone-container] {
+  padding: 2px ! important;
+}
+
+mjx-math > mjx-mlabeledtr {
+  display: inline-block;
+  margin-right: .5em ! important;
+}
+
+mjx-math > mjx-mtd {
+  float: right;
+}</style><style id="MJX-ex-styles">.MJX_ToolTip {
+  width: auto;
+  height: auto;
+  opacity: 1;
+  text-align: center;
+  border-radius: 4px;
+  padding: 0;
+  border-bottom: 1px dotted black;
+  position: absolute;
+  display: inline-block;
+  background-color: white;
+  z-index: 202;
+}
+
+.MJX_ToolTip > div {
+  border-radius: inherit;
+  padding: 0 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .MJX_ToolTip {
+    background-color: #222025;
+      box-shadow: 0px 5px 20px #000;
+      border: 1px solid #7C7C7C;
+  }
+}</style><style id="MJX-Menu-styles">.CtxtMenu_Menu {
+  position: absolute;
+  background-color: white;
+  color: black;
+  width: auto;
+  padding: 5px 0px;
+  border: 1px solid #CCCCCC;
+  margin: 0;
+  cursor: default;
+  font: menu;
+  text-align: left;
+  text-indent: 0;
+  text-transform: none;
+  line-height: normal;
+  letter-spacing: normal;
+  word-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  float: none;
+  z-index: 1001;
+  border-radius: 5px;
+  box-shadow: 0px 10px 20px #808080;
+}
+.CtxtMenu_MenuItem {
+  padding: 1px 2em;
+  background: transparent;
+}
+.CtxtMenu_MenuArrow {
+  position: absolute;
+  right: 0.5em;
+  padding-top: 0.25em;
+  color: #666666;
+  font-family: null;
+  font-size: 0.75em;
+}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {
+  color: white;
+}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {
+  left: 0.5em;
+  right: auto;
+}
+.CtxtMenu_MenuCheck {
+  position: absolute;
+  left: 0.7em;
+  font-family: null;
+}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL {
+  right: 0.7em;
+  left: auto;
+}
+.CtxtMenu_MenuRadioCheck {
+  position: absolute;
+  left: 0.7em;
+}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {
+  right: 0.7em;
+  left: auto;
+}
+.CtxtMenu_MenuInputBox {
+  padding-left: 1em;
+  right: 0.5em;
+  color: #666666;
+  font-family: null;
+}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {
+  left: 0.1em;
+}
+.CtxtMenu_MenuComboBox {
+  left: 0.1em;
+  padding-bottom: 0.5em;
+}
+.CtxtMenu_MenuSlider {
+  left: 0.1em;
+}
+.CtxtMenu_SliderValue {
+  position: absolute;
+  right: 0.1em;
+  padding-top: 0.25em;
+  color: #333333;
+  font-size: 0.75em;
+}
+.CtxtMenu_MenuActive .CtxtMenu_SliderValue {
+  color: #DDDDDD;
+}
+.CtxtMenu_SliderBar {
+  outline: none;
+  background: #D3D3D3;
+}
+.CtxtMenu_MenuLabel {
+  padding: 1px 2em 3px 1.33em;
+  font-style: italic;
+}
+.CtxtMenu_MenuRule {
+  border-top: 1px solid #DDDDDD;
+  margin: 4px 3px;
+}
+.CtxtMenu_MenuDisabled {
+  color: #999;
+}
+.CtxtMenu_MenuActive {
+  background-color: #606872;
+  color: white;
+}
+.CtxtMenu_MenuDisabled:focus {
+  background-color: #E8E8E8;
+}
+.CtxtMenu_MenuLabel:focus {
+  background-color: #E8E8E8;
+}
+.CtxtMenu_ContextMenu:focus {
+  outline: none;
+}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {
+  outline: none;
+}
+.CtxtMenu_SelectionMenu {
+  position: relative;
+  float: left;
+  border-bottom: none;
+  box-shadow: none ! important;
+  border-radius: 0px !important;
+}
+.CtxtMenu_SelectionItem {
+  padding-right: 1em;
+}
+.CtxtMenu_Selection {
+  right: 40%;
+  width: 50%;
+}
+.CtxtMenu_SelectionBox {
+  padding: 0em;
+  max-height: 20em;
+  max-width: none;
+  background-color: #FFFFFF;
+}
+.CtxtMenu_SelectionDivider {
+  clear: both;
+  border-top: 2px solid #000000;
+}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {
+  top: -10px;
+  left: -10px;
+}
+@media (prefers-color-scheme: dark) /* menu */ {
+  .CtxtMenu_Menu {
+  color: #E0E0E0;
+  background-color: #242436;
+  box-shadow: 0px 10px 20px #000;
+  border: 1px solid #808080;
+}
+  .CtxtMenu_SliderValue {
+  color: #D0D0D0;
+}
+  .CtxtMenu_MenuDisabled:focus {
+  background-color: #383838;
+}
+  .CtxtMenu_MenuLabel:focus {
+  background-color: #585858;
+}
+  .CtxtMenu_MenuRule {
+  border-top: 1px solid #808080;
+}
+  .CtxtMenu_SelectionDivider {
+  border-top: 2px solid #808080;
+};
+}
+.CtxtMenu_MenuClose {
+  position: absolute;
+  cursor: pointer;
+  display: inline-block;
+  border: 2px solid #AAA;
+  border-radius: 18px;
+  font-family:  "Courier New", Courier;
+  font-size: 24px;
+  color: #F0F0F0;
+}
+.CtxtMenu_MenuClose span {
+  display: block;
+  background-color: #AAA;
+  border: 1.5px solid;
+  border-radius: 18px;
+  line-height: 0;
+  padding: 8px 0 6px;
+}
+.CtxtMenu_MenuClose:hover {
+  color: white !important;
+  border: 2px solid #CCC !important;
+}
+.CtxtMenu_MenuClose:hover span {
+  background-color: #CCC !important;
+}
+.CtxtMenu_MenuClose:hover:focus {
+  outline: none;
+}</style><style id="MJX-CHTML-styles">
+mjx-container[overflow="scroll"][display] {
+  overflow: auto clip;
+  min-width: initial !important;
+}
+
+mjx-container[overflow="truncate"][display] {
+  overflow: hidden clip;
+  min-width: initial !important;
+}
+
+mjx-container[display] {
+  display: block;
+  text-align: center;
+  justify-content: center;
+  margin: .7em 0;
+  padding: .3em 2px;
+}
+
+mjx-container[display][width="full"] {
+  display: flex;
+}
+
+mjx-container[justify="left"] {
+  text-align: left;
+  justify-content: left;
+}
+
+mjx-container[justify="right"] {
+  text-align: right;
+  justify-content: right;
+}
+
+mjx-container[jax="CHTML"] {
+  white-space: nowrap;
+}
+
+mjx-mo > mjx-c, mjx-mi > mjx-c, mjx-mn > mjx-c, mjx-ms > mjx-c, mjx-mtext > mjx-c {
+  clip-path: padding-box polygon(-1em -2px, calc(100% + 1em) -2px, calc(100% + 1em) calc(100% + 2px), -1em calc(100% + 2px));
+}
+
+mjx-stretchy-h {
+  clip-path: padding-box polygon(0 -2px, 100% -2px, 100% calc(100% + 2px), 0 calc(100% + 2px));
+  display: inline-block;
+}
+
+mjx-stretchy-v {
+  clip-path: padding-box polygon(-2px 0, calc(100% + 2px) 0, calc(100% + 2px) 100%, -2px 100%);
+  display: inline-block;
+  text-align: center;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > mjx-cell, mjx-row > mjx-base, mjx-row > mjx-under, mjx-row > mjx-over, mjx-row > mjx-den {
+  display: table-cell;
+}
+
+mjx-container [inline-breaks] {
+  display: inline;
+}
+
+mjx-container .mjx-selected {
+  outline: 2px solid black;
+}
+
+@media (prefers-color-scheme: dark) {
+  mjx-container .mjx-selected {
+    outline: 2px solid #C8C8C8;
+  }
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+mjx-container[has-speech="true"] {
+  position: relative;
+  cursor: default;
+}
+
+mjx-speech {
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+}
+
+mjx-speech:focus {
+  outline: none;
+}
+
+mjx-container a[data-mjx-href] {
+  color: LinkText;
+  cursor: pointer;
+}
+
+mjx-container a[data-mjx-href].mjx-visited {
+  color: VisitedText;
+}
+
+mjx-container > mjx-help {
+  display: none;
+  position: absolute;
+  top: -.3em;
+  right: -.5em;
+  width: .6em;
+  height: .6em;
+  cursor: pointer;
+}
+
+mjx-container[display="true"] > mjx-help {
+  position: sticky;
+  inset: -100% 0 100% 0;
+  margin: -.3em -.5em 0 -.1em;
+  right: 0;
+  top: initial;
+}
+
+mjx-help > svg {
+  stroke: black;
+  width: 100%;
+  height: 100%;
+}
+
+mjx-help > svg > circle {
+  stroke-width: 1.5px;
+  cx: 9px;
+  cy: 9px;
+  r: 9px;
+  fill: white;
+}
+
+mjx-help > svg > circle:nth-child(2) {
+  fill: var(--mjx-bg1-color);
+  r: 7px;
+}
+
+mjx-help > svg > line {
+  stroke-width: 2.5px;
+  stroke-linecap: round;
+}
+
+mjx-help:hover > svg > circle:nth-child(2) {
+  fill: white;
+}
+
+mjx-container.mjx-explorer-active > mjx-help {
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (prefers-color-scheme: dark) /* explorer */ {
+  mjx-help > svg {
+    stroke: #E0E0E0;
+  }
+  mjx-help > svg > circle {
+    fill: #404040;
+  }
+  mjx-help > svg > circle:nth-child(2) {
+    fill: rgba(132, 132, 255, .3);
+  }
+  mjx-help:hover > svg > circle:nth-child(2) {
+    stroke: #AAAAAA;
+      fill: #404040;
+  }
+}
+
+mjx-math {
+  display: inline-block;
+  text-align: left;
+  line-height: 0;
+  text-indent: 0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 100%;
+  font-size-adjust: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  word-spacing: normal;
+  direction: ltr;
+  padding: 1px 0;
+}
+
+mjx-container[jax="CHTML"][display="true"] mjx-math {
+  padding: 0;
+}
+
+mjx-math[breakable] {
+  display: inline;
+}
+
+mjx-container[jax="CHTML"] mjx-break {
+  white-space: normal;
+  line-height: 0;
+  clip-path: rect(0 0 0 0);
+  font-family: MJX-BRK !important;
+}
+
+mjx-break[size="0"] {
+  letter-spacing: -0.999em;
+}
+
+mjx-break[size="1"] {
+  letter-spacing: -0.889em;
+}
+
+mjx-break[size="2"] {
+  letter-spacing: -0.833em;
+}
+
+mjx-break[size="3"] {
+  letter-spacing: -0.778em;
+}
+
+mjx-break[size="4"] {
+  letter-spacing: -0.722em;
+}
+
+mjx-break[size="5"] {
+  letter-spacing: -0.667em;
+}
+
+mjx-mo {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-stretchy-h > mjx-beg, mjx-stretchy-h > mjx-ext, mjx-stretchy-h > mjx-end, mjx-stretchy-h > mjx-mid {
+  display: inline-block;
+  width: 0;
+  text-align: right;
+}
+
+mjx-stretchy-h > mjx-ext {
+  clip-path: padding-box polygon(0 -1em, 100% -1em, 100% calc(100% + 1em), 0 calc(100% + 1em));
+  width: 100%;
+  border: 0px solid transparent;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+mjx-stretchy-v > mjx-beg, mjx-stretchy-v > mjx-ext, mjx-stretchy-v > mjx-end, mjx-stretchy-v > mjx-mid {
+  display: block;
+  height: 0;
+  margin: 0 auto;
+}
+
+mjx-stretchy-v > mjx-ext > mjx-spacer {
+  display: block;
+}
+
+mjx-stretchy-v > mjx-ext {
+  clip-path: padding-box polygon(-1em 0, calc(100% + 1em) 0, calc(100% + 1em) 100%, -1em 100%);
+  height: 100%;
+  border: 0.1px solid transparent;
+  box-sizing: border-box;
+  white-space: pre;
+}
+
+mjx-mark {
+  display: inline-block;
+  height: 0;
+}
+
+mjx-c {
+  display: inline-block;
+  width: 0;
+  text-align: right;
+}
+
+mjx-utext {
+  display: inline-block;
+  padding: .75em 0 .2em 0;
+}
+
+mjx-mrow {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-linestack, mjx-mrow[break-top] {
+  display: inline-table;
+  width: 100%;
+}
+
+mjx-linestack[break-align="bottom"], mjx-mrow[break-top][break-align="bottom"] {
+  display: inline-block;
+}
+
+mjx-linestack[break-align="middle"], mjx-mrow[break-top][break-align="middle"] {
+  vertical-align: middle;
+}
+
+mjx-linestack[break-align="center"], mjx-mrow[break-top][break-align="center"] {
+  vertical-align: middle;
+}
+
+mjx-linestack[breakable] {
+  display: inline;
+}
+
+mjx-linestack[breakable] > mjx-linebox {
+  display: inline;
+}
+
+mjx-linestack[breakable] > mjx-linebox::before {
+  white-space: pre;
+  content: "\A";
+}
+
+mjx-linestack[breakable] > mjx-linebox::after {
+  white-space: normal;
+  content: " ";
+  letter-spacing: -.999em;
+  font-family: MJX-BRK;
+}
+
+mjx-linestack[breakable] > mjx-linebox:first-of-type::before {
+  display: none;
+}
+
+mjx-linestack[breakable] > mjx-linebox:last-of-type::after {
+  display: none;
+}
+
+mjx-linebox {
+  display: block;
+}
+
+mjx-linebox[align="left"] {
+  text-align: left;
+}
+
+mjx-linebox[align="center"] {
+  text-align: center;
+}
+
+mjx-linebox[align="right"] {
+  text-align: right;
+}
+
+mjx-linestrut {
+  display: inline-block;
+  height: 1em;
+  vertical-align: -.25em;
+}
+
+mjx-msub {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-msubsup {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-script {
+  display: inline-block;
+  padding-right: .05em;
+  padding-left: .033em;
+}
+
+mjx-script > mjx-spacer {
+  display: block;
+}
+
+mjx-mi {
+  display: inline-block;
+  text-align: left;
+}
+
+mjx-container[jax="CHTML"] > mjx-math.NCM-N[breakable] > * {
+  font-family: MJX-NCM-ZERO, MJX-NCM-N;
+}
+
+.NCM-N {
+  font-family: MJX-NCM-ZERO, MJX-NCM-N;
+}
+
+.NCM-B {
+  font-family: MJX-NCM-ZERO, MJX-NCM-B;
+}
+
+.NCM-I {
+  font-family: MJX-NCM-ZERO, MJX-NCM-I;
+}
+
+.NCM-BI {
+  font-family: MJX-NCM-ZERO, MJX-NCM-BI;
+}
+
+.NCM-DS {
+  font-family: MJX-NCM-ZERO, MJX-NCM-DS;
+}
+
+.NCM-F {
+  font-family: MJX-NCM-ZERO, MJX-NCM-F;
+}
+
+.NCM-FB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-FB;
+}
+
+.NCM-SS {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SS;
+}
+
+.NCM-SSB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SSB;
+}
+
+.NCM-SSI {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SSI;
+}
+
+.NCM-SSBI {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SSBI;
+}
+
+.NCM-M {
+  font-family: MJX-NCM-ZERO, MJX-NCM-M;
+}
+
+.NCM-SO {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SO;
+}
+
+.NCM-LO {
+  font-family: MJX-NCM-ZERO, MJX-NCM-LO;
+}
+
+.NCM-S3 {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S3;
+}
+
+.NCM-S4 {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S4;
+}
+
+.NCM-S5 {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S5;
+}
+
+.NCM-S6 {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S6;
+}
+
+.NCM-S7 {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S7;
+}
+
+.NCM-MI {
+  font-family: MJX-NCM-ZERO, MJX-NCM-MI;
+}
+
+.NCM-C {
+  font-family: MJX-NCM-ZERO, MJX-NCM-C;
+}
+
+.NCM-CB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-CB;
+}
+
+.NCM-OS {
+  font-family: MJX-NCM-ZERO, MJX-NCM-OS;
+}
+
+.NCM-OB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-OB;
+}
+
+.NCM-V {
+  font-family: MJX-NCM-ZERO, MJX-NCM-V;
+}
+
+.NCM-LT {
+  font-family: MJX-NCM-ZERO, MJX-NCM-LT;
+}
+
+.NCM-RB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-RB;
+}
+
+.NCM-EM {
+  font-family: MJX-NCM-ZERO, MJX-NCM-EM;
+}
+
+.NCM-B-a {
+  font-family: MJX-NCM-ZERO, MJX-NCM-B-a;
+}
+
+.NCM-U {
+  font-family: MJX-NCM-ZERO, MJX-NCM-U;
+}
+
+.NCM-U-a {
+  font-family: MJX-NCM-ZERO, MJX-NCM-U-a;
+}
+
+.NCM-S {
+  font-family: MJX-NCM-ZERO, MJX-NCM-S;
+}
+
+.NCM-SB {
+  font-family: MJX-NCM-ZERO, MJX-NCM-SB;
+}
+
+@font-face /* MJX-NCM-ZERO */ {
+  font-family: MJX-NCM-ZERO;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-zero.woff2") format("woff2");
+}
+
+@font-face /* MJX-BRK */ {
+  font-family: MJX-BRK;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-brk.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-N */ {
+  font-family: MJX-NCM-N;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-n.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-B */ {
+  font-family: MJX-NCM-B;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-b.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-I */ {
+  font-family: MJX-NCM-I;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-i.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-BI */ {
+  font-family: MJX-NCM-BI;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-bi.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-DS */ {
+  font-family: MJX-NCM-DS;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-ds.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-F */ {
+  font-family: MJX-NCM-F;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-f.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-FB */ {
+  font-family: MJX-NCM-FB;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-fb.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SS */ {
+  font-family: MJX-NCM-SS;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-ss.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SSB */ {
+  font-family: MJX-NCM-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-ssb.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SSI */ {
+  font-family: MJX-NCM-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-ssi.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SSBI */ {
+  font-family: MJX-NCM-SSBI;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-ssbi.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-M */ {
+  font-family: MJX-NCM-M;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-m.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SO */ {
+  font-family: MJX-NCM-SO;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-so.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-LO */ {
+  font-family: MJX-NCM-LO;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-lo.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S3 */ {
+  font-family: MJX-NCM-S3;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-s3.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S4 */ {
+  font-family: MJX-NCM-S4;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-s4.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S5 */ {
+  font-family: MJX-NCM-S5;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-s5.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S6 */ {
+  font-family: MJX-NCM-S6;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-s6.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S7 */ {
+  font-family: MJX-NCM-S7;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-s7.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-MI */ {
+  font-family: MJX-NCM-MI;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-mi.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-C */ {
+  font-family: MJX-NCM-C;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-c.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-CB */ {
+  font-family: MJX-NCM-CB;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-cb.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-OS */ {
+  font-family: MJX-NCM-OS;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-os.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-OB */ {
+  font-family: MJX-NCM-OB;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-ob.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-V */ {
+  font-family: MJX-NCM-V;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-v.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-LT */ {
+  font-family: MJX-NCM-LT;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-lt.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-RB */ {
+  font-family: MJX-NCM-RB;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-rb.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-EM */ {
+  font-family: MJX-NCM-EM;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-em.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-B-a */ {
+  font-family: MJX-NCM-B-a;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-b-a.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-U */ {
+  font-family: MJX-NCM-U;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-u.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-U-a */ {
+  font-family: MJX-NCM-U-a;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-u-a.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-S */ {
+  font-family: MJX-NCM-S;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-s.woff2") format("woff2");
+}
+
+@font-face /* MJX-NCM-SB */ {
+  font-family: MJX-NCM-SB;
+  src: url("https://cdn.jsdelivr.net/npm/@mathjax/mathjax-newcm-font@4.1.3/chtml/woff2/mjx-ncm-sb.woff2") format("woff2");
+}
+
+mjx-c.mjx-c7B {
+  padding: 0.75em 0.5em 0.25em 0;
+}
+
+mjx-c.mjx-c210E {
+  padding: 0.694em 0.576em 0.011em 0;
+}
+
+mjx-c.mjx-c2B {
+  padding: 0.583em 0.778em 0.083em 0;
+}
+
+mjx-c.mjx-c2C {
+  padding: 0.106em 0.278em 0.193em 0;
+}
+
+mjx-c.mjx-cD7 {
+  padding: 0.491em 0.778em 0 0;
+}
+
+mjx-c.mjx-c7D {
+  padding: 0.75em 0.5em 0.25em 0;
+}
+
+mjx-c.mjx-c1D70B {
+  padding: 0.431em 0.57em 0.011em 0;
+}
+</style></head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="waveform">
+<h1>Waveform<a class="headerlink" href="#waveform" title="Link to this heading">¶</a></h1>
+<p>The Wolfram Language code has support for the following waveform models:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code>: non-precessing, aligned-spin, inspiral-merger-ringdown
+waveform model for binary black holes (BBH), see <a class="reference external" href="https://arxiv.org/abs/1508.07250">1508.07250</a> and <a class="reference external" href="https://arxiv.org/abs/1508.07253">1508.07253</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IMRPhenomHM</span></code>: non-precessing, aligned-spin, inspiral-merger-ringdown
+waveform model for BBH with higher modes, see <a class="reference external" href="https://arxiv.org/abs/1708.00404">1708.00404</a>.</p></li>
+</ul>
+<p>These waveform models are implemented as functions that return the plus and
+cross polarizations of the GW signal, given a set of parameters.</p>
+<section id="hphcimrphenomd">
+<h2><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomD</span></code><a class="headerlink" href="#hphcimrphenomd" title="Link to this heading">¶</a></h2>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">hphcIMRPhenomD</span><span class="p">[</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">Mc</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">s1z</span><span class="p">,</span><span class="w"> </span><span class="n">s2z</span><span class="p">,</span><span class="w"> </span><span class="n">iota</span><span class="p">,</span><span class="w"> </span><span class="n">tc</span><span class="p">,</span><span class="w"> </span><span class="n">phiRef</span><span class="p">,</span><span class="w"> </span><span class="n">invdL</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Calculates the polarizations <span class="math notranslate nohighlight"><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" overflow="overflow" style="font-size: 108.9%;" tabindex="0" ctxtmenu_counter="0" data-semantic-locale="en" data-semantic-domain="clearspeak" data-semantic-style="default" data-semantic-domain2style="mathspeak:default,clearspeak:default" data-semantic-collapsible="collapsible" data-semantic-expandable="expandable" data-semantic-level="Level" data-semantic-speech-none="the set h sub plus comma h sub times" data-semantic-speech="&lt;mark name=&quot;10&quot;/&gt; the set &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-speech-attached="true" data-semantic-braille="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" data-braille-attached="true" has-speech="true"><mjx-math data-latex="\{h_+, h_\times\}" data-semantic-type="fenced" data-semantic-role="set collection" data-semantic-annotation="fences:curly;depth:1" data-semantic-id="10" data-semantic-children="9" data-semantic-content="0,8" data-semantic-attributes="latex:\{h_+, h_\times\}" data-semantic-owns="0 9 8" data-semantic-level-number="0" data-semantic-structure="(10 0 (9 (3 1 2) 4 (7 5 6)) 8)" class="NCM-N" data-speech-node="true" data-semantic-speech-none="the set h sub plus comma h sub times" data-semantic-summary-none="the set comma separated list of length 2" data-semantic-speech="&lt;mark name=&quot;10&quot;/&gt; the set &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;10&quot;/&gt; the set &lt;mark name=&quot;4&quot;/&gt; comma &lt;mark name=&quot;9&quot;/&gt; separated list of length 2" data-semantic-braille="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" aria-hidden="true"><mjx-mo data-latex="\{" data-semantic-type="fence" data-semantic-role="open" data-semantic-annotation="depth:2" data-semantic-id="0" data-semantic-parent="10" data-semantic-attributes="latex:\{" data-semantic-operator="fenced" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="open brace" data-semantic-summary-none="open brace" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; open brace" data-semantic-summary="&lt;mark name=&quot;0&quot;/&gt; open brace" data-semantic-braille="⠨⠷"><mjx-c class="mjx-c7B">{</mjx-c></mjx-mo><mjx-mrow data-semantic-added="true" data-semantic-type="punctuated" data-semantic-role="sequence" data-semantic-annotation="depth:2" data-semantic-id="9" data-semantic-children="3,4,7" data-semantic-content="4" data-semantic-parent="10" data-semantic-owns="3 4 7" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="h sub plus comma h sub times" data-semantic-summary-none="comma separated list of length 2" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;4&quot;/&gt; comma &lt;mark name=&quot;9&quot;/&gt; separated list of length 2" data-semantic-braille="⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐"><mjx-msub data-latex="h_+" data-semantic-type="subscript" data-semantic-role="simple function" data-semantic-annotation="depth:3" data-semantic-id="3" data-semantic-children="1,2" data-semantic-parent="9" data-semantic-attributes="latex:h_+" data-semantic-owns="1 2" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="h sub plus" data-semantic-summary-none="subscript" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus" data-semantic-summary="&lt;mark name=&quot;3&quot;/&gt; subscript" data-semantic-braille="⠓⠰⠬"><mjx-mi data-latex="h" data-semantic-type="identifier" data-semantic-role="simple function" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;depth:4" data-semantic-id="1" data-semantic-parent="3" data-semantic-attributes="latex:h" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="h" data-semantic-prefix-none="Base" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt;" data-semantic-prefix="&lt;mark name=&quot;1&quot;/&gt; Base" data-semantic-summary="&lt;mark name=&quot;1&quot;/&gt; identifier" data-semantic-braille="⠓"><mjx-c class="mjx-c210E">ℎ</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mo size="s" data-latex="+" data-semantic-type="operator" data-semantic-role="addition" data-semantic-annotation="depth:4" data-semantic-id="2" data-semantic-parent="3" data-semantic-attributes="latex:+" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="plus" data-semantic-prefix-none="Subscript" data-semantic-summary-none="plus" data-semantic-speech="&lt;mark name=&quot;2&quot;/&gt; plus" data-semantic-prefix="&lt;mark name=&quot;2&quot;/&gt; Subscript" data-semantic-summary="&lt;mark name=&quot;2&quot;/&gt; plus" data-semantic-braille="⠬"><mjx-c class="mjx-c2B">+</mjx-c></mjx-mo></mjx-script></mjx-msub><mjx-mo data-latex="," data-semantic-type="punctuation" data-semantic-role="comma" data-semantic-annotation="depth:3" data-semantic-id="4" data-semantic-parent="9" data-semantic-attributes="latex:," data-semantic-operator="punctuated" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="comma" data-semantic-summary-none="comma" data-semantic-speech="&lt;mark name=&quot;4&quot;/&gt; comma" data-semantic-summary="&lt;mark name=&quot;4&quot;/&gt; comma" data-semantic-braille="⠠⠀"><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo><mjx-msub space="2" data-latex="h_\times" data-semantic-type="subscript" data-semantic-role="simple function" data-semantic-annotation="depth:3" data-semantic-id="7" data-semantic-children="5,6" data-semantic-parent="9" data-semantic-attributes="latex:h_\times" data-semantic-owns="5 6" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="h sub times" data-semantic-summary-none="subscript" data-semantic-speech="&lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;7&quot;/&gt; subscript" data-semantic-braille="⠓⠰⠈⠡⠐"><mjx-mi data-latex="h" data-semantic-type="identifier" data-semantic-role="simple function" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;depth:4" data-semantic-id="5" data-semantic-parent="7" data-semantic-attributes="latex:h" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="h" data-semantic-prefix-none="Base" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt;" data-semantic-prefix="&lt;mark name=&quot;5&quot;/&gt; Base" data-semantic-summary="&lt;mark name=&quot;5&quot;/&gt; identifier" data-semantic-braille="⠓"><mjx-c class="mjx-c210E">ℎ</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mo size="s" data-latex="\times" data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-annotation="depth:4" data-semantic-id="6" data-semantic-parent="7" data-semantic-attributes="latex:\times" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="times" data-semantic-prefix-none="Subscript" data-semantic-summary-none="times" data-semantic-speech="&lt;mark name=&quot;6&quot;/&gt; times" data-semantic-prefix="&lt;mark name=&quot;6&quot;/&gt; Subscript" data-semantic-summary="&lt;mark name=&quot;6&quot;/&gt; times" data-semantic-braille="⠈⠡"><mjx-c class="mjx-cD7">×</mjx-c></mjx-mo></mjx-script></mjx-msub></mjx-mrow><mjx-mo data-latex="\}" data-semantic-type="fence" data-semantic-role="close" data-semantic-annotation="depth:2" data-semantic-id="8" data-semantic-parent="10" data-semantic-attributes="latex:\}" data-semantic-operator="fenced" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="close brace" data-semantic-summary-none="close brace" data-semantic-speech="&lt;mark name=&quot;8&quot;/&gt; close brace" data-semantic-summary="&lt;mark name=&quot;8&quot;/&gt; close brace" data-semantic-braille="⠨⠾"><mjx-c class="mjx-c7D">}</mjx-c></mjx-mo></mjx-math><mjx-speech aria-label="the set h sub plus comma h sub times, math" role="img" aria-roledescription="" aria-braillelabel="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" aria-brailleroledescription="⠀"></mjx-speech></mjx-container></span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code> approximant.</p>
+<p><strong>Parameters</strong>:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">f</span></code>: Frequency vector, where <code class="docutils literal notranslate"><span class="pre">f[[i]]</span></code> is in [Hz].</p>
+<p><code class="docutils literal notranslate"><span class="pre">Mc</span></code>: Chirp mass [solar mass].</p>
+<p><code class="docutils literal notranslate"><span class="pre">q</span></code>: Mass ratio in (0,1].</p>
+<p><code class="docutils literal notranslate"><span class="pre">s1z</span></code>: Aligned spin, in (-1,1).</p>
+<p><code class="docutils literal notranslate"><span class="pre">s2z</span></code>: Aligned spin, in (-1,1).</p>
+<p><code class="docutils literal notranslate"><span class="pre">iota</span></code>: Inclination angle, in [0, <span class="math notranslate nohighlight"><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" overflow="overflow" style="font-size: 108.9%;" tabindex="0" ctxtmenu_counter="1" data-semantic-locale="en" data-semantic-domain="clearspeak" data-semantic-style="default" data-semantic-domain2style="mathspeak:default,clearspeak:default" data-semantic-collapsible="collapsible" data-semantic-expandable="expandable" data-semantic-level="Level" data-semantic-speech-none="pi" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; pi" data-speech-attached="true" data-semantic-braille="⠨⠏" data-braille-attached="true" has-speech="true"><mjx-math data-latex="\pi" data-semantic-structure="0" class="NCM-N" aria-hidden="true"><mjx-mi data-latex="\pi" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;nemeth:number;depth:1" data-semantic-id="0" data-semantic-attributes="latex:\pi" data-semantic-level-number="0" data-speech-node="true" data-semantic-speech-none="pi" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; pi" data-semantic-summary="&lt;mark name=&quot;0&quot;/&gt; identifier" data-semantic-braille="⠨⠏"><mjx-c class="mjx-c1D70B">𝜋</mjx-c></mjx-mi></mjx-math><mjx-speech aria-label="pi, math" role="img" aria-roledescription="" aria-braillelabel="⠨⠏" aria-brailleroledescription="⠀"></mjx-speech></mjx-container></span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">tc</span></code>: Coalescence time [s].</p>
+<p><code class="docutils literal notranslate"><span class="pre">phiRef</span></code>: Reference phase, in [0, 2 <span class="math notranslate nohighlight"><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" overflow="overflow" style="font-size: 108.9%;" tabindex="0" ctxtmenu_counter="2" data-semantic-locale="en" data-semantic-domain="clearspeak" data-semantic-style="default" data-semantic-domain2style="mathspeak:default,clearspeak:default" data-semantic-collapsible="collapsible" data-semantic-expandable="expandable" data-semantic-level="Level" data-semantic-speech-none="pi" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; pi" data-speech-attached="true" data-semantic-braille="⠨⠏" data-braille-attached="true" has-speech="true"><mjx-math data-latex="\pi" data-semantic-structure="0" class="NCM-N" aria-hidden="true"><mjx-mi data-latex="\pi" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;nemeth:number;depth:1" data-semantic-id="0" data-semantic-attributes="latex:\pi" data-semantic-level-number="0" data-speech-node="true" data-semantic-speech-none="pi" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; pi" data-semantic-summary="&lt;mark name=&quot;0&quot;/&gt; identifier" data-semantic-braille="⠨⠏"><mjx-c class="mjx-c1D70B">𝜋</mjx-c></mjx-mi></mjx-math><mjx-speech aria-label="pi, math" role="img" aria-roledescription="" aria-braillelabel="⠨⠏" aria-brailleroledescription="⠀"></mjx-speech></mjx-container></span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">invdL</span></code>: Inverse luminosity distance [1/Gpc].</p>
+</div></blockquote>
+<dl class="simple">
+<dt><strong>Returns</strong>:</dt><dd><p>The polarizations <span class="math notranslate nohighlight"><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" overflow="overflow" style="font-size: 108.9%;" tabindex="0" ctxtmenu_counter="3" data-semantic-locale="en" data-semantic-domain="clearspeak" data-semantic-style="default" data-semantic-domain2style="mathspeak:default,clearspeak:default" data-semantic-collapsible="collapsible" data-semantic-expandable="expandable" data-semantic-level="Level" data-semantic-speech-none="the set h sub plus comma h sub times" data-semantic-speech="&lt;mark name=&quot;10&quot;/&gt; the set &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-speech-attached="true" data-semantic-braille="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" data-braille-attached="true" has-speech="true"><mjx-math data-latex="\{h_+, h_\times\}" data-semantic-type="fenced" data-semantic-role="set collection" data-semantic-annotation="fences:curly;depth:1" data-semantic-id="10" data-semantic-children="9" data-semantic-content="0,8" data-semantic-attributes="latex:\{h_+, h_\times\}" data-semantic-owns="0 9 8" data-semantic-level-number="0" data-semantic-structure="(10 0 (9 (3 1 2) 4 (7 5 6)) 8)" class="NCM-N" data-speech-node="true" data-semantic-speech-none="the set h sub plus comma h sub times" data-semantic-summary-none="the set comma separated list of length 2" data-semantic-speech="&lt;mark name=&quot;10&quot;/&gt; the set &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;10&quot;/&gt; the set &lt;mark name=&quot;4&quot;/&gt; comma &lt;mark name=&quot;9&quot;/&gt; separated list of length 2" data-semantic-braille="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" aria-hidden="true"><mjx-mo data-latex="\{" data-semantic-type="fence" data-semantic-role="open" data-semantic-annotation="depth:2" data-semantic-id="0" data-semantic-parent="10" data-semantic-attributes="latex:\{" data-semantic-operator="fenced" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="open brace" data-semantic-summary-none="open brace" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; open brace" data-semantic-summary="&lt;mark name=&quot;0&quot;/&gt; open brace" data-semantic-braille="⠨⠷"><mjx-c class="mjx-c7B">{</mjx-c></mjx-mo><mjx-mrow data-semantic-added="true" data-semantic-type="punctuated" data-semantic-role="sequence" data-semantic-annotation="depth:2" data-semantic-id="9" data-semantic-children="3,4,7" data-semantic-content="4" data-semantic-parent="10" data-semantic-owns="3 4 7" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="h sub plus comma h sub times" data-semantic-summary-none="comma separated list of length 2" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;4&quot;/&gt; comma &lt;mark name=&quot;9&quot;/&gt; separated list of length 2" data-semantic-braille="⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐"><mjx-msub data-latex="h_+" data-semantic-type="subscript" data-semantic-role="simple function" data-semantic-annotation="depth:3" data-semantic-id="3" data-semantic-children="1,2" data-semantic-parent="9" data-semantic-attributes="latex:h_+" data-semantic-owns="1 2" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="h sub plus" data-semantic-summary-none="subscript" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus" data-semantic-summary="&lt;mark name=&quot;3&quot;/&gt; subscript" data-semantic-braille="⠓⠰⠬"><mjx-mi data-latex="h" data-semantic-type="identifier" data-semantic-role="simple function" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;depth:4" data-semantic-id="1" data-semantic-parent="3" data-semantic-attributes="latex:h" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="h" data-semantic-prefix-none="Base" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt;" data-semantic-prefix="&lt;mark name=&quot;1&quot;/&gt; Base" data-semantic-summary="&lt;mark name=&quot;1&quot;/&gt; identifier" data-semantic-braille="⠓"><mjx-c class="mjx-c210E">ℎ</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mo size="s" data-latex="+" data-semantic-type="operator" data-semantic-role="addition" data-semantic-annotation="depth:4" data-semantic-id="2" data-semantic-parent="3" data-semantic-attributes="latex:+" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="plus" data-semantic-prefix-none="Subscript" data-semantic-summary-none="plus" data-semantic-speech="&lt;mark name=&quot;2&quot;/&gt; plus" data-semantic-prefix="&lt;mark name=&quot;2&quot;/&gt; Subscript" data-semantic-summary="&lt;mark name=&quot;2&quot;/&gt; plus" data-semantic-braille="⠬"><mjx-c class="mjx-c2B">+</mjx-c></mjx-mo></mjx-script></mjx-msub><mjx-mo data-latex="," data-semantic-type="punctuation" data-semantic-role="comma" data-semantic-annotation="depth:3" data-semantic-id="4" data-semantic-parent="9" data-semantic-attributes="latex:," data-semantic-operator="punctuated" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="comma" data-semantic-summary-none="comma" data-semantic-speech="&lt;mark name=&quot;4&quot;/&gt; comma" data-semantic-summary="&lt;mark name=&quot;4&quot;/&gt; comma" data-semantic-braille="⠠⠀"><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo><mjx-msub space="2" data-latex="h_\times" data-semantic-type="subscript" data-semantic-role="simple function" data-semantic-annotation="depth:3" data-semantic-id="7" data-semantic-children="5,6" data-semantic-parent="9" data-semantic-attributes="latex:h_\times" data-semantic-owns="5 6" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="h sub times" data-semantic-summary-none="subscript" data-semantic-speech="&lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;7&quot;/&gt; subscript" data-semantic-braille="⠓⠰⠈⠡⠐"><mjx-mi data-latex="h" data-semantic-type="identifier" data-semantic-role="simple function" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;depth:4" data-semantic-id="5" data-semantic-parent="7" data-semantic-attributes="latex:h" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="h" data-semantic-prefix-none="Base" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt;" data-semantic-prefix="&lt;mark name=&quot;5&quot;/&gt; Base" data-semantic-summary="&lt;mark name=&quot;5&quot;/&gt; identifier" data-semantic-braille="⠓"><mjx-c class="mjx-c210E">ℎ</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mo size="s" data-latex="\times" data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-annotation="depth:4" data-semantic-id="6" data-semantic-parent="7" data-semantic-attributes="latex:\times" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="times" data-semantic-prefix-none="Subscript" data-semantic-summary-none="times" data-semantic-speech="&lt;mark name=&quot;6&quot;/&gt; times" data-semantic-prefix="&lt;mark name=&quot;6&quot;/&gt; Subscript" data-semantic-summary="&lt;mark name=&quot;6&quot;/&gt; times" data-semantic-braille="⠈⠡"><mjx-c class="mjx-cD7">×</mjx-c></mjx-mo></mjx-script></mjx-msub></mjx-mrow><mjx-mo data-latex="\}" data-semantic-type="fence" data-semantic-role="close" data-semantic-annotation="depth:2" data-semantic-id="8" data-semantic-parent="10" data-semantic-attributes="latex:\}" data-semantic-operator="fenced" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="close brace" data-semantic-summary-none="close brace" data-semantic-speech="&lt;mark name=&quot;8&quot;/&gt; close brace" data-semantic-summary="&lt;mark name=&quot;8&quot;/&gt; close brace" data-semantic-braille="⠨⠾"><mjx-c class="mjx-c7D">}</mjx-c></mjx-mo></mjx-math><mjx-speech aria-label="the set h sub plus comma h sub times, math" role="img" aria-roledescription="" aria-braillelabel="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" aria-brailleroledescription="⠀"></mjx-speech></mjx-container></span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code> approximant.
+The output has dimensions <code class="docutils literal notranslate"><span class="pre">{2,</span> <span class="pre">N}</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">Length[f]</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="hphcimrphenomhm">
+<h2><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomHM</span></code><a class="headerlink" href="#hphcimrphenomhm" title="Link to this heading">¶</a></h2>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">hphcIMRPhenomHM</span><span class="p">[</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">Mc</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">s1z</span><span class="p">,</span><span class="w"> </span><span class="n">s2z</span><span class="p">,</span><span class="w"> </span><span class="n">iota</span><span class="p">,</span><span class="w"> </span><span class="n">tc</span><span class="p">,</span><span class="w"> </span><span class="n">phiRef</span><span class="p">,</span><span class="w"> </span><span class="n">invdL</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Calculates the polarizations <span class="math notranslate nohighlight"><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" overflow="overflow" style="font-size: 108.9%;" tabindex="0" ctxtmenu_counter="4" data-semantic-locale="en" data-semantic-domain="clearspeak" data-semantic-style="default" data-semantic-domain2style="mathspeak:default,clearspeak:default" data-semantic-collapsible="collapsible" data-semantic-expandable="expandable" data-semantic-level="Level" data-semantic-speech-none="the set h sub plus comma h sub times" data-semantic-speech="&lt;mark name=&quot;10&quot;/&gt; the set &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-speech-attached="true" data-semantic-braille="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" data-braille-attached="true" has-speech="true"><mjx-math data-latex="\{h_+, h_\times\}" data-semantic-type="fenced" data-semantic-role="set collection" data-semantic-annotation="fences:curly;depth:1" data-semantic-id="10" data-semantic-children="9" data-semantic-content="0,8" data-semantic-attributes="latex:\{h_+, h_\times\}" data-semantic-owns="0 9 8" data-semantic-level-number="0" data-semantic-structure="(10 0 (9 (3 1 2) 4 (7 5 6)) 8)" class="NCM-N" data-speech-node="true" data-semantic-speech-none="the set h sub plus comma h sub times" data-semantic-summary-none="the set comma separated list of length 2" data-semantic-speech="&lt;mark name=&quot;10&quot;/&gt; the set &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;10&quot;/&gt; the set &lt;mark name=&quot;4&quot;/&gt; comma &lt;mark name=&quot;9&quot;/&gt; separated list of length 2" data-semantic-braille="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" aria-hidden="true"><mjx-mo data-latex="\{" data-semantic-type="fence" data-semantic-role="open" data-semantic-annotation="depth:2" data-semantic-id="0" data-semantic-parent="10" data-semantic-attributes="latex:\{" data-semantic-operator="fenced" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="open brace" data-semantic-summary-none="open brace" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; open brace" data-semantic-summary="&lt;mark name=&quot;0&quot;/&gt; open brace" data-semantic-braille="⠨⠷"><mjx-c class="mjx-c7B">{</mjx-c></mjx-mo><mjx-mrow data-semantic-added="true" data-semantic-type="punctuated" data-semantic-role="sequence" data-semantic-annotation="depth:2" data-semantic-id="9" data-semantic-children="3,4,7" data-semantic-content="4" data-semantic-parent="10" data-semantic-owns="3 4 7" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="h sub plus comma h sub times" data-semantic-summary-none="comma separated list of length 2" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;4&quot;/&gt; comma &lt;mark name=&quot;9&quot;/&gt; separated list of length 2" data-semantic-braille="⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐"><mjx-msub data-latex="h_+" data-semantic-type="subscript" data-semantic-role="simple function" data-semantic-annotation="depth:3" data-semantic-id="3" data-semantic-children="1,2" data-semantic-parent="9" data-semantic-attributes="latex:h_+" data-semantic-owns="1 2" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="h sub plus" data-semantic-summary-none="subscript" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus" data-semantic-summary="&lt;mark name=&quot;3&quot;/&gt; subscript" data-semantic-braille="⠓⠰⠬"><mjx-mi data-latex="h" data-semantic-type="identifier" data-semantic-role="simple function" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;depth:4" data-semantic-id="1" data-semantic-parent="3" data-semantic-attributes="latex:h" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="h" data-semantic-prefix-none="Base" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt;" data-semantic-prefix="&lt;mark name=&quot;1&quot;/&gt; Base" data-semantic-summary="&lt;mark name=&quot;1&quot;/&gt; identifier" data-semantic-braille="⠓"><mjx-c class="mjx-c210E">ℎ</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mo size="s" data-latex="+" data-semantic-type="operator" data-semantic-role="addition" data-semantic-annotation="depth:4" data-semantic-id="2" data-semantic-parent="3" data-semantic-attributes="latex:+" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="plus" data-semantic-prefix-none="Subscript" data-semantic-summary-none="plus" data-semantic-speech="&lt;mark name=&quot;2&quot;/&gt; plus" data-semantic-prefix="&lt;mark name=&quot;2&quot;/&gt; Subscript" data-semantic-summary="&lt;mark name=&quot;2&quot;/&gt; plus" data-semantic-braille="⠬"><mjx-c class="mjx-c2B">+</mjx-c></mjx-mo></mjx-script></mjx-msub><mjx-mo data-latex="," data-semantic-type="punctuation" data-semantic-role="comma" data-semantic-annotation="depth:3" data-semantic-id="4" data-semantic-parent="9" data-semantic-attributes="latex:," data-semantic-operator="punctuated" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="comma" data-semantic-summary-none="comma" data-semantic-speech="&lt;mark name=&quot;4&quot;/&gt; comma" data-semantic-summary="&lt;mark name=&quot;4&quot;/&gt; comma" data-semantic-braille="⠠⠀"><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo><mjx-msub space="2" data-latex="h_\times" data-semantic-type="subscript" data-semantic-role="simple function" data-semantic-annotation="depth:3" data-semantic-id="7" data-semantic-children="5,6" data-semantic-parent="9" data-semantic-attributes="latex:h_\times" data-semantic-owns="5 6" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="h sub times" data-semantic-summary-none="subscript" data-semantic-speech="&lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;7&quot;/&gt; subscript" data-semantic-braille="⠓⠰⠈⠡⠐"><mjx-mi data-latex="h" data-semantic-type="identifier" data-semantic-role="simple function" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;depth:4" data-semantic-id="5" data-semantic-parent="7" data-semantic-attributes="latex:h" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="h" data-semantic-prefix-none="Base" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt;" data-semantic-prefix="&lt;mark name=&quot;5&quot;/&gt; Base" data-semantic-summary="&lt;mark name=&quot;5&quot;/&gt; identifier" data-semantic-braille="⠓"><mjx-c class="mjx-c210E">ℎ</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mo size="s" data-latex="\times" data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-annotation="depth:4" data-semantic-id="6" data-semantic-parent="7" data-semantic-attributes="latex:\times" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="times" data-semantic-prefix-none="Subscript" data-semantic-summary-none="times" data-semantic-speech="&lt;mark name=&quot;6&quot;/&gt; times" data-semantic-prefix="&lt;mark name=&quot;6&quot;/&gt; Subscript" data-semantic-summary="&lt;mark name=&quot;6&quot;/&gt; times" data-semantic-braille="⠈⠡"><mjx-c class="mjx-cD7">×</mjx-c></mjx-mo></mjx-script></mjx-msub></mjx-mrow><mjx-mo data-latex="\}" data-semantic-type="fence" data-semantic-role="close" data-semantic-annotation="depth:2" data-semantic-id="8" data-semantic-parent="10" data-semantic-attributes="latex:\}" data-semantic-operator="fenced" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="close brace" data-semantic-summary-none="close brace" data-semantic-speech="&lt;mark name=&quot;8&quot;/&gt; close brace" data-semantic-summary="&lt;mark name=&quot;8&quot;/&gt; close brace" data-semantic-braille="⠨⠾"><mjx-c class="mjx-c7D">}</mjx-c></mjx-mo></mjx-math><mjx-speech aria-label="the set h sub plus comma h sub times, math" role="img" aria-roledescription="" aria-braillelabel="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" aria-brailleroledescription="⠀"></mjx-speech></mjx-container></span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomHM</span></code> approximant.</p>
+<p><strong>Parameters</strong>:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">f</span></code>: Frequency vector, where <code class="docutils literal notranslate"><span class="pre">f[[i]]</span></code> is in [Hz].</p>
+<p><code class="docutils literal notranslate"><span class="pre">Mc</span></code>: Chirp mass [solar mass].</p>
+<p><code class="docutils literal notranslate"><span class="pre">q</span></code>: Mass ratio in (0,1].</p>
+<p><code class="docutils literal notranslate"><span class="pre">s1z</span></code>: Aligned spin, in (-1,1).</p>
+<p><code class="docutils literal notranslate"><span class="pre">s2z</span></code>: Aligned spin, in (-1,1).</p>
+<p><code class="docutils literal notranslate"><span class="pre">iota</span></code>: Inclination angle, in [0, <span class="math notranslate nohighlight"><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" overflow="overflow" style="font-size: 108.9%;" tabindex="0" ctxtmenu_counter="5" data-semantic-locale="en" data-semantic-domain="clearspeak" data-semantic-style="default" data-semantic-domain2style="mathspeak:default,clearspeak:default" data-semantic-collapsible="collapsible" data-semantic-expandable="expandable" data-semantic-level="Level" data-semantic-speech-none="pi" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; pi" data-speech-attached="true" data-semantic-braille="⠨⠏" data-braille-attached="true" has-speech="true"><mjx-math data-latex="\pi" data-semantic-structure="0" class="NCM-N" aria-hidden="true"><mjx-mi data-latex="\pi" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;nemeth:number;depth:1" data-semantic-id="0" data-semantic-attributes="latex:\pi" data-semantic-level-number="0" data-speech-node="true" data-semantic-speech-none="pi" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; pi" data-semantic-summary="&lt;mark name=&quot;0&quot;/&gt; identifier" data-semantic-braille="⠨⠏"><mjx-c class="mjx-c1D70B">𝜋</mjx-c></mjx-mi></mjx-math><mjx-speech aria-label="pi, math" role="img" aria-roledescription="" aria-braillelabel="⠨⠏" aria-brailleroledescription="⠀"></mjx-speech></mjx-container></span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">tc</span></code>: Coalescence time [s].</p>
+<p><code class="docutils literal notranslate"><span class="pre">phiRef</span></code>: Reference phase, in [0, 2 <span class="math notranslate nohighlight"><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" overflow="overflow" style="font-size: 108.9%;" tabindex="0" ctxtmenu_counter="6" data-semantic-locale="en" data-semantic-domain="clearspeak" data-semantic-style="default" data-semantic-domain2style="mathspeak:default,clearspeak:default" data-semantic-collapsible="collapsible" data-semantic-expandable="expandable" data-semantic-level="Level" data-semantic-speech-none="pi" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; pi" data-speech-attached="true" data-semantic-braille="⠨⠏" data-braille-attached="true" has-speech="true"><mjx-math data-latex="\pi" data-semantic-structure="0" class="NCM-N" aria-hidden="true"><mjx-mi data-latex="\pi" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;nemeth:number;depth:1" data-semantic-id="0" data-semantic-attributes="latex:\pi" data-semantic-level-number="0" data-speech-node="true" data-semantic-speech-none="pi" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; pi" data-semantic-summary="&lt;mark name=&quot;0&quot;/&gt; identifier" data-semantic-braille="⠨⠏"><mjx-c class="mjx-c1D70B">𝜋</mjx-c></mjx-mi></mjx-math><mjx-speech aria-label="pi, math" role="img" aria-roledescription="" aria-braillelabel="⠨⠏" aria-brailleroledescription="⠀"></mjx-speech></mjx-container></span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">invdL</span></code>: Inverse luminosity distance [1/Gpc].</p>
+</div></blockquote>
+<dl class="simple">
+<dt><strong>Returns</strong></dt><dd><p>The polarizations <span class="math notranslate nohighlight"><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" overflow="overflow" style="font-size: 108.9%;" tabindex="0" ctxtmenu_counter="7" data-semantic-locale="en" data-semantic-domain="clearspeak" data-semantic-style="default" data-semantic-domain2style="mathspeak:default,clearspeak:default" data-semantic-collapsible="collapsible" data-semantic-expandable="expandable" data-semantic-level="Level" data-semantic-speech-none="the set h sub plus comma h sub times" data-semantic-speech="&lt;mark name=&quot;10&quot;/&gt; the set &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-speech-attached="true" data-semantic-braille="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" data-braille-attached="true" has-speech="true"><mjx-math data-latex="\{h_+, h_\times\}" data-semantic-type="fenced" data-semantic-role="set collection" data-semantic-annotation="fences:curly;depth:1" data-semantic-id="10" data-semantic-children="9" data-semantic-content="0,8" data-semantic-attributes="latex:\{h_+, h_\times\}" data-semantic-owns="0 9 8" data-semantic-level-number="0" data-semantic-structure="(10 0 (9 (3 1 2) 4 (7 5 6)) 8)" class="NCM-N" data-speech-node="true" data-semantic-speech-none="the set h sub plus comma h sub times" data-semantic-summary-none="the set comma separated list of length 2" data-semantic-speech="&lt;mark name=&quot;10&quot;/&gt; the set &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;10&quot;/&gt; the set &lt;mark name=&quot;4&quot;/&gt; comma &lt;mark name=&quot;9&quot;/&gt; separated list of length 2" data-semantic-braille="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" aria-hidden="true"><mjx-mo data-latex="\{" data-semantic-type="fence" data-semantic-role="open" data-semantic-annotation="depth:2" data-semantic-id="0" data-semantic-parent="10" data-semantic-attributes="latex:\{" data-semantic-operator="fenced" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="open brace" data-semantic-summary-none="open brace" data-semantic-speech="&lt;mark name=&quot;0&quot;/&gt; open brace" data-semantic-summary="&lt;mark name=&quot;0&quot;/&gt; open brace" data-semantic-braille="⠨⠷"><mjx-c class="mjx-c7B">{</mjx-c></mjx-mo><mjx-mrow data-semantic-added="true" data-semantic-type="punctuated" data-semantic-role="sequence" data-semantic-annotation="depth:2" data-semantic-id="9" data-semantic-children="3,4,7" data-semantic-content="4" data-semantic-parent="10" data-semantic-owns="3 4 7" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="h sub plus comma h sub times" data-semantic-summary-none="comma separated list of length 2" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;4&quot;/&gt; comma &lt;break time=&quot;250ms&quot;/&gt; &lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;4&quot;/&gt; comma &lt;mark name=&quot;9&quot;/&gt; separated list of length 2" data-semantic-braille="⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐"><mjx-msub data-latex="h_+" data-semantic-type="subscript" data-semantic-role="simple function" data-semantic-annotation="depth:3" data-semantic-id="3" data-semantic-children="1,2" data-semantic-parent="9" data-semantic-attributes="latex:h_+" data-semantic-owns="1 2" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="h sub plus" data-semantic-summary-none="subscript" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;2&quot;/&gt; sub plus" data-semantic-summary="&lt;mark name=&quot;3&quot;/&gt; subscript" data-semantic-braille="⠓⠰⠬"><mjx-mi data-latex="h" data-semantic-type="identifier" data-semantic-role="simple function" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;depth:4" data-semantic-id="1" data-semantic-parent="3" data-semantic-attributes="latex:h" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="h" data-semantic-prefix-none="Base" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;1&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt;" data-semantic-prefix="&lt;mark name=&quot;1&quot;/&gt; Base" data-semantic-summary="&lt;mark name=&quot;1&quot;/&gt; identifier" data-semantic-braille="⠓"><mjx-c class="mjx-c210E">ℎ</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mo size="s" data-latex="+" data-semantic-type="operator" data-semantic-role="addition" data-semantic-annotation="depth:4" data-semantic-id="2" data-semantic-parent="3" data-semantic-attributes="latex:+" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="plus" data-semantic-prefix-none="Subscript" data-semantic-summary-none="plus" data-semantic-speech="&lt;mark name=&quot;2&quot;/&gt; plus" data-semantic-prefix="&lt;mark name=&quot;2&quot;/&gt; Subscript" data-semantic-summary="&lt;mark name=&quot;2&quot;/&gt; plus" data-semantic-braille="⠬"><mjx-c class="mjx-c2B">+</mjx-c></mjx-mo></mjx-script></mjx-msub><mjx-mo data-latex="," data-semantic-type="punctuation" data-semantic-role="comma" data-semantic-annotation="depth:3" data-semantic-id="4" data-semantic-parent="9" data-semantic-attributes="latex:," data-semantic-operator="punctuated" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="comma" data-semantic-summary-none="comma" data-semantic-speech="&lt;mark name=&quot;4&quot;/&gt; comma" data-semantic-summary="&lt;mark name=&quot;4&quot;/&gt; comma" data-semantic-braille="⠠⠀"><mjx-c class="mjx-c2C">,</mjx-c></mjx-mo><mjx-msub space="2" data-latex="h_\times" data-semantic-type="subscript" data-semantic-role="simple function" data-semantic-annotation="depth:3" data-semantic-id="7" data-semantic-children="5,6" data-semantic-parent="9" data-semantic-attributes="latex:h_\times" data-semantic-owns="5 6" data-semantic-level-number="2" data-speech-node="true" data-semantic-speech-none="h sub times" data-semantic-summary-none="subscript" data-semantic-speech="&lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt; &lt;mark name=&quot;6&quot;/&gt; sub times" data-semantic-summary="&lt;mark name=&quot;7&quot;/&gt; subscript" data-semantic-braille="⠓⠰⠈⠡⠐"><mjx-mi data-latex="h" data-semantic-type="identifier" data-semantic-role="simple function" data-semantic-font="italic" data-semantic-annotation="clearspeak:simple;depth:4" data-semantic-id="5" data-semantic-parent="7" data-semantic-attributes="latex:h" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="h" data-semantic-prefix-none="Base" data-semantic-summary-none="identifier" data-semantic-speech="&lt;mark name=&quot;5&quot;/&gt; &lt;say-as interpret-as=&quot;character&quot;&gt;h&lt;/say-as&gt;" data-semantic-prefix="&lt;mark name=&quot;5&quot;/&gt; Base" data-semantic-summary="&lt;mark name=&quot;5&quot;/&gt; identifier" data-semantic-braille="⠓"><mjx-c class="mjx-c210E">ℎ</mjx-c></mjx-mi><mjx-script style="vertical-align: -0.15em;"><mjx-mo size="s" data-latex="\times" data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-annotation="depth:4" data-semantic-id="6" data-semantic-parent="7" data-semantic-attributes="latex:\times" data-semantic-level-number="3" data-speech-node="true" data-semantic-speech-none="times" data-semantic-prefix-none="Subscript" data-semantic-summary-none="times" data-semantic-speech="&lt;mark name=&quot;6&quot;/&gt; times" data-semantic-prefix="&lt;mark name=&quot;6&quot;/&gt; Subscript" data-semantic-summary="&lt;mark name=&quot;6&quot;/&gt; times" data-semantic-braille="⠈⠡"><mjx-c class="mjx-cD7">×</mjx-c></mjx-mo></mjx-script></mjx-msub></mjx-mrow><mjx-mo data-latex="\}" data-semantic-type="fence" data-semantic-role="close" data-semantic-annotation="depth:2" data-semantic-id="8" data-semantic-parent="10" data-semantic-attributes="latex:\}" data-semantic-operator="fenced" data-semantic-level-number="1" data-speech-node="true" data-semantic-speech-none="close brace" data-semantic-summary-none="close brace" data-semantic-speech="&lt;mark name=&quot;8&quot;/&gt; close brace" data-semantic-summary="&lt;mark name=&quot;8&quot;/&gt; close brace" data-semantic-braille="⠨⠾"><mjx-c class="mjx-c7D">}</mjx-c></mjx-mo></mjx-math><mjx-speech aria-label="the set h sub plus comma h sub times, math" role="img" aria-roledescription="" aria-braillelabel="⠨⠷⠓⠰⠬⠠⠀⠓⠰⠈⠡⠐⠨⠾" aria-brailleroledescription="⠀"></mjx-speech></mjx-container></span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomHM</span></code> approximant.
+The output has dimensions <code class="docutils literal notranslate"><span class="pre">{2,</span> <span class="pre">N}</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">Length[f]</span></code>.</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="file:///Users/felipe/Documents/GitHub/SymDALI/docs/build/html/index.html">SymDALI</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: block;" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search">
+      <input type="submit" value="Go">
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="file:///Users/felipe/Documents/GitHub/SymDALI/docs/build/html/installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Waveform</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hphcimrphenomd"><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hphcimrphenomhm"><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomHM</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="file:///Users/felipe/Documents/GitHub/SymDALI/docs/build/html/index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="file:///Users/felipe/Documents/GitHub/SymDALI/docs/build/html/installation.html" title="previous chapter">Installation</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      ©2026, Felipe Barbosa.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io/">Alabaster 1.0.0</a>
+      
+      |
+      <a href="file:///Users/felipe/Documents/GitHub/SymDALI/docs/build/html/_sources/Waveform.rst.txt" rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  
+</body></html>
