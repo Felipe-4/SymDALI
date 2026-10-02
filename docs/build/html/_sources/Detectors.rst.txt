@@ -166,4 +166,59 @@ Pattern functions
 -----------------
 
 
-aaaaa
+The pattern functions quantify how a detector responds to the GW polarizations 
+:math:`{h_+, \, h_\times}`. They are defined as 
+
+.. math::
+
+   F_{+} =  D^{ij} \, e^{+}_{ij}, \\
+   F_{\times} = D^{ij} \, e^{\times}_{ij}.
+
+These are functions of the declination, right ascension and polarization angle. In ``SymDALI``
+we extend the definition to include the time delay between the arrival of the GW signal at the detector and at the geocenter. 
+Therefore, we have: 
+
+.. math::
+
+   &F_{+} =  D^{ij} \, e^{+}_{ij} \, e^{2 \pi i f \Delta t}, \\
+   &F_{\times} = D^{ij} \, e^{\times}_{ij} \, e^{2 \pi i f \Delta t}, \\
+   &\Delta t \equiv \frac{\vec{r} \cdot \hat{n}}{c},
+
+where :math:`\vec{r}` is the position vector of the detector, :math:`\hat{n}` is the 
+unit vector pointing from the geocenter to the source, and :math:`c` is the speed of light.
+These pattern functions can be calculated with the function ``PatternFunctions``
+
+.. code-block:: mathematica
+
+   PatternFunctions[f, dec, phi, psi, pi, Dij]
+
+Calculates the pattern functions :math:`\{F_+, F_\times \}` including the phase factor 
+:math:`e^{2 \pi i f \Delta t}` for a given detector.
+
+**Parameters**:
+
+   ``f``: Frequency vector, where ``f[[i]]`` is in [Hz].
+
+   ``dec``: declination of the source.
+
+   ``phi``: azimuthal angle of the source.
+
+   ``psi``: polarization angle of the source.
+
+   ``pi``: position vector of the detector.
+
+   ``Dij``: Detector tensor of the detector.
+
+**Returns**: 
+   The pattern functions :math:`\{F_+, F_\times \}` of the detector, 
+   including the phase factor :math:`e^{2 \pi i f \Delta t}`.
+   The output has dimensions ``{2, N}``, where ``N = Length[f]``. 
+
+We note that if the user does not want to include the phase factor they can set ``pi={0,0,0}`` and
+``f={1}``.
+
+The following example shows how to calculate the pattern functions for the LIGO Livingston detector:
+
+.. code-block:: mathematica
+    
+    {Fplus, Fcross} = PatternFunctions[{1}, 0.5, 0.1, 0.2, PosL1, DL1];

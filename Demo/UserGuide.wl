@@ -1293,7 +1293,7 @@ rd = Extract[a, SymmetrizedIndependentComponents[{11,11}, Symmetric[All]]];
 ListPlot[Sort[rd], PlotRange->All, ScalingFunctions->"Log10"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing Fisher matrix performance PhenomD*)
 
 
