@@ -1,22 +1,23 @@
 Detectors 
 =========================
-Here we describe how the Wolfram Language code characterizes a detector, how to access
-the built-in detectors and how to define a new detector.
+We describe how to characterize a detector in Wolfram Language, how to access built-in
+detectors and how to define new ones.
+
 
 Characterization
 ----------------
 
 
-A detector is specified by three properties: its location, orientation, and
+A detector is specified by three properties: location, orientation, and
 noise power spectral density :math:`S_n(f)`. Our convention
 is to use the WGS-84 model to define the detector's position and orientation.
 
 The position is given by the Cartesian coordinates of the detector's vertex
-in meters. For example, the LIGO Livingston detector position vector is:
+in meters. For example, the LIGO Livingston position is:
 
 .. code-block:: mathematica
 
-   PosL1 = {-74276., -5.49628*10^6, 3.22426*10^6};
+   PosL1 = {-74276., -5.49628*10^6, 3.22426*10^6};  (*{x,y,z}*)
 
 The orientation is given by the detector tensor:
 
@@ -25,8 +26,7 @@ The orientation is given by the detector tensor:
    D_{ij} = \frac{1}{2} \left(nx_i nx_j - ny_i ny_j\right),
 
 where :math:`nx` and :math:`ny` are the unit vectors along the two detector
-arms. For the LIGO Livingston detector, the orientation is given by the
-matrix:
+arms. For LIGO Livingston we have:
 
 .. code-block:: mathematica
 
@@ -42,12 +42,11 @@ The noise properties are represented by an
 
 .. code-block:: mathematica
 
-   data = Import["AplusDesign.txt", "Data"];
+   data = Import["AplusDesign.txt", "Data"]; (*you need the file AplusDesign.txt in your path to run this line*)
    ASDL1 = Interpolation[data];
 
-The functions in ``SymDALI`` require detectors to be specified by quantities
-such as ``PosL1``, ``DL1``, and ``ASDL1``. These quantities can be defined
-for any detector. 
+Functions in ``SymDALI`` require detectors to be specified by quantities such as
+ ``PosL1``, ``DL1``, and ``ASDL1``. These quantities can be defined for any detector. 
 
 Buit-in detectors
 -----------------
@@ -55,11 +54,11 @@ Buit-in detectors
 ``SymDALI`` has built-in support for the
 LIGO-Virgo-KAGRA (LVK) network, Einstein Telescope (ET), and Cosmic Explorer
 (CE). Predefined detector positions are provided by ``DetectorVertex``. Predefined
-orientations are provided by ``DetectorTensor``, and built-in ASDs are
+orientations are provided by ``DetectorTensor``. Built-in ASDs are
 provided by ``ASD``. The usage messages of these three functions (for instance ``?DetectorVertex``) provide 
 a list of the available detectors and their corresponding names.
 
-For example, the previous definitions can instead be generated with:
+For example, the previous definitions are readily available with:
 
 .. code-block:: mathematica
 
@@ -71,7 +70,7 @@ For example, the previous definitions can instead be generated with:
 Defining a new detector
 -----------------------
 
-To define the position and orientation of a new detector, we can use the functions
+To define the position and orientation of a new detector we can use the functions
 ``FromGeocentricCoordinates`` and ``ArmDirection``.
 
 .. code-block:: mathematica
@@ -89,7 +88,7 @@ Returns the Cartesian coordinates ``{x, y, z}`` of a point.
     ``lon``: Vertex longitude in radians.
 
 **Returns**:
-    The Cartesian coordinates ``{x, y, z}`` of the point, in meters.
+    The Cartesian coordinates ``{x, y, z}`` in meters.
 
 .. code-block:: mathematica
 
@@ -120,9 +119,9 @@ Returns the unit vectors along the two detector arms.
 The altitude and azimuth angles follow the convention used in
 `LALDetectors.h <https://git.ligo.org/lscsoft/lalsuite/-/blob/master/lal/lib/tools/LALDetectors.h>`_:
 
-**Azimuth**: Angle measured clockwise from north of the direction vector.
+   **Azimuth**: Angle measured clockwise from north of the direction vector.
 
-**Altitude**: The angle the direction vector makes with the local horizontal plane. Positive values indicate directions above the horizontal.
+   **Altitude**: The angle the direction vector makes with the local horizontal plane. Positive values indicate directions above the horizontal.
 
 The following example shows how to define the position and orientation of
 LIGO Livingston using these functions. The reference values are taken from
@@ -146,11 +145,13 @@ A new ASD can be defined by importing the corresponding data and applying
 ``Interpolation``.
 
 
+.. _detector_asso:
+
 Detector association
 --------------------
 
 The functions ``SNR`` and ``DALITensors`` take a list of one or more
-detectors as one of their inputs. Each detector is specified by an
+detectors as one of their inputs. Each detector is defined by an
 association with the following keys:
 
 .. code-block:: mathematica
@@ -167,7 +168,7 @@ Pattern functions
 
 
 The pattern functions quantify how a detector responds to the GW polarizations 
-:math:`{h_+, \, h_\times}`. They are defined as 
+:math:`\{h_+, \, h_\times\}`. They are defined as 
 
 .. math::
 
@@ -186,7 +187,7 @@ Therefore, we have:
 
 where :math:`\vec{r}` is the position vector of the detector, :math:`\hat{n}` is the 
 unit vector pointing from the geocenter to the source, and :math:`c` is the speed of light.
-These pattern functions can be calculated with the function ``PatternFunctions``
+:math:`\{F_+, \, F_\times\}` can be calculated with the function ``PatternFunctions``
 
 .. code-block:: mathematica
 
@@ -199,11 +200,11 @@ Calculates the pattern functions :math:`\{F_+, F_\times \}` including the phase 
 
    ``f``: Frequency vector, where ``f[[i]]`` is in [Hz].
 
-   ``dec``: declination of the source.
+   ``dec``: declination of the source, in [:math:`-\pi/2`,  :math:`\pi/2`].
 
-   ``phi``: azimuthal angle of the source.
+   ``phi``: azimuthal angle of the source, in [0,  2 :math:`\pi`].
 
-   ``psi``: polarization angle of the source.
+   ``psi``: polarization angle of the source, in [0,  :math:`\pi`].
 
    ``pi``: position vector of the detector.
 
@@ -214,7 +215,7 @@ Calculates the pattern functions :math:`\{F_+, F_\times \}` including the phase 
    including the phase factor :math:`e^{2 \pi i f \Delta t}`.
    The output has dimensions ``{2, N}``, where ``N = Length[f]``. 
 
-We note that if the user does not want to include the phase factor they can set ``pi={0,0,0}`` and
+If the user does not need the phase factor they can set ``pi={0,0,0}`` and
 ``f={1}``.
 
 The following example shows how to calculate the pattern functions for the LIGO Livingston detector:

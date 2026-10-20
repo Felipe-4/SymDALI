@@ -21,6 +21,7 @@ exclude_patterns = []
 
 
 
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
@@ -39,4 +40,5 @@ html_theme_options = {
 }
 
 #html_theme = 'alabaster'
+html_css_files = ['custom.css']
 html_static_path = ['_static']

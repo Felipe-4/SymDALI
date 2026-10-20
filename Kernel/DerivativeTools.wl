@@ -1238,7 +1238,7 @@ DerivativeRulesLoadMMA[theory_String, hphcHead_String] := Module[
 	MMADirec = FileNameJoin[{Pacletdirectory, "Assets", "Derivatives", theory}];
 	
 	(*LOAD THE DEFINITIONS OF THE WAVEFORM/DETECTOR*)
-	Get[MMADirec <> "/Defs.mx"];
+	Get[MMADirec <> "/Defs.wdx"];
 	
 	
 	dummyHead = ToExpression["dummy"<>hphcHead];

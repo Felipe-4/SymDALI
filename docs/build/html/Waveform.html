@@ -9,6 +9,7 @@
   <title>Waveform &mdash; SymDALI 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0db0cb75" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -52,6 +53,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Detectors.html">Detectors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SNR_tutorial.html">SNR tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fisher.html">Fisher tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DALI_Tensors.html">DALI Tensors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sampling.html">Likelihood sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Math.html">Math</a></li>
 </ul>
 
         </div>
@@ -87,28 +93,26 @@ waveform model for binary black holes (BBH), see <a class="reference external" h
 <li><p><code class="docutils literal notranslate"><span class="pre">IMRPhenomHM</span></code>: non-precessing, aligned-spin, inspiral-merger-ringdown
 waveform model for BBH with higher modes, see <a class="reference external" href="https://arxiv.org/abs/1708.00404">1708.00404</a>.</p></li>
 </ul>
-<p>These waveform models are implemented as functions that return the plus and
-cross polarizations of the GW signal, given a set of parameters.</p>
+<p>The models are implemented as functions that return the plus and
+cross polarizations of the GW signal.</p>
 <section id="hphcimrphenomd">
 <h2><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomD</span></code><a class="headerlink" href="#hphcimrphenomd" title="Link to this heading"></a></h2>
 <div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">hphcIMRPhenomD</span><span class="p">[</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">Mc</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="n">s1z</span><span class="p">,</span><span class="w"> </span><span class="n">s2z</span><span class="p">,</span><span class="w"> </span><span class="n">iota</span><span class="p">,</span><span class="w"> </span><span class="n">tc</span><span class="p">,</span><span class="w"> </span><span class="n">phiRef</span><span class="p">,</span><span class="w"> </span><span class="n">invdL</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>Calculates the polarizations <span class="math notranslate nohighlight">\(\{h_+, h_\times\}\)</span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code> approximant.</p>
-<p><strong>Parameters</strong>:</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">f</span></code>: Frequency vector, where <code class="docutils literal notranslate"><span class="pre">f[[i]]</span></code> is in [Hz].</p>
-<p><code class="docutils literal notranslate"><span class="pre">Mc</span></code>: Chirp mass [solar mass].</p>
-<p><code class="docutils literal notranslate"><span class="pre">q</span></code>: Mass ratio in (0,1].</p>
-<p><code class="docutils literal notranslate"><span class="pre">s1z</span></code>: Aligned spin, in (-1,1).</p>
-<p><code class="docutils literal notranslate"><span class="pre">s2z</span></code>: Aligned spin, in (-1,1).</p>
+<dl>
+<dt><strong>Parameters</strong>:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">f</span></code>: Frequency vector, where <code class="docutils literal notranslate"><span class="pre">f[[i]]</span></code> is in [Hz].</p>
+<p><code class="docutils literal notranslate"><span class="pre">Mc</span></code>: Chirp mass [<span class="math notranslate nohighlight">\(M_\odot\)</span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">q</span></code>: Mass ratio, in (0,1].</p>
+<p><code class="docutils literal notranslate"><span class="pre">s1z</span></code>: Aligned spin of the heaviest BH, in (-1,1).</p>
+<p><code class="docutils literal notranslate"><span class="pre">s2z</span></code>: Aligned spin of the lightest BH, in (-1,1).</p>
 <p><code class="docutils literal notranslate"><span class="pre">iota</span></code>: Inclination angle, in [0, <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
 <p><code class="docutils literal notranslate"><span class="pre">tc</span></code>: Coalescence time [s].</p>
 <p><code class="docutils literal notranslate"><span class="pre">phiRef</span></code>: Reference phase, in [0, 2 <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
 <p><code class="docutils literal notranslate"><span class="pre">invdL</span></code>: Inverse luminosity distance [1/Gpc].</p>
-</div></blockquote>
-<dl class="simple">
-<dt><strong>Returns</strong>:</dt><dd><p>The polarizations <span class="math notranslate nohighlight">\(\{h_+, h_\times\}\)</span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code> approximant.
+</dd>
+<dt><strong>Returns</strong>:</dt><dd><p>Polarizations <span class="math notranslate nohighlight">\(\{h_+, h_\times\}\)</span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code> approximant.
 The output has dimensions <code class="docutils literal notranslate"><span class="pre">{2,</span> <span class="pre">N}</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">Length[f]</span></code>.</p>
 </dd>
 </dl>
@@ -122,17 +126,17 @@ The output has dimensions <code class="docutils literal notranslate"><span class
 <p><strong>Parameters</strong>:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">f</span></code>: Frequency vector, where <code class="docutils literal notranslate"><span class="pre">f[[i]]</span></code> is in [Hz].</p>
-<p><code class="docutils literal notranslate"><span class="pre">Mc</span></code>: Chirp mass [solar mass].</p>
-<p><code class="docutils literal notranslate"><span class="pre">q</span></code>: Mass ratio in (0,1].</p>
-<p><code class="docutils literal notranslate"><span class="pre">s1z</span></code>: Aligned spin, in (-1,1).</p>
-<p><code class="docutils literal notranslate"><span class="pre">s2z</span></code>: Aligned spin, in (-1,1).</p>
+<p><code class="docutils literal notranslate"><span class="pre">Mc</span></code>: Chirp mass [<span class="math notranslate nohighlight">\(M_\odot\)</span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">q</span></code>: Mass ratio, in (0,1].</p>
+<p><code class="docutils literal notranslate"><span class="pre">s1z</span></code>: Aligned spin of the heaviest BH, in (-1,1).</p>
+<p><code class="docutils literal notranslate"><span class="pre">s2z</span></code>: Aligned spin of the lightest BH, in (-1,1).</p>
 <p><code class="docutils literal notranslate"><span class="pre">iota</span></code>: Inclination angle, in [0, <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
 <p><code class="docutils literal notranslate"><span class="pre">tc</span></code>: Coalescence time [s].</p>
 <p><code class="docutils literal notranslate"><span class="pre">phiRef</span></code>: Reference phase, in [0, 2 <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
 <p><code class="docutils literal notranslate"><span class="pre">invdL</span></code>: Inverse luminosity distance [1/Gpc].</p>
 </div></blockquote>
 <dl class="simple">
-<dt><strong>Returns</strong></dt><dd><p>The polarizations <span class="math notranslate nohighlight">\(\{h_+, h_\times\}\)</span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomHM</span></code> approximant.
+<dt><strong>Returns</strong>:</dt><dd><p>Polarizations <span class="math notranslate nohighlight">\(\{h_+, h_\times\}\)</span> of the <code class="docutils literal notranslate"><span class="pre">IMRPhenomHM</span></code> approximant.
 The output has dimensions <code class="docutils literal notranslate"><span class="pre">{2,</span> <span class="pre">N}</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">Length[f]</span></code>.</p>
 </dd>
 </dl>

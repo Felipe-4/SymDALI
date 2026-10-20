@@ -143,7 +143,7 @@ NFisher[f_, vars_, ni_, nf_, Psd_List] := Module[
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Test Pattern Functions against lal: *)
 
 
@@ -228,6 +228,9 @@ test := Module[
 (*If you get some error from the Python function just run again. I don't know why, but sometimes python external functions generate errors inside ```Do``` or ```Table```*)
 
 
+test
+
+
 list = Table[test, 10^4]; 
 
 
@@ -244,7 +247,7 @@ list[[All,2]]//Sort//ListPlot[#, PlotRange->All, ScalingFunctions->"Log10"]&
 Clear@list
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Test IMRPhenomD against lal:*)
 
 
@@ -630,7 +633,7 @@ Export["/Users/felipe/Desktop/cos.pdf", plot3]
 Export["/Users/felipe/Desktop/res_cos.pdf", plot4]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Test IMRPhenomHM against lal:*)
 
 
@@ -1293,11 +1296,11 @@ rd = Extract[a, SymmetrizedIndependentComponents[{11,11}, Symmetric[All]]];
 ListPlot[Sort[rd], PlotRange->All, ScalingFunctions->"Log10"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing Fisher matrix performance PhenomD*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*MMA: *)
 
 
@@ -1335,7 +1338,7 @@ a = DALITensors[
 	"IMRPhenomD", 
 	fp, 
 	{L1, H1, V1}, 
-	4, 
+	3, 
 	"fmin"->20, "fmax"->1024, 
 	"res"->1000
 ];//AbsoluteTiming//ScientificForm
@@ -1418,13 +1421,13 @@ a = DALITensors[
 	"IMRPhenomHM", 
 	fp, 
 	{L1, H1, V1}, 
-	4, 
+	2, 
 	"fmin"->20, "fmax"->1024,
 	"res"->1000
 ];//EchoTiming
 
 
-a[[4,4]]//Total
+a[[2,2]]//Total
 
 
 (* ::Text:: *)

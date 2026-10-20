@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fisher tutorial &mdash; SymDALI 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0db0cb75" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DALI tensors tutorial" href="DALI_Tensors.html" />
+    <link rel="prev" title="SNR tutorial" href="SNR_tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SymDALI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Math.html">Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Waveform.html">Waveform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Detectors.html">Detectors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fiducial.html">Fiducial point</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SNR_tutorial.html">SNR tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fisher tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="DALI_Tensors.html">DALI tensors tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sampling.html">Likelihood sampling tutorial</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SymDALI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Fisher tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Fisher.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fisher-tutorial">
+<span id="id1"></span><h1>Fisher tutorial<a class="headerlink" href="#fisher-tutorial" title="Link to this heading"></a></h1>
+<p>The Fisher matrix can be calculated using the function
+<code class="docutils literal notranslate"><span class="pre">DALITensors</span></code>. Its inputs are the waveform model, the source parameters, the
+detector network and the order for <code class="docutils literal notranslate"><span class="pre">DALI</span></code> tensors. Since we want the
+Fisher matrix, we will set the order to 1. The output is the Fisher matrix of the network.</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">DALITensors</span><span class="p">[</span><span class="n">Appr</span><span class="p">,</span><span class="w"> </span><span class="n">fp</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">det1</span><span class="p">,</span><span class="w"> </span><span class="n">det2</span><span class="p">,</span><span class="w"> </span><span class="err">...</span><span class="p">},</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Calculates the Fisher matrix for the waveform model <code class="docutils literal notranslate"><span class="pre">Appr</span></code>, with source parameters
+<code class="docutils literal notranslate"><span class="pre">fp</span></code>, and the detector network <code class="docutils literal notranslate"><span class="pre">{det1,</span> <span class="pre">det2,</span> <span class="pre">...}</span></code>.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Appr</span></code>: Waveform model. Supported values are <code class="docutils literal notranslate"><span class="pre">&quot;IMRPhenomD&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;IMRPhenomHM&quot;</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">fp</span></code>: Association containing the source parameters.</p>
+<p><code class="docutils literal notranslate"><span class="pre">{det1,</span> <span class="pre">det2,</span> <span class="pre">...}</span></code>: List of associations representing the detectors in the network.</p>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<p>The Fisher matrix of the detector network.</p>
+<p>The convention for <code class="docutils literal notranslate"><span class="pre">fp</span></code> follows section <a class="reference internal" href="Fiducial.html#fiducial"><span class="std std-ref">Fiducial point</span></a> and the convention for <code class="docutils literal notranslate"><span class="pre">deti</span></code>
+follows section <a class="reference internal" href="Detectors.html#detector-asso"><span class="std std-ref">Detector association</span></a>.</p>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
+<p>The following example calculates the Fisher matrix using the <code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code>
+waveform model:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">    </span><span class="s">"dec"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.14</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Phi]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Psi]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"\[ScriptCapitalM]c"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.0116</span><span class="p">,</span><span class="w"> </span><span class="s">"q"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.2</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"s1z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="s">"s2z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Iota]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">2.5</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"1/dL"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">"tc"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Phi]ref"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+
+<span class="n">H1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">    </span><span class="s">"Position"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">DetectorVertex</span><span class="p">[</span><span class="s">"H1"</span><span class="p">],</span>
+<span class="w">    </span><span class="s">"DetectorTensor"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">DetectorTensor</span><span class="p">[</span><span class="s">"H1"</span><span class="p">],</span>
+<span class="w">    </span><span class="s">"ASD"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">ASD</span><span class="p">[</span><span class="s">"L1H1-O5"</span><span class="p">]</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+
+<span class="n">L1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">    </span><span class="s">"Position"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">DetectorVertex</span><span class="p">[</span><span class="s">"L1"</span><span class="p">],</span>
+<span class="w">    </span><span class="s">"DetectorTensor"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">DetectorTensor</span><span class="p">[</span><span class="s">"L1"</span><span class="p">],</span>
+<span class="w">    </span><span class="s">"ASD"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">ASD</span><span class="p">[</span><span class="s">"L1H1-O5"</span><span class="p">]</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+
+<span class="n">FM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DALITensors</span><span class="p">[</span><span class="s">"IMRPhenomD"</span><span class="p">,</span><span class="w"> </span><span class="n">fp</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">H1</span><span class="p">,</span><span class="w"> </span><span class="n">L1</span><span class="p">},</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>We note that <code class="docutils literal notranslate"><span class="pre">FM</span></code> has dimensions <code class="docutils literal notranslate"><span class="pre">{1,1,121}</span></code>:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">Dimensions</span><span class="p">[</span><span class="n">FM</span><span class="p">]</span>
+<span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">121</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>If we want the familiar matrix dimensions we can use</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">FM2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ArrayReshape</span><span class="p">[</span><span class="n">FM</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">}];</span>
+</pre></div>
+</div>
+<p>To invert the Fisher matrix we can use the <code class="docutils literal notranslate"><span class="pre">CholeskyInverse</span></code> function:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="n">Cov</span><span class="p">,</span><span class="w"> </span><span class="n">epsilon</span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CholeskyInverse</span><span class="p">[</span><span class="n">FM2</span><span class="p">];</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Cov</span></code> is the Fisher inverse calculated through a Cholesky decomposition.
+<code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is the error on the inversion. We defined <code class="docutils literal notranslate"><span class="pre">epsilon</span></code>, following <a class="reference external" href="https://arxiv.org/pdf/2207.02771">2207.02771</a>,
+to be the largest error between the product of the Fisher matrix and its inverse with respect to the identity:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">diff1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FM2</span><span class="err">.</span><span class="n">Cov</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">IdentityMatrix</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">//</span><span class="n">Abs</span><span class="p">;</span>
+<span class="n">diff2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Cov</span><span class="err">.</span><span class="n">FM2</span><span class="o">-</span><span class="w"> </span><span class="n">IdentityMatrix</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">//</span><span class="n">Abs</span><span class="p">;</span>
+<span class="n">epsilon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Max</span><span class="p">[{</span><span class="n">diff1</span><span class="p">,</span><span class="w"> </span><span class="n">diff2</span><span class="p">}];</span>
+</pre></div>
+</div>
+<p>The recommendation is that <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> should be less than <code class="docutils literal notranslate"><span class="pre">0.05</span></code>.</p>
+<p>The derivatives that are used to calculate the Fisher matrix are with respect to
+the variables in <code class="docutils literal notranslate"><span class="pre">fp</span></code>. Their order, that is which variable corresponds to which
+dimension, can be accessed through the function <code class="docutils literal notranslate"><span class="pre">EmptyAssociation</span></code>. For example,
+the following code gives us the exact correspondence between waveform variables and
+matrix dimensions:</p>
+<div class="highlight-mathematica: notranslate"><div class="highlight"><pre><span></span>EmptyAssociation["Aligned"]
+&lt;|
+    "dec" -&gt; 1, "\[Phi]" -&gt; 2, "\[Psi]" -&gt; 3, "\[ScriptCapitalM]c" -&gt; 4,
+    "q" -&gt; 5, "s1z" -&gt; 6, "s2z" -&gt; 7, "\[Iota]" -&gt; 8, "1/dL" -&gt; 9,
+    "tc" -&gt; 10, "\[Phi]ref" -&gt; 11
+|&gt;
+</pre></div>
+</div>
+</section>
+<section id="options">
+<span id="options-fisher"></span><h2>Options<a class="headerlink" href="#options" title="Link to this heading"></a></h2>
+<p>The function also accepts options to specify the frequency range,
+resolution and whether to return the Fisher matrix of each detector separately.
+The default settings are shown below:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">FM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DALITensors</span><span class="p">[</span>
+<span class="w">    </span><span class="s">"IMRPhenomD"</span><span class="p">,</span><span class="w"> </span><span class="n">fp</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">H1</span><span class="p">,</span><span class="w"> </span><span class="n">L1</span><span class="p">},</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"fmin"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="s">"fmax"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="s">"res"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"AllFisherMatrices"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">False</span>
+<span class="p">];</span>
+</pre></div>
+</div>
+<p>When <code class="docutils literal notranslate"><span class="pre">AllFisherMatrices</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the output will be a
+list of the previous output form:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">FM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DALITensors</span><span class="p">[</span>
+<span class="w">    </span><span class="s">"IMRPhenomD"</span><span class="p">,</span><span class="w"> </span><span class="n">fp</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">H1</span><span class="p">,</span><span class="w"> </span><span class="n">L1</span><span class="p">},</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"fmin"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="s">"fmax"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="s">"res"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"AllFisherMatrices"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">True</span>
+<span class="p">];</span>
+<span class="n">Dimensions</span><span class="p">[</span><span class="n">FM</span><span class="p">]</span>
+<span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">121</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The order of Fisher matrices is the same of the detector network, in this case <code class="docutils literal notranslate"><span class="pre">{H1,</span> <span class="pre">L1}</span></code>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="SNR_tutorial.html" class="btn btn-neutral float-left" title="SNR tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="DALI_Tensors.html" class="btn btn-neutral float-right" title="DALI tensors tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Felipe Barbosa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

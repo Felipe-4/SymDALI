@@ -1,0 +1,185 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNR tutorial &mdash; SymDALI 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0db0cb75" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fisher tutorial" href="Fisher.html" />
+    <link rel="prev" title="Fiducial point" href="Fiducial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SymDALI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Math.html">Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Waveform.html">Waveform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Detectors.html">Detectors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fiducial.html">Fiducial point</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SNR tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Fisher.html">Fisher tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DALI_Tensors.html">DALI Tensors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sampling.html">Likelihood sampling</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SymDALI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SNR tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/SNR_tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="snr-tutorial">
+<h1>SNR tutorial<a class="headerlink" href="#snr-tutorial" title="Link to this heading"></a></h1>
+<p>The signal-to-noise ratio (SNR) can be calculated using the function
+<code class="docutils literal notranslate"><span class="pre">SNR</span></code>. Its inputs are the waveform model, the source parameters, and
+the detector network. The output is the total network SNR.</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">SNR</span><span class="p">[</span><span class="n">Appr</span><span class="p">,</span><span class="w"> </span><span class="n">fp</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">det1</span><span class="p">,</span><span class="w"> </span><span class="n">det2</span><span class="p">,</span><span class="w"> </span><span class="err">...</span><span class="p">}]</span>
+</pre></div>
+</div>
+<p>Calculates the SNR for the waveform model <code class="docutils literal notranslate"><span class="pre">Appr</span></code>, with source parameters
+<code class="docutils literal notranslate"><span class="pre">fp</span></code>, and the detector network <code class="docutils literal notranslate"><span class="pre">{det1,</span> <span class="pre">det2,</span> <span class="pre">...}</span></code>.</p>
+<p><strong>Parameters</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Appr</span></code>: Waveform model. Supported values are <code class="docutils literal notranslate"><span class="pre">&quot;IMRPhenomD&quot;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">&quot;IMRPhenomHM&quot;</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fp</span></code>: Association containing the source parameters.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{det1,</span> <span class="pre">det2,</span> <span class="pre">...}</span></code>: List of associations representing the detectors
+in the network.</p></li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>The total SNR of the detector network.</p>
+<p>The convention for <code class="docutils literal notranslate"><span class="pre">fp</span></code> follows section <a class="reference internal" href="Fiducial.html#fiducial"><span class="std std-ref">Fiducial point</span></a> and the convention for <code class="docutils literal notranslate"><span class="pre">deti</span></code>
+follows section <a class="reference internal" href="Detectors.html#detector-asso"><span class="std std-ref">Detector association</span></a>.</p>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
+<p>The following example calculates the SNR using the <code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code>
+waveform model:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">    </span><span class="s">"dec"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.14</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Phi]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Psi]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"\[ScriptCapitalM]c"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.0116</span><span class="p">,</span><span class="w"> </span><span class="s">"q"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.2</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"s1z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="s">"s2z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Iota]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">2.5</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"1/dL"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">"tc"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Phi]ref"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+
+<span class="n">H1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">    </span><span class="s">"Position"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">DetectorVertex</span><span class="p">[</span><span class="s">"H1"</span><span class="p">],</span>
+<span class="w">    </span><span class="s">"DetectorTensor"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">DetectorTensor</span><span class="p">[</span><span class="s">"H1"</span><span class="p">],</span>
+<span class="w">    </span><span class="s">"ASD"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">ASD</span><span class="p">[</span><span class="s">"L1H1-O5"</span><span class="p">]</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+
+<span class="n">L1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">    </span><span class="s">"Position"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">DetectorVertex</span><span class="p">[</span><span class="s">"L1"</span><span class="p">],</span>
+<span class="w">    </span><span class="s">"DetectorTensor"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">DetectorTensor</span><span class="p">[</span><span class="s">"L1"</span><span class="p">],</span>
+<span class="w">    </span><span class="s">"ASD"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">ASD</span><span class="p">[</span><span class="s">"L1H1-O5"</span><span class="p">]</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+
+<span class="n">snr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SNR</span><span class="p">[</span><span class="s">"IMRPhenomD"</span><span class="p">,</span><span class="w"> </span><span class="n">fp</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">H1</span><span class="p">,</span><span class="w"> </span><span class="n">L1</span><span class="p">}];</span>
+</pre></div>
+</div>
+</section>
+<section id="options">
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading"></a></h2>
+<p>The function also accepts options to specify the frequency range, resolution
+and whether to return the SNR of each detector separately.
+The default settings are shown below:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">snr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SNR</span><span class="p">[</span>
+<span class="w">    </span><span class="s">"IMRPhenomD"</span><span class="p">,</span><span class="w"> </span><span class="n">fp</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">H1</span><span class="p">,</span><span class="w"> </span><span class="n">L1</span><span class="p">},</span>
+<span class="w">    </span><span class="s">"fmin"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">"fmax"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"res"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="s">"AllSNRs"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">False</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>When <code class="docutils literal notranslate"><span class="pre">&quot;AllSNRs&quot;</span> <span class="pre">-&gt;</span> <span class="pre">True</span></code> the function returns a list containing the
+SNR of each detector in the network. The order of SNRs is the same of the detector
+network, in this case <code class="docutils literal notranslate"><span class="pre">{H1,</span> <span class="pre">L1}</span></code>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Fiducial.html" class="btn btn-neutral float-left" title="Fiducial point" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Fisher.html" class="btn btn-neutral float-right" title="Fisher tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Felipe Barbosa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -34,8 +34,14 @@ it has been shown that sampling the Fisher likelihood with exact priors produces
    :caption: Contents
 
    installation
+   Math
    Waveform
    Detectors
+   Fiducial
+   SNR_tutorial
+   Fisher
+   DALI_Tensors
+   Sampling
    quickstart
    user_guide
    examples

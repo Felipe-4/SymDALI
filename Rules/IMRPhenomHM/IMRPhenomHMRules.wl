@@ -146,7 +146,7 @@ CompareComplexVectors[{v1_, v2_}, {name1_, name2_}, dataRange_, plotRange_]/;(
 ]
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Amplitude*)
 
 
@@ -3061,7 +3061,7 @@ Make
 (*Making Final function*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Symbolic expression*)
 
 
@@ -3354,7 +3354,7 @@ Module[
 HMhphc[\[Omega]_, \[Omega]ref_, \[Eta]_, \[Chi]s_, \[Chi]a_, \[Iota]_, \[Phi]Ref_] = chphcres[[1, 2]][\[Omega], \[Omega]ref, \[Eta], \[Chi]s, \[Chi]a, \[Iota], \[Phi]Ref];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing*)
 
 
@@ -4167,13 +4167,51 @@ Module[
 ]
 
 
+Module[
+	{SymDALIDir = NotebookDirectory[]//ParentDirectory[#, 2]&, fileName, file},
+	
+	
+	fileName = FileNameJoin[{
+		SymDALIDir, 
+		"Assets",
+		"Derivatives/IMRPhenomHM/Defs.wdx"
+	}];
+	
+	file = CreateFile[fileName];
+	
+	DumpSave[
+		file,
+		{
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`HMZeroFunction,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`HM\[ScriptCapitalA]Ins,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`HM\[ScriptCapitalA]Int,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`HM\[ScriptCapitalA]MR,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`HM\[ScriptCapitalA]IMR,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`HM\[CapitalPhi]Ins,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`HM\[CapitalPhi]Int,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`HM\[CapitalPhi]MR,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`HM\[CapitalPhi]IMR,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`HM\[CapitalPsi]lm,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`HMhphc
+		}
+	]
+	
+]
+
+
 DownValues@FelipeBarbosa`SymDALI`DALICoefficients`Private`HMZeroFunction
 
 
 FelipeBarbosa`SymDALI`DALICoefficients`Private`HMZeroFunction//ClearAll
 
 
-Get["/Users/felipe/Documents/GitHub/SymDALI/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomHM/MMA/Defs.mx"]
+FelipeBarbosa`SymDALI`DALICoefficients`Private`HMZeroFunction//DownValues
+
+
+Get["/Users/felipe/Documents/GitHub/SymDALI/Assets/Derivatives/IMRPhenomHM/Defs.wdx"]
 
 
 DownValues@FelipeBarbosa`SymDALI`DALICoefficients`Private`HMZeroFunction
+
+
+jupyter lab --no-browser --ip=127.0.0.1 --port=8888

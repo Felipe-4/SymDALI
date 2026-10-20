@@ -1,0 +1,245 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DALI tensors tutorial &mdash; SymDALI 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0db0cb75" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Likelihood sampling tutorial" href="Sampling.html" />
+    <link rel="prev" title="Fisher tutorial" href="Fisher.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SymDALI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Math.html">Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Waveform.html">Waveform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Detectors.html">Detectors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fiducial.html">Fiducial point</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SNR_tutorial.html">SNR tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fisher.html">Fisher tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">DALI tensors tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#options">Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Sampling.html">Likelihood sampling tutorial</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SymDALI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">DALI tensors tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/DALI_Tensors.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dali-tensors-tutorial">
+<span id="dali-tensors"></span><h1>DALI tensors tutorial<a class="headerlink" href="#dali-tensors-tutorial" title="Link to this heading"></a></h1>
+<p>Higher order <code class="docutils literal notranslate"><span class="pre">DALI</span></code> tensors are calculated with the function <code class="docutils literal notranslate"><span class="pre">DALITensors</span></code>. This
+function takes as input the waveform model, the source parameters, the detector network
+and the derivative order for <code class="docutils literal notranslate"><span class="pre">DALI</span></code>.</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">DALITensors</span><span class="p">[</span><span class="n">Appr</span><span class="p">,</span><span class="w"> </span><span class="n">fp</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">det1</span><span class="p">,</span><span class="w"> </span><span class="n">det2</span><span class="p">,</span><span class="w"> </span><span class="err">...</span><span class="p">},</span><span class="w"> </span><span class="n">n</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Calculates the <code class="docutils literal notranslate"><span class="pre">DALI</span></code> tensors for the waveform model <code class="docutils literal notranslate"><span class="pre">Appr</span></code>, with source parameters
+<code class="docutils literal notranslate"><span class="pre">fp</span></code> and the detector network <code class="docutils literal notranslate"><span class="pre">{det1,</span> <span class="pre">det2,</span> <span class="pre">...}</span></code> up to derivative order <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p>
+<p><strong>Parameters</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Appr</span></code>: Waveform model. Supported values are <code class="docutils literal notranslate"><span class="pre">&quot;IMRPhenomD&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;IMRPhenomHM&quot;</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">fp</span></code>: Association containing the source parameters.</p>
+<p><code class="docutils literal notranslate"><span class="pre">{det1,</span> <span class="pre">det2,</span> <span class="pre">...}</span></code>: List of associations representing the detectors in the network.</p>
+<p><code class="docutils literal notranslate"><span class="pre">n</span></code>: Derivative order for <code class="docutils literal notranslate"><span class="pre">DALI</span></code> tensors. <code class="docutils literal notranslate"><span class="pre">SymDALI</span></code> has support up to <code class="docutils literal notranslate"><span class="pre">n=4</span></code>.</p>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">DALI</span></code> tensors for the specified derivative order.</p>
+<p>The convention for <code class="docutils literal notranslate"><span class="pre">fp</span></code> follows section <a class="reference internal" href="Fiducial.html#fiducial"><span class="std std-ref">Fiducial point</span></a> and the convention for <code class="docutils literal notranslate"><span class="pre">deti</span></code>
+follows section <a class="reference internal" href="Detectors.html#detector-asso"><span class="std std-ref">Detector association</span></a>.</p>
+<section id="example">
+<span id="dali-tensors-ex"></span><h2>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
+<p>The following example calculates the third order <code class="docutils literal notranslate"><span class="pre">DALI</span></code> tensors using <code class="docutils literal notranslate"><span class="pre">IMRPhenomHM</span></code>
+at the same fiducial point and detector network of Figure 5 in <a class="reference external" href="https://arxiv.org/abs/2609.38399">2609.38399</a></p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">    </span><span class="s">"dec"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">-0.883787</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Phi]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">6.18412</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Psi]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.471846</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"\[ScriptCapitalM]c"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">190.258</span><span class="p">,</span><span class="w"> </span><span class="s">"q"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.935815</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"s1z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.107562</span><span class="p">,</span><span class="w"> </span><span class="s">"s2z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">-0.0254365</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Iota]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">2.60021</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"1/dL"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.0284797</span><span class="p">,</span><span class="w"> </span><span class="s">"tc"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">61093.87906420612</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Phi]ref"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">5.93578</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+
+<span class="n">ET1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">        </span><span class="s">"Position"</span><span class="o">-&gt;</span><span class="w"> </span><span class="n">DetectorVertex</span><span class="p">[</span><span class="s">"ET-S"</span><span class="p">],</span>
+<span class="w">        </span><span class="s">"DetectorTensor"</span><span class="o">-&gt;</span><span class="n">DetectorTensor</span><span class="p">[</span><span class="s">"ET-S-L"</span><span class="p">],</span>
+<span class="w">        </span><span class="s">"ASD"</span><span class="o">-&gt;</span><span class="n">ASD</span><span class="p">[</span><span class="s">"ET-15-lfhf"</span><span class="p">]</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+
+<span class="n">ET2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">        </span><span class="s">"Position"</span><span class="o">-&gt;</span><span class="n">DetectorVertex</span><span class="p">[</span><span class="s">"ET-MR"</span><span class="p">],</span>
+<span class="w">        </span><span class="s">"DetectorTensor"</span><span class="o">-&gt;</span><span class="n">DetectorTensor</span><span class="p">[</span><span class="s">"ET-MR-L-45"</span><span class="p">],</span>
+<span class="w">        </span><span class="s">"ASD"</span><span class="o">-&gt;</span><span class="n">ASD</span><span class="p">[</span><span class="s">"ET-15-lfhf"</span><span class="p">]</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+
+<span class="n">CE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">        </span><span class="s">"Position"</span><span class="o">-&gt;</span><span class="w"> </span><span class="n">DetectorVertex</span><span class="p">[</span><span class="s">"CE-NM"</span><span class="p">],</span>
+<span class="w">        </span><span class="s">"DetectorTensor"</span><span class="o">-&gt;</span><span class="n">DetectorTensor</span><span class="p">[</span><span class="s">"CE-NM"</span><span class="p">],</span>
+<span class="w">        </span><span class="s">"ASD"</span><span class="o">-&gt;</span><span class="n">ASD</span><span class="p">[</span><span class="s">"CE-40"</span><span class="p">]</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+
+<span class="c">(*Given the total mass of the injection after 93 Hz the waveform is 0*)</span>
+<span class="n">fcut</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">93.</span><span class="p">;</span>
+
+<span class="c">(*We take Delta_f to be 1/Delta_t == 1/2 for this signal*)</span>
+<span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Length</span><span class="o">@</span><span class="n">Range</span><span class="p">[</span><span class="mf">5.</span><span class="p">,</span><span class="w"> </span><span class="mf">93.</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mf">2.</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="n">tensors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DALITensors</span><span class="p">[</span><span class="s">"IMRPhenomHM"</span><span class="p">,</span><span class="w"> </span><span class="n">fp</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">ET1</span><span class="p">,</span><span class="w"> </span><span class="n">ET2</span><span class="p">,</span><span class="w"> </span><span class="n">CE</span><span class="p">},</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">"fmin"</span><span class="o">-&gt;</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">"fmax"</span><span class="o">-&gt;</span><span class="mi">93</span><span class="p">,</span><span class="w"> </span><span class="s">"res"</span><span class="o">-&gt;</span><span class="n">res</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>We note that the structure of the output is a depth-2 list of vectors:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">Table</span><span class="p">[</span>
+<span class="w">     </span><span class="n">tensors</span><span class="p">[[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]]</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="n">Length</span><span class="p">,</span>
+<span class="w">     </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">},</span>
+<span class="w">     </span><span class="p">{</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">}</span>
+<span class="w"> </span><span class="p">]</span>
+<span class="w"> </span><span class="p">{{</span><span class="mi">121</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="mi">726</span><span class="p">,</span><span class="w"> </span><span class="mi">4356</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="mi">3146</span><span class="p">,</span><span class="w"> </span><span class="mi">18876</span><span class="p">,</span><span class="w"> </span><span class="mi">81796</span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>Each tensor in the <code class="docutils literal notranslate"><span class="pre">DALI</span></code> formalism is represented as a one dimensional vector. We recognize the
+first element as the Fisher matrix in 11 dimensions, with 121 elements. The second element has
+the representation of <span class="math notranslate nohighlight">\(\langle h_{ij} | h_k  \rangle\)</span> and <span class="math notranslate nohighlight">\(\langle h_{ij} | h_{kl}  \rangle\)</span> with 726
+elements with 4356 elements respectvely. In summary, the output of <code class="docutils literal notranslate"><span class="pre">DALITensors</span></code> is
+schematically equivalent to the following structure:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\Big\{&amp; \\
+     &amp;\quad \{ \langle h_{i} | h_j  \rangle  \}, \\
+     &amp;\quad \{ \langle h_{ij} | h_k  \rangle  , \,  \langle h_{ij} | h_{kl}  \rangle \} , \\
+     &amp;\quad \dots \\
+\Big\}&amp;,\end{split}\]</div>
+<p>where each quantity <span class="math notranslate nohighlight">\(\langle h_{i_1 \dots i_n} | h_{j_1 \dots j_m}  \rangle\)</span>
+is represented as a one dimensional vector. The relation between waveform variables and
+dimensions of the tensors follows that of the Fisher matrix case. As explained in <a class="reference internal" href="Fisher.html#fisher-tutorial"><span class="std std-ref">Fisher tutorial</span></a>
+this relation can be obtained by calling <code class="docutils literal notranslate"><span class="pre">EmptyAssociation[&quot;Aligned&quot;]</span></code>.</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">DALITensors</span></code> does eliminate
+some redundant elements in the tensors, but not all of them. For instance,
+the Fisher matrix representation does contain 121 elements, even though it is symmetric and
+only 66 of them are independent. The same applies to the higher order tensors.
+As pointed out in section <a class="reference internal" href="Math.html#taylor-section"><span class="std std-ref">Taylor form</span></a>, for likelihood sampling it is more
+efficient to use the Taylor form of the <code class="docutils literal notranslate"><span class="pre">DALI</span></code> expansion, which can be obtained with
+the function <code class="docutils literal notranslate"><span class="pre">TaylorForm</span></code></p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">taylor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TaylorForm</span><span class="p">[</span><span class="n">tensors</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>Now, we observe that this quantity carries only the independent elements of all tensors:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">Table</span><span class="p">[</span>
+<span class="w">     </span><span class="n">taylor</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="n">Length</span><span class="p">,</span>
+<span class="w">     </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">}</span>
+<span class="w"> </span><span class="p">]</span>
+<span class="w"> </span><span class="p">{</span><span class="mi">66</span><span class="p">,</span><span class="w"> </span><span class="mi">286</span><span class="p">,</span><span class="w"> </span><span class="mi">1001</span><span class="p">,</span><span class="w"> </span><span class="mi">3003</span><span class="p">,</span><span class="w"> </span><span class="mi">8008</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>In fact, the output <code class="docutils literal notranslate"><span class="pre">taylor</span></code> defined above is a representation of the following structure:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\Big\{&amp; \\
+     &amp;\quad -\frac{1}{2} \{ \langle h_{i} | h_j  \rangle  \}, \\
+     &amp;\quad - \left(\frac{1}{2 \, 2!^2} \langle h_{ij} | h_{kl} \rangle  + \frac{1}{3! 1!} \langle h_{ijk} | h_l \rangle \right) \\
+     &amp;\quad -  \frac{1}{3! 2!} \langle h_{ijk} | h_{lm} \rangle  \\
+     &amp;\quad - \frac{1}{2 \, 3!^2} \langle h_{ijk} | h_{lmn} \rangle \\
+\Big\}&amp;\end{split}\]</div>
+<p>where the labels were all symmetrized and only the LI components are kept. This explains why
+we got <code class="docutils literal notranslate"><span class="pre">{66,</span> <span class="pre">286,</span> <span class="pre">1001,</span> <span class="pre">3003,</span> <span class="pre">8008}</span></code> as the lengths of the elements of <code class="docutils literal notranslate"><span class="pre">taylor</span></code>. These
+are the numbers of LI components in a totally symmetric tensor of rank (2, 3, 4, 5, 6) in 11 dimensions.</p>
+<p>After calculating the Taylor form, the recommendation is to save it in a text file:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">Export</span><span class="p">[</span><span class="s">"taylor.txt"</span><span class="p">,</span><span class="w"> </span><span class="n">Flatten</span><span class="p">[</span><span class="n">taylor</span><span class="p">],</span><span class="w"> </span><span class="s">"Table"</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>This file is used in the <code class="docutils literal notranslate"><span class="pre">Python</span></code> part of the framework to sample the likelihood, which is described
+in section <a class="reference internal" href="Sampling.html#sampling"><span class="std std-ref">Likelihood sampling tutorial</span></a>.</p>
+</section>
+<section id="options">
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading"></a></h2>
+<p>The options of <code class="docutils literal notranslate"><span class="pre">DALITensors</span></code> are already described in the Fisher tutorial in section
+<a class="reference internal" href="Fisher.html#options-fisher"><span class="std std-ref">Options</span></a>. They extend naturally to the higher order case.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Fisher.html" class="btn btn-neutral float-left" title="Fisher tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Sampling.html" class="btn btn-neutral float-right" title="Likelihood sampling tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Felipe Barbosa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

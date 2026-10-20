@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Likelihood sampling tutorial &mdash; SymDALI 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0db0cb75" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="DALI tensors tutorial" href="DALI_Tensors.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SymDALI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Math.html">Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Waveform.html">Waveform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Detectors.html">Detectors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fiducial.html">Fiducial point</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SNR_tutorial.html">SNR tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fisher.html">Fisher tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DALI_Tensors.html">DALI tensors tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Likelihood sampling tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#taylor-deltaps-function"><code class="docutils literal notranslate"><span class="pre">Taylor_DeltaPs</span></code> Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Sampling</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SymDALI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Likelihood sampling tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Sampling.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="likelihood-sampling-tutorial">
+<span id="sampling"></span><h1>Likelihood sampling tutorial<a class="headerlink" href="#likelihood-sampling-tutorial" title="Link to this heading"></a></h1>
+<p>In section <a class="reference internal" href="DALI_Tensors.html#dali-tensors"><span class="std std-ref">DALI tensors tutorial</span></a> we have discussed how to calculate the <code class="docutils literal notranslate"><span class="pre">DALI</span></code> tensors and their Taylor form.
+In this section, assuming we have already performed such calculations we will discuss how
+to sample the <code class="docutils literal notranslate"><span class="pre">DALI</span></code> likelihood in the Python part of the framework.</p>
+<section id="taylor-deltaps-function">
+<h2><code class="docutils literal notranslate"><span class="pre">Taylor_DeltaPs</span></code> Function<a class="headerlink" href="#taylor-deltaps-function" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">DALI</span></code> likelihood depends on the <code class="docutils literal notranslate"><span class="pre">DALI</span></code> tensors and their contraction
+with <span class="math notranslate nohighlight">\(\Delta \theta^i\)</span>. The latter is calculated with the function <code class="docutils literal notranslate"><span class="pre">Taylor_DeltaPs</span></code>.
+This function takes as input <span class="math notranslate nohighlight">\(\Delta \theta^i\)</span>, in the form of a <code class="docutils literal notranslate"><span class="pre">numpy</span></code>
+array, and an integer <code class="docutils literal notranslate"><span class="pre">N</span></code> and returns the powers
+<span class="math notranslate nohighlight">\(\{\Delta \theta^{i_1 i_2}, \dots ,\Delta \theta^{i_1 ... i_{2 N}} \}\)</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">symdali</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Delta theta array</span>
+<span class="n">delta_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+
+<span class="c1"># Calculate up to the power theta^6:</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">delta_ps</span> <span class="o">=</span> <span class="n">symdali</span><span class="o">.</span><span class="n">Taylor_DeltaPs</span><span class="p">(</span><span class="n">delta_theta</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If we look at the output <code class="docutils literal notranslate"><span class="pre">delta_ps</span></code> we will see that it is a 1D <code class="docutils literal notranslate"><span class="pre">numpy</span></code> array</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">delta_ps</span><span class="p">))</span>
+<span class="o">&gt;&gt;</span> <span class="mi">456</span>
+</pre></div>
+</div>
+<p>The number of elements is the sum <code class="docutils literal notranslate"><span class="pre">456</span> <span class="pre">==</span> <span class="pre">15</span> <span class="pre">+</span> <span class="pre">35</span> <span class="pre">+</span> <span class="pre">70</span> <span class="pre">+126+210</span></code>, the number of LI components
+of totally symmetric tensors of ranks (2,3,4,5,6) in 5 dimensions. The function
+<code class="docutils literal notranslate"><span class="pre">Taylor_DeltaPs</span></code> gives a representation of</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\Big\{&amp; \\
+     &amp;\quad \Delta \theta^{ij},  \\
+     &amp;\quad \Delta \theta^{ijk}, \\
+     &amp;\quad \Delta \theta^{ijkl} \\
+     &amp;\quad \Delta \theta^{ijklm} \\
+     &amp;\quad \Delta \theta^{ijklmn} \\
+\Big\}&amp;,\end{split}\]</div>
+<p>where the different powers of <span class="math notranslate nohighlight">\(\Delta \theta^i\)</span> are represented by their LI components.
+Once we have the powers of <span class="math notranslate nohighlight">\(\Delta \theta^i\)</span> and the Taylor form of the <code class="docutils literal notranslate"><span class="pre">DALI</span></code>
+tensors obtained in <a class="reference internal" href="DALI_Tensors.html#dali-tensors-ex"><span class="std std-ref">Example</span></a> we can implement the <code class="docutils literal notranslate"><span class="pre">DALI</span></code> likelihood by taking the dot product
+of these vectors. For instance, given the form of <code class="docutils literal notranslate"><span class="pre">DALI</span></code> tensors saved in <a class="reference internal" href="DALI_Tensors.html#dali-tensors-ex"><span class="std std-ref">Example</span></a>
+we have</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#the fiducial point around which we expanded likelihood</span>
+<span class="n">pf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+   <span class="o">-</span><span class="mf">0.883787</span><span class="p">,</span> <span class="mf">6.18412</span><span class="p">,</span> <span class="mf">0.471846</span><span class="p">,</span> <span class="mf">190.258</span><span class="p">,</span> <span class="mf">0.935815</span><span class="p">,</span> <span class="mf">0.107562</span><span class="p">,</span>
+   <span class="o">-</span><span class="mf">0.0254365</span><span class="p">,</span> <span class="mf">2.60021</span><span class="p">,</span> <span class="mf">35.1128</span><span class="p">,</span> <span class="mf">61093.87906420612</span><span class="p">,</span> <span class="mf">5.93578</span>
+<span class="p">])</span>
+
+<span class="c1">#Change dL -&gt; 1/dL</span>
+<span class="n">pf2</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">pf2</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">pf</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+
+<span class="n">tensors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">'taylor.txt'</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">DALI_L</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+
+    <span class="c1">#Change dL -&gt; 1/dL</span>
+   <span class="n">i_p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+   <span class="n">i_p</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">p</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+
+   <span class="n">Delta_theta</span> <span class="o">=</span> <span class="n">i_p</span> <span class="o">-</span> <span class="n">pf2</span>
+
+   <span class="n">log_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+      <span class="n">symdali</span><span class="o">.</span><span class="n">Taylor_DeltaPs</span><span class="p">(</span><span class="n">Delta_theta</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+      <span class="n">tensors</span>
+   <span class="p">)</span>
+
+   <span class="k">return</span> <span class="n">log_L</span>
+</pre></div>
+</div>
+<p>Here we make two important observations: as we saw in <a class="reference internal" href="Fisher.html#fisher-tutorial"><span class="std std-ref">Fisher tutorial</span></a> the derivatives are calculated
+in <span class="math notranslate nohighlight">\(1/d_L\)</span>, whereas we want to sample the likelihood in <span class="math notranslate nohighlight">\(d_L\)</span>, so we perform
+a coordinate change inside the function. Also, it is necessary to pass the vector <cite>p</cite> in the
+same order of the variable derivatives calculated in <a class="reference internal" href="DALI_Tensors.html#dali-tensors"><span class="std std-ref">DALI tensors tutorial</span></a> that is:</p>
+<div class="math notranslate nohighlight">
+\[p = \left(\text{dec}, \phi, \psi, \mathcal{M}_c, q, \chi_1, \chi_2, \iota, d_L, t_c, \phi_{\text{ref}} \right)\]</div>
+<p>The function <code class="docutils literal notranslate"><span class="pre">DALI_L(p)</span></code> already implements the <code class="docutils literal notranslate"><span class="pre">DALI</span></code> likelihood and can be used to
+perform the sampling, which can be done with any algorithm. In practice we advise the use
+of <code class="docutils literal notranslate"><span class="pre">emcee</span></code> because it is lightweight. In the following we describe our way of using it.</p>
+</section>
+<section id="id1">
+<h2>Sampling<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>The priors in GWs can be defined in very different scales we find it useful to
+transform the sampling problem to a cube. We choose the cube length to be 200, so that
+the step size of <code class="docutils literal notranslate"><span class="pre">emcee</span></code>, <code class="docutils literal notranslate"><span class="pre">a=1</span></code>, is small with respect to the cube’s length
+scale. In order to perform such a change we need two functions to convert variables from
+the cube to the actual prior ranges and vice versa. Assume that <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> have the
+boundaries of the waveform variables:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+   <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="c1"># dec, phi, psi</span>
+   <span class="mi">140</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.99</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.99</span><span class="p">,</span> <span class="c1"># Mc, q, s1z, s2z</span>
+   <span class="mf">0.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">61094.012</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mi">0</span> <span class="c1"># iota, dL, tc, phi_ref</span>
+<span class="p">])</span>
+
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+   <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="c1"># dec, phi, psi</span>
+   <span class="mf">240.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">,</span> <span class="c1"># Mc, q, s1z, s2z</span>
+   <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">40.</span><span class="p">,</span> <span class="mf">61094.012</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="c1"># iota, dL, tc, phi_ref</span>
+ <span class="p">])</span>
+</pre></div>
+</div>
+<p>We define functions to take a variable <span class="math notranslate nohighlight">\(x \in \left[a, \, b \right]\)</span> to <span class="math notranslate nohighlight">\(y \in \left[0, 200 \right]\)</span>
+and to take the variable <span class="math notranslate nohighlight">\(y\)</span> back to <span class="math notranslate nohighlight">\(x\)</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Define transformations to the cube and from it:</span>
+<span class="n">cube_length</span><span class="o">=</span><span class="mi">200</span>
+
+<span class="n">inv_scale</span> <span class="o">=</span> <span class="n">cube_length</span> <span class="o">/</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span>
+
+<span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="n">cube_length</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">from_cube</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+   <span class="k">return</span> <span class="n">y</span> <span class="o">*</span> <span class="n">scale</span> <span class="o">+</span> <span class="n">a</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">to_cube</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+   <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">inv_scale</span>
+</pre></div>
+</div>
+<p>Now we define the likelihood that takes the cube variables:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">emcee_logP</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+   <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">:</span>
+      <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+   <span class="k">return</span> <span class="n">DALI_L</span><span class="p">(</span><span class="n">from_cube</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Finally, we just proceed to likelihood sampling:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Here we set the walkers and initial steps</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+<span class="n">nwalkers</span><span class="p">,</span> <span class="n">ndim</span> <span class="o">=</span> <span class="n">p0</span><span class="o">.</span><span class="n">shape</span>
+
+<span class="c1">#RUN EMCEE</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">emcee</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">emcee_logP</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mf">5e5</span><span class="p">),</span> <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">);</span>
+
+<span class="c1">#Calculate the auto correlation time</span>
+<span class="n">tau</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_autocorr_time</span><span class="p">()</span>
+
+<span class="c1"># the emcee recomendation is to discard 2xtau and thin the chain by tau/2</span>
+<span class="n">flat_samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">(</span>
+   <span class="n">discard</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">tau</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+   <span class="n">thin</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">tau</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
+   <span class="n">flat</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1">#The samples are in the cube variables y in (0,200)</span>
+<span class="c1"># Here we transform them back to the original intervals</span>
+<span class="n">flat_samples</span> <span class="o">=</span> <span class="n">from_cube</span><span class="p">(</span><span class="n">flat_samples</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, we look at the corner plot of the result:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">getdist</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">getdist</span><span class="w"> </span><span class="kn">import</span> <span class="n">plots</span>
+
+<span class="c1">#observe that for the injection value of t_c the right ascension and azimuthal angle</span>
+<span class="c1">#are equivalent</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span>
+   <span class="s1">'dec'</span><span class="p">,</span> <span class="s1">'ra'</span><span class="p">,</span> <span class="s1">'psi'</span><span class="p">,</span>
+   <span class="s1">'chirp_mass'</span><span class="p">,</span> <span class="s1">'mass_ratio'</span><span class="p">,</span><span class="s1">'chi_1'</span><span class="p">,</span> <span class="s1">'chi_2'</span><span class="p">,</span>
+   <span class="s1">'theta_jn'</span><span class="p">,</span> <span class="s1">'luminosity_distance'</span><span class="p">,</span> <span class="s1">'geocent_time'</span><span class="p">,</span> <span class="s1">'phase'</span>
+<span class="p">]</span>
+
+<span class="n">latex_labels</span> <span class="o">=</span> <span class="p">[</span>
+   <span class="sa">r</span><span class="s1">'\delta'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'\alpha'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'\psi'</span><span class="p">,</span>
+   <span class="sa">r</span><span class="s1">'\mathcal</span><span class="si">{M}</span><span class="s1">_c'</span><span class="p">,</span> <span class="s1">'q'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'\chi_1'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'\chi_2'</span><span class="p">,</span>
+   <span class="sa">r</span><span class="s1">'\theta_</span><span class="si">{JN}</span><span class="s1">'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'d_L'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'t_c'</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'\phi_c'</span>
+<span class="p">]</span>
+
+
+<span class="n">samples</span> <span class="o">=</span> <span class="n">getdist</span><span class="o">.</span><span class="n">MCSamples</span><span class="p">(</span>
+   <span class="n">samples</span><span class="o">=</span><span class="n">flat_samples</span><span class="p">,</span>
+   <span class="n">names</span> <span class="o">=</span> <span class="n">labels</span><span class="p">,</span>
+   <span class="n">labels</span> <span class="o">=</span> <span class="n">latex_labels</span><span class="p">,</span>
+   <span class="n">label</span><span class="o">=</span><span class="s1">'Triplet'</span>
+<span class="p">)</span>
+
+<span class="n">samples</span><span class="o">.</span><span class="n">smooth_scale_1D</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">samples</span><span class="o">.</span><span class="n">contours</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.9</span><span class="p">]</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">get_subplot_plotter</span><span class="p">(</span><span class="n">scaling</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">figure_legend_frame</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">g</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">legend_fontsize</span> <span class="o">=</span> <span class="mi">50</span>
+
+<span class="n">g</span><span class="o">.</span><span class="n">triangle_plot</span><span class="p">(</span>
+   <span class="p">[</span><span class="n">samples</span><span class="p">],</span>
+   <span class="n">filled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+   <span class="n">contour_colors</span><span class="o">=</span><span class="p">[</span><span class="s1">'g'</span><span class="p">],</span>
+   <span class="n">line_args</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="p">{</span><span class="s1">'lw'</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'color'</span><span class="p">:</span><span class="s1">'g'</span><span class="p">}</span>
+   <span class="p">],</span>
+   <span class="n">legend_loc</span><span class="o">=</span><span class="s1">'upper right'</span><span class="p">,</span>
+   <span class="n">marker_args</span><span class="o">=</span><span class="p">{</span><span class="s1">'lw'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span><span class="s1">'color'</span><span class="p">:</span><span class="s1">'r'</span><span class="p">,</span> <span class="s2">"alpha"</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">leg</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">legends</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">leg</span><span class="o">.</span><span class="n">get_lines</span><span class="p">():</span>
+   <span class="n">line</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+
+<span class="c1"># add truth only to 1D panels (diagonal)</span>
+<span class="n">pf</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">pf</span><span class="p">))</span>
+<span class="n">truth</span> <span class="o">=</span> <span class="n">pf</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+   <span class="n">ax</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">subplots</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>   <span class="c1"># diagonal axis</span>
+   <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="n">p</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">'k'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">fig</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'example.pdf'</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">'tight'</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/example.svg"><img alt="Taylor expansion illustration" class="align-center" src="_images/example.svg" style="width: 80%;" />
+</a>
+<p>In …, the reader can find a link to Wolfram Language, Python, and Bash scripts that
+demonstrate the complete workflow, from the <cite>DALI</cite> tensors to the final plot with a
+single terminal command. On a Macbook Air M1 with 8 Gb of RAM this example takes 12.3 minutes to run.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="DALI_Tensors.html" class="btn btn-neutral float-left" title="DALI tensors tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Felipe Barbosa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

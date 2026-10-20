@@ -8,8 +8,8 @@ The Wolfram Language code has support for the following waveform models:
 * ``IMRPhenomHM``: non-precessing, aligned-spin, inspiral-merger-ringdown
   waveform model for BBH with higher modes, see `1708.00404 <https://arxiv.org/abs/1708.00404>`_.
 
-These waveform models are implemented as functions that return the plus and
-cross polarizations of the GW signal, given a set of parameters.
+The models are implemented as functions that return the plus and
+cross polarizations of the GW signal.
 
 ``hphcIMRPhenomD``
 ------------------
@@ -20,28 +20,27 @@ cross polarizations of the GW signal, given a set of parameters.
 
 Calculates the polarizations :math:`\{h_+, h_\times\}` of the ``IMRPhenomD`` approximant.
 
-**Parameters**:
+**Parameters**: 
+               ``f``: Frequency vector, where ``f[[i]]`` is in [Hz].
 
-   ``f``: Frequency vector, where ``f[[i]]`` is in [Hz].
+               ``Mc``: Chirp mass [:math:`M_\odot`].
 
-   ``Mc``: Chirp mass [solar mass].
+               ``q``: Mass ratio, in (0,1].
 
-   ``q``: Mass ratio in (0,1].
+               ``s1z``: Aligned spin of the heaviest BH, in (-1,1).
 
-   ``s1z``: Aligned spin, in (-1,1).
+               ``s2z``: Aligned spin of the lightest BH, in (-1,1).
 
-   ``s2z``: Aligned spin, in (-1,1).
+               ``iota``: Inclination angle, in [0, :math:`\pi`].
 
-   ``iota``: Inclination angle, in [0, :math:`\pi`].
+               ``tc``: Coalescence time [s].
 
-   ``tc``: Coalescence time [s].
+               ``phiRef``: Reference phase, in [0, 2 :math:`\pi`].
 
-   ``phiRef``: Reference phase, in [0, 2 :math:`\pi`].
-
-   ``invdL``: Inverse luminosity distance [1/Gpc].
+               ``invdL``: Inverse luminosity distance [1/Gpc].
 
 **Returns**: 
-   The polarizations :math:`\{h_+, h_\times\}` of the ``IMRPhenomD`` approximant. 
+   Polarizations :math:`\{h_+, h_\times\}` of the ``IMRPhenomD`` approximant. 
    The output has dimensions ``{2, N}``, where ``N = Length[f]``. 
 
 
@@ -59,13 +58,13 @@ Calculates the polarizations :math:`\{h_+, h_\times\}` of the ``IMRPhenomHM`` ap
 
    ``f``: Frequency vector, where ``f[[i]]`` is in [Hz].
 
-   ``Mc``: Chirp mass [solar mass].
+   ``Mc``: Chirp mass [:math:`M_\odot`].
 
-   ``q``: Mass ratio in (0,1].
+   ``q``: Mass ratio, in (0,1].
 
-   ``s1z``: Aligned spin, in (-1,1).
+   ``s1z``: Aligned spin of the heaviest BH, in (-1,1).
 
-   ``s2z``: Aligned spin, in (-1,1).
+   ``s2z``: Aligned spin of the lightest BH, in (-1,1).
 
    ``iota``: Inclination angle, in [0, :math:`\pi`].
 
@@ -75,7 +74,7 @@ Calculates the polarizations :math:`\{h_+, h_\times\}` of the ``IMRPhenomHM`` ap
 
    ``invdL``: Inverse luminosity distance [1/Gpc].
 
-**Returns**
-   The polarizations :math:`\{h_+, h_\times\}` of the ``IMRPhenomHM`` approximant. 
+**Returns**:
+   Polarizations :math:`\{h_+, h_\times\}` of the ``IMRPhenomHM`` approximant. 
    The output has dimensions ``{2, N}``, where ``N = Length[f]``. 
 

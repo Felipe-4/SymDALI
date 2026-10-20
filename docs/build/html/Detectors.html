@@ -9,6 +9,7 @@
   <title>Detectors &mdash; SymDALI 1.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0db0cb75" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -20,6 +21,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fiducial point" href="Fiducial.html" />
     <link rel="prev" title="Waveform" href="Waveform.html" /> 
 </head>
 
@@ -45,6 +47,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Math.html">Math</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Waveform.html">Waveform</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Detectors</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#characterization">Characterization</a></li>
@@ -54,6 +57,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#pattern-functions">Pattern functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Fiducial.html">Fiducial point</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SNR_tutorial.html">SNR tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fisher.html">Fisher tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DALI_Tensors.html">DALI Tensors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sampling.html">Likelihood sampling</a></li>
 </ul>
 
         </div>
@@ -82,24 +90,23 @@
              
   <section id="detectors">
 <h1>Detectors<a class="headerlink" href="#detectors" title="Link to this heading"></a></h1>
-<p>Here we describe how the Wolfram Language code characterizes a detector, how to access
-the built-in detectors and how to define a new detector.</p>
+<p>We describe how to characterize a detector in Wolfram Language, how to access built-in
+detectors and how to define new ones.</p>
 <section id="characterization">
 <h2>Characterization<a class="headerlink" href="#characterization" title="Link to this heading"></a></h2>
-<p>A detector is specified by three properties: its location, orientation, and
+<p>A detector is specified by three properties: location, orientation, and
 noise power spectral density <span class="math notranslate nohighlight">\(S_n(f)\)</span>. Our convention
 is to use the WGS-84 model to define the detector’s position and orientation.</p>
 <p>The position is given by the Cartesian coordinates of the detector’s vertex
-in meters. For example, the LIGO Livingston detector position vector is:</p>
-<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">PosL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mf">-74276.</span><span class="p">,</span><span class="w"> </span><span class="mf">-5.49628</span><span class="o">*</span><span class="mi">10</span><span class="o">^</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mf">3.22426</span><span class="o">*</span><span class="mi">10</span><span class="o">^</span><span class="mi">6</span><span class="p">};</span>
+in meters. For example, the LIGO Livingston position is:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">PosL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mf">-74276.</span><span class="p">,</span><span class="w"> </span><span class="mf">-5.49628</span><span class="o">*</span><span class="mi">10</span><span class="o">^</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mf">3.22426</span><span class="o">*</span><span class="mi">10</span><span class="o">^</span><span class="mi">6</span><span class="p">};</span><span class="w">  </span><span class="c">(*{x,y,z}*)</span>
 </pre></div>
 </div>
 <p>The orientation is given by the detector tensor:</p>
 <div class="math notranslate nohighlight">
 \[D_{ij} = \frac{1}{2} \left(nx_i nx_j - ny_i ny_j\right),\]</div>
 <p>where <span class="math notranslate nohighlight">\(nx\)</span> and <span class="math notranslate nohighlight">\(ny\)</span> are the unit vectors along the two detector
-arms. For the LIGO Livingston detector, the orientation is given by the
-matrix:</p>
+arms. For LIGO Livingston we have:</p>
 <div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">DL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="p">{</span><span class="mf">0.411318</span><span class="p">,</span><span class="w"> </span><span class="mf">0.14021</span><span class="p">,</span><span class="w"> </span><span class="mf">0.247279</span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span><span class="mf">0.14021</span><span class="p">,</span><span class="w"> </span><span class="mf">-0.108998</span><span class="p">,</span><span class="w"> </span><span class="mf">-0.181597</span><span class="p">},</span>
@@ -110,23 +117,24 @@ matrix:</p>
 <p>The noise properties are represented by an
 <code class="docutils literal notranslate"><span class="pre">InterpolatingFunction</span></code> of the amplitude spectral density (ASD),
 <span class="math notranslate nohighlight">\(\sqrt{S_n(f)}\)</span>, which can be generated using <code class="docutils literal notranslate"><span class="pre">Interpolation</span></code>:</p>
-<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Import</span><span class="p">[</span><span class="s">"AplusDesign.txt"</span><span class="p">,</span><span class="w"> </span><span class="s">"Data"</span><span class="p">];</span>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Import</span><span class="p">[</span><span class="s">"AplusDesign.txt"</span><span class="p">,</span><span class="w"> </span><span class="s">"Data"</span><span class="p">];</span><span class="w"> </span><span class="c">(*you need the file AplusDesign.txt in your path to run this line*)</span>
 <span class="n">ASDL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Interpolation</span><span class="p">[</span><span class="n">data</span><span class="p">];</span>
 </pre></div>
 </div>
-<p>The functions in <code class="docutils literal notranslate"><span class="pre">SymDALI</span></code> require detectors to be specified by quantities
-such as <code class="docutils literal notranslate"><span class="pre">PosL1</span></code>, <code class="docutils literal notranslate"><span class="pre">DL1</span></code>, and <code class="docutils literal notranslate"><span class="pre">ASDL1</span></code>. These quantities can be defined
-for any detector.</p>
+<dl class="simple">
+<dt>Functions in <code class="docutils literal notranslate"><span class="pre">SymDALI</span></code> require detectors to be specified by quantities such as</dt><dd><p><code class="docutils literal notranslate"><span class="pre">PosL1</span></code>, <code class="docutils literal notranslate"><span class="pre">DL1</span></code>, and <code class="docutils literal notranslate"><span class="pre">ASDL1</span></code>. These quantities can be defined for any detector.</p>
+</dd>
+</dl>
 </section>
 <section id="buit-in-detectors">
 <h2>Buit-in detectors<a class="headerlink" href="#buit-in-detectors" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">SymDALI</span></code> has built-in support for the
 LIGO-Virgo-KAGRA (LVK) network, Einstein Telescope (ET), and Cosmic Explorer
 (CE). Predefined detector positions are provided by <code class="docutils literal notranslate"><span class="pre">DetectorVertex</span></code>. Predefined
-orientations are provided by <code class="docutils literal notranslate"><span class="pre">DetectorTensor</span></code>, and built-in ASDs are
+orientations are provided by <code class="docutils literal notranslate"><span class="pre">DetectorTensor</span></code>. Built-in ASDs are
 provided by <code class="docutils literal notranslate"><span class="pre">ASD</span></code>. The usage messages of these three functions (for instance <code class="docutils literal notranslate"><span class="pre">?DetectorVertex</span></code>) provide
 a list of the available detectors and their corresponding names.</p>
-<p>For example, the previous definitions can instead be generated with:</p>
+<p>For example, the previous definitions are readily available with:</p>
 <div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">PosL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DetectorVertex</span><span class="p">[</span><span class="s">"L1"</span><span class="p">];</span>
 <span class="n">DL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DetectorTensor</span><span class="p">[</span><span class="s">"L1"</span><span class="p">];</span>
 <span class="n">ASDL1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ASD</span><span class="p">[</span><span class="s">"L1H1-O5"</span><span class="p">];</span>
@@ -135,7 +143,7 @@ a list of the available detectors and their corresponding names.</p>
 </section>
 <section id="defining-a-new-detector">
 <h2>Defining a new detector<a class="headerlink" href="#defining-a-new-detector" title="Link to this heading"></a></h2>
-<p>To define the position and orientation of a new detector, we can use the functions
+<p>To define the position and orientation of a new detector we can use the functions
 <code class="docutils literal notranslate"><span class="pre">FromGeocentricCoordinates</span></code> and <code class="docutils literal notranslate"><span class="pre">ArmDirection</span></code>.</p>
 <div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">FromGeocentricCoordinates</span><span class="p">[{</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">lon</span><span class="p">}]</span>
 </pre></div>
@@ -148,7 +156,7 @@ a list of the available detectors and their corresponding names.</p>
 <p><code class="docutils literal notranslate"><span class="pre">lon</span></code>: Vertex longitude in radians.</p>
 </div></blockquote>
 <dl class="simple">
-<dt><strong>Returns</strong>:</dt><dd><p>The Cartesian coordinates <code class="docutils literal notranslate"><span class="pre">{x,</span> <span class="pre">y,</span> <span class="pre">z}</span></code> of the point, in meters.</p>
+<dt><strong>Returns</strong>:</dt><dd><p>The Cartesian coordinates <code class="docutils literal notranslate"><span class="pre">{x,</span> <span class="pre">y,</span> <span class="pre">z}</span></code> in meters.</p>
 </dd>
 </dl>
 <div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">ArmDirection</span><span class="p">[</span>
@@ -173,8 +181,10 @@ a list of the available detectors and their corresponding names.</p>
 </dl>
 <p>The altitude and azimuth angles follow the convention used in
 <a class="reference external" href="https://git.ligo.org/lscsoft/lalsuite/-/blob/master/lal/lib/tools/LALDetectors.h">LALDetectors.h</a>:</p>
-<p><strong>Azimuth</strong>: Angle measured clockwise from north of the direction vector.</p>
+<blockquote>
+<div><p><strong>Azimuth</strong>: Angle measured clockwise from north of the direction vector.</p>
 <p><strong>Altitude</strong>: The angle the direction vector makes with the local horizontal plane. Positive values indicate directions above the horizontal.</p>
+</div></blockquote>
 <p>The following example shows how to define the position and orientation of
 LIGO Livingston using these functions. The reference values are taken from
 <a class="reference external" href="https://git.ligo.org/lscsoft/lalsuite/-/blob/master/lal/lib/tools/LALDetectors.h">LALDetectors.h</a>:</p>
@@ -195,9 +205,9 @@ LIGO Livingston using these functions. The reference values are taken from
 <code class="docutils literal notranslate"><span class="pre">Interpolation</span></code>.</p>
 </section>
 <section id="detector-association">
-<h2>Detector association<a class="headerlink" href="#detector-association" title="Link to this heading"></a></h2>
+<span id="detector-asso"></span><h2>Detector association<a class="headerlink" href="#detector-association" title="Link to this heading"></a></h2>
 <p>The functions <code class="docutils literal notranslate"><span class="pre">SNR</span></code> and <code class="docutils literal notranslate"><span class="pre">DALITensors</span></code> take a list of one or more
-detectors as one of their inputs. Each detector is specified by an
+detectors as one of their inputs. Each detector is defined by an
 association with the following keys:</p>
 <div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">L1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
 <span class="w">    </span><span class="s">"Position"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">PosL1</span><span class="p">,</span>
@@ -210,7 +220,7 @@ association with the following keys:</p>
 <section id="pattern-functions">
 <h2>Pattern functions<a class="headerlink" href="#pattern-functions" title="Link to this heading"></a></h2>
 <p>The pattern functions quantify how a detector responds to the GW polarizations
-<span class="math notranslate nohighlight">\({h_+, \, h_\times}\)</span>. They are defined as</p>
+<span class="math notranslate nohighlight">\(\{h_+, \, h_\times\}\)</span>. They are defined as</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}F_{+} =  D^{ij} \, e^{+}_{ij}, \\
 F_{\times} = D^{ij} \, e^{\times}_{ij}.\end{split}\]</div>
@@ -223,7 +233,7 @@ Therefore, we have:</p>
 &amp;\Delta t \equiv \frac{\vec{r} \cdot \hat{n}}{c},\end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\vec{r}\)</span> is the position vector of the detector, <span class="math notranslate nohighlight">\(\hat{n}\)</span> is the
 unit vector pointing from the geocenter to the source, and <span class="math notranslate nohighlight">\(c\)</span> is the speed of light.
-These pattern functions can be calculated with the function <code class="docutils literal notranslate"><span class="pre">PatternFunctions</span></code></p>
+<span class="math notranslate nohighlight">\(\{F_+, \, F_\times\}\)</span> can be calculated with the function <code class="docutils literal notranslate"><span class="pre">PatternFunctions</span></code></p>
 <div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">PatternFunctions</span><span class="p">[</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">dec</span><span class="p">,</span><span class="w"> </span><span class="n">phi</span><span class="p">,</span><span class="w"> </span><span class="n">psi</span><span class="p">,</span><span class="w"> </span><span class="n">pi</span><span class="p">,</span><span class="w"> </span><span class="n">Dij</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -232,9 +242,9 @@ These pattern functions can be calculated with the function <code class="docutil
 <p><strong>Parameters</strong>:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">f</span></code>: Frequency vector, where <code class="docutils literal notranslate"><span class="pre">f[[i]]</span></code> is in [Hz].</p>
-<p><code class="docutils literal notranslate"><span class="pre">dec</span></code>: declination of the source.</p>
-<p><code class="docutils literal notranslate"><span class="pre">phi</span></code>: azimuthal angle of the source.</p>
-<p><code class="docutils literal notranslate"><span class="pre">psi</span></code>: polarization angle of the source.</p>
+<p><code class="docutils literal notranslate"><span class="pre">dec</span></code>: declination of the source, in [<span class="math notranslate nohighlight">\(-\pi/2\)</span>,  <span class="math notranslate nohighlight">\(\pi/2\)</span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">phi</span></code>: azimuthal angle of the source, in [0,  2 <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">psi</span></code>: polarization angle of the source, in [0,  <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
 <p><code class="docutils literal notranslate"><span class="pre">pi</span></code>: position vector of the detector.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Dij</span></code>: Detector tensor of the detector.</p>
 </div></blockquote>
@@ -244,7 +254,7 @@ including the phase factor <span class="math notranslate nohighlight">\(e^{2 \pi
 The output has dimensions <code class="docutils literal notranslate"><span class="pre">{2,</span> <span class="pre">N}</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">Length[f]</span></code>.</p>
 </dd>
 </dl>
-<p>We note that if the user does not want to include the phase factor they can set <code class="docutils literal notranslate"><span class="pre">pi={0,0,0}</span></code> and
+<p>If the user does not need the phase factor they can set <code class="docutils literal notranslate"><span class="pre">pi={0,0,0}</span></code> and
 <code class="docutils literal notranslate"><span class="pre">f={1}</span></code>.</p>
 <p>The following example shows how to calculate the pattern functions for the LIGO Livingston detector:</p>
 <div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="n">Fplus</span><span class="p">,</span><span class="w"> </span><span class="n">Fcross</span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PatternFunctions</span><span class="p">[{</span><span class="mi">1</span><span class="p">},</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="mf">0.2</span><span class="p">,</span><span class="w"> </span><span class="n">PosL1</span><span class="p">,</span><span class="w"> </span><span class="n">DL1</span><span class="p">];</span>
@@ -258,6 +268,7 @@ The output has dimensions <code class="docutils literal notranslate"><span class
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Waveform.html" class="btn btn-neutral float-left" title="Waveform" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Fiducial.html" class="btn btn-neutral float-right" title="Fiducial point" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

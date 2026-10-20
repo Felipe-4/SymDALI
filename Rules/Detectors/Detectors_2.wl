@@ -10,7 +10,7 @@ PacletDirectoryLoad[ParentDirectory[NotebookDirectory[], 3]];
 <<FelipeBarbosa`SymDALI`
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Defs*)
 
 
@@ -71,7 +71,7 @@ iDetectorTensor["H1"] = Module[
 Vertex["H1"] = {-2.16141492636 10^6,  -3.83469517889 10^6   , 4.60035022664 10^6};
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Calculating Derivatives:*)
 
 
@@ -131,7 +131,7 @@ Clear@name
 res = DerivativeRules@@expr2;
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing the function*)
 
 
@@ -517,7 +517,7 @@ name[f_, \[Theta]_, \[Phi]_, \[Psi]_, pi_, Dij_] = compiledDs[[1, 2]][f, \[Theta
 compiledDs[[4, 2]]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Saving*)
 
 
@@ -576,7 +576,7 @@ ChangeContext[x_Symbol] := Module[
 ChangeContext[name]
 
 
-Module[
+(*Module[
 	{SymDALIDir = NotebookDirectory[]//ParentDirectory[#, 2]&, fileName, file},
 	
 	
@@ -596,7 +596,50 @@ Module[
 		}
 	]
 	
+]*)
+
+
+Module[
+	{SymDALIDir = NotebookDirectory[]//ParentDirectory[#, 2]&, fileName, file},
+	
+	
+	fileName = FileNameJoin[{
+		SymDALIDir, 
+		"Assets",
+		"Derivatives/Detectors/Defs.wdx"
+	}];
+	
+	file = CreateFile[fileName];
+	
+	Save[
+		file,
+		{
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`name
+		}
+	]
+	
 ]
+
+
+NotebookDirectory[]//ParentDirectory[#, 2]&
+
+
+ClearAll@FelipeBarbosa`SymDALI`DALICoefficients`Private`name
+
+
+UpValues@FelipeBarbosa`SymDALI`DALICoefficients`Private`name
+
+
+Get["/Users/felipe/Documents/GitHub/SymDALI/Assets/Derivatives/Detectors/Defs.wdx"]
+
+
+a = UpValues@FelipeBarbosa`SymDALI`DALICoefficients`Private`name;
+
+
+a//Length
+
+
+DownValues@FelipeBarbosa`SymDALI`DALICoefficients`Private`name
 
 
 (* ::Section::Closed:: *)

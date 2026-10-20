@@ -97,8 +97,6 @@ CompareComplexVectors[{v1_, v2_}, {name1_, name2_}, dataRange_, plotRange_]/;(
 		{Rev1, Rev2},
 		PlotLegends->Placed[{name1, name2}, {Right, Top}],
 		ImageSize->Medium,
-		
-		
 		PlotLabel->Style["Re", Black],
 		PlotRange->{plotRange, All},
 		DataRange->MinMax[dataRange], 
@@ -277,6 +275,9 @@ Clear["\[CapitalPhi]*"]
 } = InsVecPhase[\[Eta], \[Chi]s, \[Chi]a, \[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7];
 
 
+?\[CapitalPhi]6l
+
+
 Clear["\[CapitalSigma]*"]
 
 {\[CapitalSigma]1[\[Eta]_, \[Chi]s_, \[Chi]a_], \[CapitalSigma]2[\[Eta]_, \[Chi]s_, \[Chi]a_], \[CapitalSigma]3[\[Eta]_, \[Chi]s_, \[Chi]a_], \[CapitalSigma]4[\[Eta]_, \[Chi]s_, \[Chi]a_]} = \[Eta]^-1*(PhenomCoeff[\[Eta], \[Chi]PN, #]&/@PhenomDTableV[[8;;11]])//.{
@@ -284,21 +285,6 @@ Clear["\[CapitalSigma]*"]
 
 
 {\[CapitalSigma]1[\[Delta], \[Chi]s, \[Chi]a], \[CapitalSigma]2[\[Delta], \[Chi]s, \[Chi]a],\[CapitalSigma]3[\[Delta], \[Chi]s, \[Chi]a],\[CapitalSigma]4[\[Delta], \[Chi]s, \[Chi]a]} . {\[Omega], 3/4 \[Omega]^(4/3), 3/5 \[Omega]^(5/3), 1/2 \[Omega]^2};
-
-
-InsExpr = -\[Pi]/4 + {
-	U\[CapitalPhi]minus2[\[Eta],\[Delta]\[CurlyPhi]minus2],U\[CapitalPhi]0[\[Eta],\[Delta]\[CurlyPhi]0],U\[CapitalPhi]1[\[Eta],\[Delta]\[CurlyPhi]1],U\[CapitalPhi]2[\[Eta],\[Delta]\[CurlyPhi]2],U\[CapitalPhi]3[\[Eta], \[Chi]s, \[Chi]a,\[Delta]\[CurlyPhi]3],U\[CapitalPhi]4[\[Eta], \[Chi]s, \[Chi]a,\[Delta]\[CurlyPhi]4],U\[CapitalPhi]5[\[Eta], \[Chi]s, \[Chi]a],
-	U\[CapitalPhi]5l[\[Eta], \[Chi]s, \[Chi]a,\[Delta]\[CurlyPhi]5l],U\[CapitalPhi]6[\[Eta], \[Chi]s, \[Chi]a,\[Delta]\[CurlyPhi]6],U\[CapitalPhi]6l[\[Eta],\[Delta]\[CurlyPhi]6l],U\[CapitalPhi]7[\[Eta], \[Chi]s, \[Chi]a,\[Delta]\[CurlyPhi]7]
-} . \[Omega]InsVecPhase[\[Omega]]  + {U\[CapitalSigma]1[\[Eta], \[Chi]s, \[Chi]a],U\[CapitalSigma]2[\[Eta], \[Chi]s, \[Chi]a],U\[CapitalSigma]3[\[Eta], \[Chi]s, \[Chi]a],U\[CapitalSigma]4[\[Eta], \[Chi]s, \[Chi]a]} . {\[Omega], 3/4 \[Omega]^(4/3), 3/5 \[Omega]^(5/3), 1/2 \[Omega]^2};
-
-
-InsExpr
-
-
-\[CapitalPhi]0[\[Eta], \[Delta]\[CurlyPhi]0]
-
-
-InsExpr;
 
 
 Expr = HoldComplete[
@@ -329,16 +315,27 @@ Expr = HoldComplete[
 		\[Omega] \[CapitalSigma]1[\[Eta],\[Chi]s,\[Chi]a] + 3/4 \[Omega]^(4/3) \[CapitalSigma]2[\[Eta],\[Chi]s,\[Chi]a]+3/5 \[Omega]^(5/3) \[CapitalSigma]3[\[Eta],\[Chi]s,\[Chi]a]+1/2 \[Omega]^2 \[CapitalSigma]4[\[Eta],\[Chi]s,\[Chi]a]
 	) +
 	(
-		\[CapitalPhi]0[\[Eta],\[Delta]\[CurlyPhi]0]/(\[Pi]^(5/3) \[Omega]^(5/3))+\[CapitalPhi]1[\[Eta],\[Delta]\[CurlyPhi]1]/(\[Pi]^(4/3) \[Omega]^(4/3))+\[CapitalPhi]2[\[Eta],\[Delta]\[CurlyPhi]2]/(\[Pi] \[Omega])+\[CapitalPhi]3[\[Eta],\[Chi]s,\[Chi]a,\[Delta]\[CurlyPhi]3]/(\[Pi]^(2/3) \[Omega]^(2/3))+
-		\[CapitalPhi]4[\[Eta],\[Chi]s,\[Chi]a,\[Delta]\[CurlyPhi]4]/(\[Pi]^(1/3) \[Omega]^(1/3))+\[CapitalPhi]5[\[Eta],\[Chi]s,\[Chi]a]+Log[\[Pi] \[Omega]] \[CapitalPhi]5l[\[Eta],\[Chi]s,\[Chi]a,\[Delta]\[CurlyPhi]5l]+
-		\[Pi]^(1/3) \[Omega]^(1/3) \[CapitalPhi]6[\[Eta],\[Chi]s,\[Chi]a,\[Delta]\[CurlyPhi]6]+\[Pi]^(1/3) \[Omega]^(1/3) Log[\[Pi] \[Omega]] \[CapitalPhi]6l[\[Eta],\[Delta]\[CurlyPhi]6l]+
-		\[Pi]^(2/3) \[Omega]^(2/3) \[CapitalPhi]7[\[Eta],\[Chi]s,\[Chi]a,\[Delta]\[CurlyPhi]7] + \[CapitalPhi]minus2[\[Eta],\[Delta]\[CurlyPhi]minus2]/(\[Pi]^(7/3) \[Omega]^(7/3))
+		\[CapitalPhi]0[\[Eta], \[Delta]\[CurlyPhi]0]/(\[Pi]^(5/3) \[Omega]^(5/3))+ 
+		\[CapitalPhi]1[\[Eta],\[Delta]\[CurlyPhi]1]/(\[Pi]^(4/3) \[Omega]^(4/3))+
+		\[CapitalPhi]2[\[Eta],\[Delta]\[CurlyPhi]2]/(\[Pi] \[Omega])+
+		\[CapitalPhi]3[\[Eta],\[Chi]s,\[Chi]a,\[Delta]\[CurlyPhi]3]/(\[Pi]^(2/3) \[Omega]^(2/3))+
+		\[CapitalPhi]4[\[Eta],\[Chi]s,\[Chi]a,\[Delta]\[CurlyPhi]4]/(\[Pi]^(1/3) \[Omega]^(1/3))+
+		\[CapitalPhi]5[\[Eta],\[Chi]s,\[Chi]a]+
+		Log[\[Pi] \[Omega]] \[CapitalPhi]5l[\[Eta],\[Chi]s,\[Chi]a,\[Delta]\[CurlyPhi]5l]+
+		\[Pi]^(1/3) \[Omega]^(1/3) \[CapitalPhi]6[\[Eta],\[Chi]s,\[Chi]a,\[Delta]\[CurlyPhi]6]+
+		\[Pi]^(1/3) \[Omega]^(1/3) Log[\[Pi] \[Omega]] \[CapitalPhi]6l[\[Eta], \[Delta]\[CurlyPhi]6l]+
+		\[Pi]^(2/3) \[Omega]^(2/3) \[CapitalPhi]7[\[Eta],\[Chi]s,\[Chi]a,\[Delta]\[CurlyPhi]7] + 
+		\[CapitalPhi]minus2[\[Eta],\[Delta]\[CurlyPhi]minus2]/(\[Pi]^(7/3) \[Omega]^(7/3))
 	)
 ]//.{
 	pminus2 ->  \[CapitalPhi]minus2[\[Eta], \[Delta]\[CurlyPhi]minus2], 
 	p1 -> \[CapitalPhi]1[\[Eta], \[Delta]\[CurlyPhi]1],
-	p0-> \[CapitalPhi]0[\[Eta], \[Delta]\[CurlyPhi]0], p2-> \[CapitalPhi]2[\[Eta],  \[Delta]\[CurlyPhi]2], p3-> \[CapitalPhi]3[\[Eta], \[Chi]s, \[Chi]a,  \[Delta]\[CurlyPhi]3], p4-> \[CapitalPhi]4[\[Eta], \[Chi]s, \[Chi]a,  \[Delta]\[CurlyPhi]4], p5-> \[CapitalPhi]5[\[Eta], \[Chi]s, \[Chi]a],
-	p5l-> \[CapitalPhi]5l[\[Eta], \[Chi]s, \[Chi]a,  \[Delta]\[CurlyPhi]5l], p6-> \[CapitalPhi]6[\[Eta], \[Chi]s, \[Chi]a,  \[Delta]\[CurlyPhi]6], p6l-> \[CapitalPhi]6l[\[Eta],  \[Delta]\[CurlyPhi]6l],p7-> \[CapitalPhi]7[\[Eta], \[Chi]s, \[Chi]a,  \[Delta]\[CurlyPhi]7],
+	p0-> \[CapitalPhi]0[\[Eta], \[Delta]\[CurlyPhi]0], 
+	p2-> \[CapitalPhi]2[\[Eta],  \[Delta]\[CurlyPhi]2], 
+	p3-> \[CapitalPhi]3[\[Eta], \[Chi]s, \[Chi]a,  \[Delta]\[CurlyPhi]3], p4-> \[CapitalPhi]4[\[Eta], \[Chi]s, \[Chi]a,  \[Delta]\[CurlyPhi]4], p5-> \[CapitalPhi]5[\[Eta], \[Chi]s, \[Chi]a],
+	p5l-> \[CapitalPhi]5l[\[Eta], \[Chi]s, \[Chi]a,  \[Delta]\[CurlyPhi]5l], p6-> \[CapitalPhi]6[\[Eta], \[Chi]s, \[Chi]a,  \[Delta]\[CurlyPhi]6], 
+	p6l-> \[CapitalPhi]6l[\[Eta],  \[Delta]\[CurlyPhi]6l], 
+	p7-> \[CapitalPhi]7[\[Eta], \[Chi]s, \[Chi]a,  \[Delta]\[CurlyPhi]7],
 	
 	S1 ->\[CapitalSigma]1[\[Eta], \[Chi]s, \[Chi]a], S2 ->\[CapitalSigma]2[\[Eta], \[Chi]s, \[Chi]a], S3->\[CapitalSigma]3[\[Eta], \[Chi]s, \[Chi]a], S4->\[CapitalSigma]4[\[Eta], \[Chi]s, \[Chi]a]
 };
@@ -347,7 +344,7 @@ Expr = HoldComplete[
 Expr = $Block@@@(HoldForm[Evaluate@Expr]);
 
 
-{\[Delta]\[CurlyPhi]minus2, \[Delta]\[CurlyPhi]0, \[Delta]\[CurlyPhi]1, \[Delta]\[CurlyPhi]2, \[Delta]\[CurlyPhi]3, \[Delta]\[CurlyPhi]4, \[Delta]\[CurlyPhi]5l, \[Delta]\[CurlyPhi]6, \[Delta]\[CurlyPhi]6l, \[Delta]\[CurlyPhi]7}
+Expr
 
 
 Combinations[vars_List, n_Integer]/;n>0 := Module[
@@ -418,7 +415,7 @@ expr = Hold[
 \[CapitalPhi]resInspiral = EchoTiming[DerivativeRules@@expr];
 
 
-\[CapitalPhi]resInspiral[[-1]]
+\[CapitalPhi]resInspiral[[1]]
 
 
 Clear@T
@@ -1413,11 +1410,11 @@ Module[
 D\[CapitalPsi][\[Omega]_, \[Omega]ref_, \[Eta]_, \[Chi]s_, \[Chi]a_, \[Delta]\[CurlyPhi]minus2_, \[Delta]\[CurlyPhi]0_, \[Delta]\[CurlyPhi]1_, \[Delta]\[CurlyPhi]2_, \[Delta]\[CurlyPhi]3_, \[Delta]\[CurlyPhi]4_, \[Delta]\[CurlyPhi]5l_, \[Delta]\[CurlyPhi]6_, \[Delta]\[CurlyPhi]6l_, \[Delta]\[CurlyPhi]7_] = c\[CapitalPsi]2[[1, 2]][\[Omega], \[Omega]ref, \[Eta], \[Chi]s, \[Chi]a,\[Delta]\[CurlyPhi]minus2,\[Delta]\[CurlyPhi]0,\[Delta]\[CurlyPhi]1,\[Delta]\[CurlyPhi]2,\[Delta]\[CurlyPhi]3,\[Delta]\[CurlyPhi]4,\[Delta]\[CurlyPhi]5l,\[Delta]\[CurlyPhi]6,\[Delta]\[CurlyPhi]6l,\[Delta]\[CurlyPhi]7];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Testing *)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Testing phase accuracy*)
 
 
@@ -1566,7 +1563,7 @@ Test := Module[
 Test
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*lal hphc function*)
 
 
@@ -1597,6 +1594,9 @@ ExternalEvaluate[python,"
 duration = 4.0
 sampling_frequency = 2048.0
 minimum_frequency = 5
+import lal
+import lalsimulation as lalsim
+import numpy as np
 
 
 # Fixed arguments passed into the source model
@@ -1616,10 +1616,55 @@ WG = bilby.gw.WaveformGenerator(
 "]
 
 
-lalPhase = ExternalFunction[python,"
-def lal_phase(m1, m2, chi1, chi2, delta_pi):
+lal = ExternalFunction[python, "
+def lal_hp(m1, m2, s1z, s2z, appr, delta_pi):
 
-    f = np.linspace(5, 1024, 4077)
+    approximant = lalsim.SimInspiralGetApproximantFromString(appr)
+    
+    dL_m = 1 * 3.08568 * (10**22)  # convert megaparsecs to meters
+
+    # solar mass to Kg
+    m1_kg = m1 * 1.9884 * (10**30)
+    m2_kg = m2 * 1.9884 * (10**30)
+    
+    params = lal.CreateDict()
+    
+    lalsim.SimInspiralWaveformParamsInsertNonGRDChi0(params,delta_pi)
+    
+    hp, hc = lalsim.SimInspiralChooseFDWaveform(
+        m1_kg,
+        m2_kg,
+        0,#s1x,
+        0,#s1y,
+        s1z,
+        0,#s2x,
+        0,#s2y,
+        s2z,
+        dL_m,
+        1.,     #iota
+        0        , # phiRef
+        0        ,
+        0,
+        0,
+        0.25, # deltaF,
+        5., #fmin
+        1024        , #fmax
+        5        , #f_ref
+        params        ,
+        approximant,
+    )
+
+    hP = hp.data.data
+    hC = hc.data.data
+
+    hp = hP[20:]
+
+    return hp/np.abs(hp)
+"]
+
+
+tgrPhase = ExternalFunction[python, "
+def tgr_phase(m1, m2, chi1, chi2, delta_pi):
 
     params = {
         \"mass_1\": m1,
@@ -1630,15 +1675,15 @@ def lal_phase(m1, m2, chi1, chi2, delta_pi):
         \"theta_jn\": 1.0,
         \"phase\": 0,
 
-        \"dchi_0\":0,
-        \"dchi_1\":0,
+        \"dchi_0\": 0,#delta_pi,
+        \"dchi_1\": 0,
         \"dchi_2\": 0,
         \"dchi_3\": 0,
         \"dchi_4\": 0,
         \"dchi_5l\": 0,
-        \"dchi_6\": 0,
+        \"dchi_6\": delta_pi,
         \"dchi_6l\": 0,
-        \"dchi_7\": delta_pi,
+        \"dchi_7\": 0,
 
         \"dbeta_2\": 0,
         \"dbeta_3\": 0,
@@ -1657,10 +1702,11 @@ def lal_phase(m1, m2, chi1, chi2, delta_pi):
     phase = hp_bilby / np.abs(hp_bilby)
 
     return phase
+
 "]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Test*)
 
 
@@ -1673,30 +1719,35 @@ Clear@Test
 Test[M_] := Module[
 	{
 		m1, m2, mc, eta, s1z, s2z, \[Iota], \[Phi]Ref, lalRes, fmax, fmin, myDef, amp, t0, chis, chia, psi,  
-		G =  4.925490947641267`*^-6, \[Delta]p=RandomReal[{-10,10}]
+		G =  4.925490947641267`*^-6, \[Delta]p
 	},
 	
 	eta = RandomReal[{0.1, 0.25}];
 	m1 = M/2 (1 + Sqrt[1-4 eta]);
 	m2 = M/2 (1 - Sqrt[1-4 eta]);
-	
+	Echo[{m1,m2}];
 	
 	mc = (m1+m2) eta^(3/5);
-	{s1z, s2z} = RandomReal[{-1,1}, 2];
+	{s1z, s2z} ={0,0}; RandomReal[{-1,1}, 2];
 	
 	fmax =  1024;
-	fmin=5;
+	fmin= 5;
 	
-	lalRes = lalPhase[m1, m2, s1z, s2z, \[Delta]p]//Normal;
+	\[Delta]p=RandomReal[{-10,10}];
+	(*lalRes  = lal[m1, m2, s1z, s2z, "IMRPhenomD", \[Delta]p]//Normal;*)
+	lalRes = tgrPhase[m1, m2, s1z, s2z, \[Delta]p]//Normal;
+
 	
-	myDef = D\[CapitalPsi][
+	
+	myDef = FelipeBarbosa`SymDALI`DALICoefficients`Private`D\[CapitalPsi][
 		M Range[5., 1024, 0.25] G, 
 		5 M G,
 		eta,
 		(s1z+s2z)/2, (s1z-s2z)/2, 
-		0, 0,0, 0, 0, 0, 0, 0, 0, \[Delta]p
+		0, 0, 0, 0, 0, 0, 0, \[Delta]p, 0, 0
 	];
 		
+	
 	{lalRes, Exp[-I myDef]}
 	
 ]
@@ -1704,20 +1755,25 @@ Test[M_] := Module[
 
 Module[
 	{M = RandomReal[{50,200}], list, G =  4.925490947641267`*^-6},
-	
+	Echo[0.018/(G M)];
 	list = Test[M];
 	
 	ListLinePlot[
 		RelativeDiff@@list,
-		ScalingFunctions->"Log10"
+		ScalingFunctions->"Log10",
+		MaxPlotPoints->1024,
+		Mesh->All
 	]//Echo;
 	
-	CompareComplexVectors[list, {"lal", "MMA"}, Range[5,1024,0.25], {5, 0.2/(G M)}]
+	CompareComplexVectors[list, {"lal", "MMA"}, Range[5, 1024, 0.25], {5, 0.018/(G M)}]
 	
 ]
 
 
-(* ::Subsection::Closed:: *)
+?ListLinePlot
+
+
+(* ::Subsection:: *)
 (*Comparing numerical x Symbolic derivatives*)
 
 
@@ -3879,7 +3935,7 @@ ListPlot[Flatten@tt, ScalingFunctions->"Log10"]
 (*Saving defs*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*New*)
 
 
@@ -3962,7 +4018,7 @@ ChangeContext/@{
 }
 
 
-Module[
+(*Module[
 	{SymDALIDir = NotebookDirectory[]//ParentDirectory[#, 2]&, fileName, file},
 	
 	
@@ -3991,6 +4047,37 @@ Module[
 		}
 	]
 	
+]*)
+
+
+Module[
+	{SymDALIDir = NotebookDirectory[]//ParentDirectory[#, 2]&, fileName, file},
+	
+	
+	fileName = FileNameJoin[{
+		SymDALIDir, 
+		"Assets",
+		"Derivatives/IMRPhenomD/Defs.wdx"
+	}];
+	
+	file = CreateFile[fileName];
+	
+	Save[
+		file,
+		{
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`DZeroFunction,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`D\[ScriptCapitalA]Ins,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`D\[ScriptCapitalA]Int,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`D\[ScriptCapitalA]MR,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`D\[ScriptCapitalA]IMR,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`D\[CapitalPhi]Ins,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`D\[CapitalPhi]Int,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`D\[CapitalPhi]MR,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`D\[CapitalPhi]IMR,
+			FelipeBarbosa`SymDALI`DALICoefficients`Private`D\[CapitalPsi]
+		}
+	]
+	
 ]
 
 
@@ -4000,10 +4087,10 @@ DownValues@FelipeBarbosa`SymDALI`DALICoefficients`Private`DZeroFunction
 FelipeBarbosa`SymDALI`DALICoefficients`Private`DZeroFunction//ClearAll
 
 
-Get["/Users/felipe/Documents/GitHub/SymDALI/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomD/MMA/Defs.mx"]
+Get["/Users/felipe/Documents/GitHub/SymDALI/Assets/Derivatives/IMRPhenomD/Defs.wdx"]
 
 
 DownValues@FelipeBarbosa`SymDALI`DALICoefficients`Private`DZeroFunction
 
 
-Import["/Users/felipe/Documents/GitHub/SymDALI/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomD/SymRules/file.wdx"]
+(*Import["/Users/felipe/Documents/GitHub/SymDALI/LibraryResources/MacOSX-ARM64/DerivativeRules/IMRPhenomD/SymRules/file.wdx"]*)
