@@ -254,7 +254,12 @@ Finally, we look at the corner plot of the result:
    :width: 80%
    :align: center
 
-In ..., the reader can find a link to Wolfram Language, Python, and Bash scripts that 
+As shown in Figure 5 in `2609.38399 <https://arxiv.org/abs/2609.38399>`_ this example
+as good agreement with the result of the exact likelihood, which takes around 69 hours
+to run.
+
+`Here <https://github.com/Felipe-4/SymDALI/tree/main/Demo/Terminal_workflow>`_, 
+we have a Wolfram Language, Python and Bash scripts that 
 demonstrate the complete workflow, from the `DALI` tensors to the final plot with a 
 single terminal command. On a Macbook Air M1 with 8 Gb of RAM this example takes 12.3 minutes to run.
 
