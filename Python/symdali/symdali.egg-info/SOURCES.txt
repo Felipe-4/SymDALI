@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+symdali.c
+symdali.egg-info/PKG-INFO
+symdali.egg-info/SOURCES.txt
+symdali.egg-info/dependency_links.txt
+symdali.egg-info/requires.txt
+symdali.egg-info/top_level.txt

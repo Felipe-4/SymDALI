@@ -20,7 +20,7 @@ the user's preferences in the options of the functions ``SNR`` and ``DALITensors
 ``DALI`` tensors
 ----------------
 
-The ``DALI`` Likelihood expansion, up to derivative order 3, is defined as
+The ``DALI`` likelihood expansion, up to derivative order 3, is defined as
 
 .. math::
 
