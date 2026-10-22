@@ -3,7 +3,7 @@
 PacletObject[
   <|
     "Name" -> "FelipeBarbosa/SymDALI",
-    "Description" -> "Implementation of the DALI algorithm (Derivative Approximation for LIkelihoods)",
+    "Description" -> "Implementation of the DALI algorithm (Derivative Approximation for LIkelihoods) for gravitational wave likelihoods",
 	"Creator" -> "Felipe Barbosa",
     "Version" -> "1.0.0",
     "WolframVersion" -> "14.1+",

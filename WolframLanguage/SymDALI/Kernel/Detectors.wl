@@ -95,7 +95,7 @@ Begin["`Private`"];
 (*Definitions*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*ArmDirection and DetectorPosition*)
 
 
@@ -140,7 +140,7 @@ FromGeocentricCoordinates[{h_, \[CurlyPhi]_, \[Lambda]_}] := Module[
 Protect[ArmDirection]; Protect[FromGeocentricCoordinates];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*DetectorTensor*)
 
 
@@ -302,13 +302,6 @@ Module[
 	
 	DetectorTensor["CE-NM"] = (n1\[TensorProduct]n1 - n2\[TensorProduct]n2)/2;
 ]
-
-
-{4.188792653589793`/Degree,2.6179963267948967`/Degree}
-
-
-(* ::Input:: *)
-(*{240.0001403060998`,150.0001403060998`}*)
 
 
 DetectorVertex["CE-NM"]

@@ -1,11 +1,8 @@
 (* ::Package:: *)
 
-Quit
-
-
 $HistoryLength=1;
 SetOptions[EvaluationNotebook[], LightDark->"Light"]
-PacletDirectoryLoad[NotebookDirectory[]//ParentDirectory[#,2]&];
+PacletDirectoryLoad[NotebookDirectory[]//ParentDirectory];
 EchoTiming[<<FelipeBarbosa`SymDALI`]
 
 
@@ -143,7 +140,7 @@ NFisher[f_, vars_, ni_, nf_, Psd_List] := Module[
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Test Pattern Functions against lal: *)
 
 
@@ -247,7 +244,7 @@ list[[All,2]]//Sort//ListPlot[#, PlotRange->All, ScalingFunctions->"Log10"]&
 Clear@list
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Test IMRPhenomD against lal:*)
 
 
@@ -324,7 +321,7 @@ def lal_hp(m1, m2, s1z, s2z, dL, iota, phiRef, deltaF,
 "]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test hp and hc*)
 
 
@@ -421,7 +418,7 @@ testhc := Module[
 
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*check plots: *)
 
 
@@ -633,7 +630,7 @@ Export["/Users/felipe/Desktop/cos.pdf", plot3]
 Export["/Users/felipe/Desktop/res_cos.pdf", plot4]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Test IMRPhenomHM against lal:*)
 
 
@@ -710,7 +707,7 @@ def lal_hp(m1, m2, s1z, s2z, dL, iota, phiRef, deltaF,
 "]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test hp and hc*)
 
 
@@ -819,7 +816,7 @@ testhc := Module[
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*check plots: *)
 
 
@@ -1328,9 +1325,9 @@ EmptyAssociation["Aligned"]
 
 
 fp = <|
-	"dec"->\[Pi]/2 - 0.408,"\[Phi]"->3.4,"\[Psi]"->0.1,
-	"\[ScriptCapitalM]c"->0.01162182`,"q"->0.2,"s1z"->0.1,"s2z"->0.1,
-	"\[Iota]"->2.5,"1/dL"->1,"tc"->10,"\[Phi]ref"->0.
+	"dec"->\[Pi]/2-0.408,"phi"->3.4,"psi"->0.1,
+	"Mc"->0.01162182`,"q"->0.9,"s1z"->0.1,"s2z"->0.,
+	"iota"->2.5,"invdL"->1,"tc"->10,"phiRef"->0.
 |>;
 
 
@@ -1379,11 +1376,11 @@ l
 46.1 60
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Testing Fisher matrix performance PhenomHM*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*MMA: *)
 
 
@@ -1411,9 +1408,9 @@ EmptyAssociation["Aligned"]
 
 
 fp = <|
-	"dec"->\[Pi]/2-0.408,"\[Phi]"->3.4,"\[Psi]"->0.1,
-	"\[ScriptCapitalM]c"->0.01162182`,"q"->0.9,"s1z"->0.1,"s2z"->0.,
-	"\[Iota]"->2.5,"1/dL"->1,"tc"->10,"\[Phi]ref"->0.
+	"dec"->\[Pi]/2-0.408,"phi"->3.4,"psi"->0.1,
+	"Mc"->0.01162182`,"q"->0.9,"s1z"->0.1,"s2z"->0.,
+	"iota"->2.5,"invdL"->1,"tc"->10,"phiRef"->0.
 |>;
 
 
@@ -1421,13 +1418,13 @@ a = DALITensors[
 	"IMRPhenomHM", 
 	fp, 
 	{L1, H1, V1}, 
-	2, 
+	3, 
 	"fmin"->20, "fmax"->1024,
 	"res"->1000
 ];//EchoTiming
 
 
-a[[2,2]]//Total
+a[[3]]//Flatten//Total
 
 
 (* ::Text:: *)
@@ -1470,7 +1467,7 @@ MemoryInUse[]
 (*Testing SNRs against GWFAST:*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*IMRPhenomD*)
 
 
@@ -1645,7 +1642,7 @@ MMASNR[fp_Association] := Module[
 ]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Test*)
 
 
@@ -1683,7 +1680,7 @@ test := Module[
 	pyvec = {Mc, dL, theta, phi, iota+\[Pi], psi, eta, phic, chi1z, chi2z};
 	
 	fp =  (Thread@Rule[
-		{"\[ScriptCapitalM]c","q","s1z","s2z","\[Iota]","dec","\[Phi]","\[Psi]","1/dL","tc","\[Phi]ref"},
+		{"Mc","q","s1z","s2z","iota","dec","phi","psi","invdL","tc","phiRef"},
 		{Mc, q, chi1z, chi2z, iota, \[Pi]/2 - theta, phi, psi, 1/dL, tc, phic}
 	])//Association;
 	
@@ -1702,7 +1699,7 @@ test := Module[
 test
 
 
-Table[test, 1000]//MinMax
+Table[test, 100]//MinMax
 
 
 (* ::Subsection::Closed:: *)
@@ -1915,7 +1912,7 @@ test := Module[
 	pyvec = {Mc, dL, theta, phi, iota+\[Pi], psi, eta, phic, chi1z, chi2z};
 	
 	fp =  (Thread@Rule[
-		{"\[ScriptCapitalM]c","q","s1z","s2z","\[Iota]","dec","\[Phi]","\[Psi]","1/dL","tc","\[Phi]ref"},
+		{"Mc","q","s1z","s2z","iota","dec","phi","psi","invdL","tc","phiRef"},
 		{Mc, q, chi1z, chi2z, iota, \[Pi]/2 - theta, phi, psi, 1/dL, tc, phic}
 	])//Association;
 	
@@ -1934,7 +1931,7 @@ test := Module[
 test
 
 
-Table[test, 1000]//MinMax
+Table[test, 100]//MinMax
 
 
 (* ::Section::Closed:: *)

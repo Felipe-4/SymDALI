@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Package Header*)
 
 
@@ -86,11 +86,11 @@ Options:
 Begin["Private`"];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Definitions*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*SymRules, NRules and iFunctions for Fisher calculation*)
 
 
@@ -121,7 +121,7 @@ HMhphc := FelipeBarbosa`SymDALI`DALICoefficients`Private`HMhphc;
 ClearAll@NRules;
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*(Public) PatternFunctions*)
 
 
@@ -140,17 +140,17 @@ PatternFunctions[$f_, $\[Delta]_, $\[Phi]_, $\[Psi]_, $pi_, $Dij_]/;(
 Protect[PatternFunctions];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*(Public) hphc's*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PhenomD*)
 
 
-{
+(*{
 	"\[Delta]\[CurlyPhi]-2"->0, "\[Delta]\[CurlyPhi]0"->0, "\[Delta]\[CurlyPhi]1"->0,"\[Delta]\[CurlyPhi]2"->0,"\[Delta]\[CurlyPhi]3"->0,"\[Delta]\[CurlyPhi]4"->0,"\[Delta]\[CurlyPhi]5l"->0,"\[Delta]\[CurlyPhi]6"->0,"\[Delta]\[CurlyPhi]6l"->0,"\[Delta]\[CurlyPhi]7"->0
-}[[All,1]]
+}[[All,1]]*)
 
 
 Options[hphcIMRPhenomD] = {
@@ -199,7 +199,7 @@ hphcIMRPhenomD[$f_, $\[ScriptCapitalM]c_, $q_, $s1z_, $s2z_, $\[Iota]_, $tc_, $\
 Protect[hphcIMRPhenomD];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PhenomHM*)
 
 
@@ -228,7 +228,7 @@ hphcIMRPhenomHM[
 Protect[hphcIMRPhenomHM];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*(Public) EmptyAssociation*)
 
 
@@ -250,11 +250,11 @@ EmptyAssociation["Detector"] = <|
 Protect[EmptyAssociation]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*SNR*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*RetrieveFiducial*)
 
 
@@ -303,12 +303,15 @@ RetrieveFiducial["Aligned", fp_Association]/;(
 	
 	GenErrorMessage["Aligned", test];
 	
-	If[
+	res = {{\[Pi]/2-dec, \[Phi], \[Psi]}, {\[ScriptCapitalM]c, q, s1z, s2z, \[Iota], tc, \[Phi]ref, invdL}}
+	
+	(*If[
 		Length[Keys[fp]] === 11,
+		
 		res = {{\[Pi]/2-dec, \[Phi], \[Psi]}, {\[ScriptCapitalM]c, q, s1z, s2z, \[Iota], tc, \[Phi]ref, invdL}},
 		
 		res = {{\[Pi]/2- dec, \[Phi], \[Psi]}, {\[ScriptCapitalM]c, q, s1z, s2z, \[Iota], tc, \[Phi]ref, invdL}}
-	]
+	]*)
 	(*$\[ScriptCapitalM]c_, $q_, $s1z_, $s2z_, $\[Iota]_, $tc_, $\[Phi]ref_, $invdL*)
 ]
 
@@ -316,7 +319,7 @@ RetrieveFiducial["Aligned", fp_Association]/;(
 LIDij = SymmetrizedIndependentComponents[{3,3}, Symmetric[All]];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*SNR*)
 
 

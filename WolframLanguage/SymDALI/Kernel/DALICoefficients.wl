@@ -34,7 +34,7 @@ Begin["`Private`"];
 PacletDirectoryLoad["/Users/felipe/Documents/GitHub"];*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Definitions*)
 
 
@@ -61,11 +61,11 @@ GenMessage[True, mess_] := True;
 GenMessage[False, mess_] := With[{}, Message[mess]; False]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Make Gradients*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Function Set-Up*)
 
 
@@ -313,7 +313,7 @@ MakeDefs[SymRules_Association, NRules_Association] := Module[
 MakeDefs[x___] := Throw[$Failed, failTag[MakeDefs]]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Calculate symbolic gradient*)
 
 
@@ -375,7 +375,7 @@ TakeGrad[functionhead_Symbol, dummyvariables_List, -1]/;(
 TakeGrad[x___] := Throw[$Failed, failTag[TakeGrad]]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*iCalculateGrads*)
 
 
@@ -503,7 +503,7 @@ iCalculateGrads[h_Symbol, {Orighs___Symbol}, {uniquehs___Symbol}, ObsPoints_List
 iCalculateGrads[x___] := Throw[$Failed, failTag[iCalculateGrads]]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*iGenGrads*)
 
 
@@ -612,7 +612,7 @@ iGenGrads[head_Symbol, dim_Integer, obspoints_List, {Orighs___Symbol}, {uniquehs
 iGenGrads[x___] := Throw[$Failed, failTag[iGenGrads]]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*GenGrads*)
 
 
@@ -638,7 +638,7 @@ GenGrads[head_, {dims__Integer}, {obspoints__List}, {Orighs___Symbol}, {uniquehs
 GenGrads[x___] := Throw[$Failed, failTag[GenGrads]]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PartitionLIComponents*)
 
 
@@ -822,11 +822,11 @@ GradientsList[{gradients__Association}, {varnumbers__Integer}, n_Integer] :=Modu
 GradientsList[x___] := Throw[$Failed, failTag[GradientsList]]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Make DALI Tensors*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*GenDaliTerm*)
 
 
@@ -918,7 +918,7 @@ term  = Sum[matrix[[i,j]]*TensorProduct[list1[[i]], list2[[j]]], {i, 10}, {j, 10
 Clear[list1, list2, a, aValues, values1, values2, values3, matrix,  termValues]*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*GenDaliList*)
 
 
@@ -1037,7 +1037,7 @@ manualDALIlist == automaticDAliLIst*)
 (**)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*DALICoefficients*)
 
 
@@ -1232,7 +1232,7 @@ iGWDALICoefficients[{h__}, detecs_Integer, {{vars__}, {fp__}, n_Integer}, {f0_, 
 (*DALITensors*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*SymRules and NRules*)
 
 
@@ -1354,7 +1354,7 @@ NRules2 = Join[
 Protect[SymRules, NRules];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*ihphc, iFpFc*)
 
 
@@ -1820,7 +1820,7 @@ iDALITensors[
 		SymRules[approximant],
 		Join[NRules2, NRules[approximant]],
 		AllFisherMatrices
-	]
+	]//QuietEcho
 ]
 
 

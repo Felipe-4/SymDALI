@@ -30,7 +30,7 @@ contracted with \!\(\*SuperscriptBox[\(\[CapitalDelta]p\), \(i\)]\)s directly.";
 Begin["`Private`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Definitions*)
 
 
@@ -386,7 +386,7 @@ StanPolynomial[x___] := Throw[$Failed, failTag[StanPolynomial]] *)
 CompiledPolynomial[x___] := Throw[$Failed, failTag[CompiledPolynomial]]*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Coordinate Change*)
 
 
@@ -450,7 +450,7 @@ dict = <|
 <|dec->1, \[Phi]->2, \[Psi]->3, ...|>*)
 
 
-ChangeCoordinate[processedDALI_List, transform_Association, varNumbers_Association] := Module[
+(*ChangeCoordinate[processedDALI_List, transform_Association, varNumbers_Association] := Module[
 	{a, b, rules, hVars, dim = Length@vars, CoordinateToVar, hFunc},
 	
 	a = CheckList[dim];
@@ -496,7 +496,9 @@ ChangeCoordinate[processedDALI_List, transform_Association, varNumbers_Associati
 		]
 	];
 	f[x_, y_]/;Length[y]>Length[x] := f[y,x];
+	
 	b=b;
+	
 	DownValues@AngleBracket = Drop[DownValues@AngleBracket,-1];
 	
 	
@@ -510,7 +512,7 @@ ChangeCoordinate[processedDALI_List, transform_Association, varNumbers_Associati
 	     ];
 	     b
 	 ] (*numerical rules for f[list1, list2]->numerical values*)
-]
+]*)
 
 
 (* ::Section::Closed:: *)

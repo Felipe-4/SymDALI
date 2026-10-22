@@ -172,12 +172,12 @@ parameter:
         "\[Delta]\[CurlyPhi]2" -> 0, "\[Delta]\[CurlyPhi]0" -> 0
    |>;
 
-In which case :math:`\delta \varphi_0` will correspond to the dimension 12 and :math:`\delta \varphi_2`
-to the dimension 13. The ordering is defined by the sequence 
+In which case :math:`\delta \varphi_0` will correspond to dimension 12 and :math:`\delta \varphi_2`
+to dimension 13. The ordering is defined by the sequence 
 
 .. math::
     \left(\delta \varphi_{-2}, \, \delta \varphi_{0}, \delta \varphi_{1}, \delta \varphi_{2},
-    \delta \varphi_{3}, \delta \varphi_{4}, \delta \varphi_{5l}, \delta \varphi_{6}, \delta \varphi_{6l}, \delta \varphi_{7} \right)
+    \delta \varphi_{3}, \delta \varphi_{4}, \delta \varphi_{5l}, \delta \varphi_{6}, \delta \varphi_{6l}, \delta \varphi_{7} \right),
 
-lower numbers will always correspond to lower dimensions. The syntax for all 
+where lower numbers will always correspond to lower dimensions. The syntax for all 
 ``TIGER`` parameters is the same of ``Options[hphcIMRPhenomD]``.
