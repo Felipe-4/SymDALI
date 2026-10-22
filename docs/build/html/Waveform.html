@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Detectors" href="Detectors.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+    <link rel="prev" title="Math" href="Math.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,17 +47,18 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Math.html">Math</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Waveform</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#hphcimrphenomd"><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomD</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#hphcimrphenomhm"><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomHM</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Detectors.html">Detectors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fiducial.html">Fiducial point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SNR_tutorial.html">SNR tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Fisher.html">Fisher tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="DALI_Tensors.html">DALI Tensors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Sampling.html">Likelihood sampling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Math.html">Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DALI_Tensors.html">DALI tensors tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sampling.html">Likelihood sampling tutorial</a></li>
 </ul>
 
         </div>
@@ -116,6 +117,11 @@ cross polarizations of the GW signal.</p>
 The output has dimensions <code class="docutils literal notranslate"><span class="pre">{2,</span> <span class="pre">N}</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">Length[f]</span></code>.</p>
 </dd>
 </dl>
+<p><strong>Options</strong>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code> has support for <code class="docutils literal notranslate"><span class="pre">TIGER</span></code> parameters. The default value for the
+<span class="math notranslate nohighlight">\(\delta \varphi_i\)</span> parameters is zero. These values can be altered by passing
+non-zero values of <span class="math notranslate nohighlight">\(\delta \varphi_i\)</span> to <code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomD</span></code> in the form
+of options. The syntax is available through <code class="docutils literal notranslate"><span class="pre">Options[hphcIMRPhenomD]</span></code>.</p>
 </section>
 <section id="hphcimrphenomhm">
 <h2><code class="docutils literal notranslate"><span class="pre">hphcIMRPhenomHM</span></code><a class="headerlink" href="#hphcimrphenomhm" title="Link to this heading"></a></h2>
@@ -147,7 +153,7 @@ The output has dimensions <code class="docutils literal notranslate"><span class
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Math.html" class="btn btn-neutral float-left" title="Math" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="Detectors.html" class="btn btn-neutral float-right" title="Detectors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

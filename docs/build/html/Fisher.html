@@ -17,6 +17,7 @@
       <script src="_static/documentation_options.js?v=8d563738"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -110,10 +111,10 @@ follows section <a class="reference internal" href="Detectors.html#detector-asso
 <p>The following example calculates the Fisher matrix using the <code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code>
 waveform model:</p>
 <div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
-<span class="w">    </span><span class="s">"dec"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.14</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Phi]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Psi]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span>
-<span class="w">    </span><span class="s">"\[ScriptCapitalM]c"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.0116</span><span class="p">,</span><span class="w"> </span><span class="s">"q"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.2</span><span class="p">,</span>
-<span class="w">    </span><span class="s">"s1z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="s">"s2z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Iota]"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">2.5</span><span class="p">,</span>
-<span class="w">    </span><span class="s">"1/dL"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">"tc"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Phi]ref"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.</span>
+<span class="w">    </span><span class="s">"dec"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.14</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"phi"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="s">"psi"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"Mc"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.0116</span><span class="p">,</span><span class="w"> </span><span class="s">"q"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.2</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"s1z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="s">"s2z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"iota"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">2.5</span><span class="p">,</span><span class="w"> </span><span class="s">"invdL"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">"tc"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">"phiRef"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.</span>
 <span class="o">|&gt;</span><span class="p">;</span>
 
 <span class="n">H1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
@@ -160,9 +161,9 @@ the following code gives us the exact correspondence between waveform variables 
 matrix dimensions:</p>
 <div class="highlight-mathematica: notranslate"><div class="highlight"><pre><span></span>EmptyAssociation["Aligned"]
 &lt;|
-    "dec" -&gt; 1, "\[Phi]" -&gt; 2, "\[Psi]" -&gt; 3, "\[ScriptCapitalM]c" -&gt; 4,
-    "q" -&gt; 5, "s1z" -&gt; 6, "s2z" -&gt; 7, "\[Iota]" -&gt; 8, "1/dL" -&gt; 9,
-    "tc" -&gt; 10, "\[Phi]ref" -&gt; 11
+    "dec" -&gt; 1, "phi" -&gt; 2, "psi" -&gt; 3, "Mc" -&gt; 4,
+    "q" -&gt; 5, "s1z" -&gt; 6, "s2z" -&gt; 7, "iota" -&gt; 8, "invdL" -&gt; 9,
+    "tc" -&gt; 10, "phiRef" -&gt; 11
 |&gt;
 </pre></div>
 </div>
@@ -191,6 +192,42 @@ list of the previous output form:</p>
 </pre></div>
 </div>
 <p>The order of Fisher matrices is the same of the detector network, in this case <code class="docutils literal notranslate"><span class="pre">{H1,</span> <span class="pre">L1}</span></code>.</p>
+<p>For the <code class="docutils literal notranslate"><span class="pre">IMRPhenomD</span></code> model is possible to calculate the Fisher matrix with derivatives
+of the waveform on <code class="docutils literal notranslate"><span class="pre">TIGER</span></code> parameters:</p>
+<div class="math notranslate nohighlight">
+\[\left(\delta \varphi_{-2}, \, \delta \varphi_{0}, \delta \varphi_{1}, \delta \varphi_{2},
+\delta \varphi_{3}, \delta \varphi_{4}, \delta \varphi_{5l}, \delta \varphi_{6}, \delta \varphi_{6l}, \delta \varphi_{7} \right)\]</div>
+<p>The way of including these extra parameters is passing them as additional keys for the
+fiducial point association. For instance</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="n">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">    </span><span class="s">"dec"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.14</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"phi"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="s">"psi"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"Mc"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.0116</span><span class="p">,</span><span class="w"> </span><span class="s">"q"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.2</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"s1z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="s">"s2z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"iota"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">2.5</span><span class="p">,</span><span class="w"> </span><span class="s">"invdL"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">"tc"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">"phiRef"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"\[Delta]\[CurlyPhi]0"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>when passed to <code class="docutils literal notranslate"><span class="pre">DALITensors</span></code> will include derivatives of <span class="math notranslate nohighlight">\(\delta \varphi_0\)</span>. The
+variable <span class="math notranslate nohighlight">\(\delta \varphi_0\)</span> will correspond to the dimension 12 of the Fisher matrix,
+keeping the relation of GR variables and dimension intact. You can pass more than one
+parameter:</p>
+<div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="n">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
+<span class="w">    </span><span class="s">"dec"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.14</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"phi"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">3.4</span><span class="p">,</span><span class="w"> </span><span class="s">"psi"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"Mc"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.0116</span><span class="p">,</span><span class="w"> </span><span class="s">"q"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.2</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"s1z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="s">"s2z"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"iota"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">2.5</span><span class="p">,</span><span class="w"> </span><span class="s">"invdL"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">"tc"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">"phiRef"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mf">0.</span><span class="p">,</span>
+<span class="w">     </span><span class="s">"\[Delta]\[CurlyPhi]2"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Delta]\[CurlyPhi]0"</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">0</span>
+<span class="o">|&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>In which case <span class="math notranslate nohighlight">\(\delta \varphi_0\)</span> will correspond to the dimension 12 and <span class="math notranslate nohighlight">\(\delta \varphi_2\)</span>
+to the dimension 13. The ordering is defined by the sequence</p>
+<div class="math notranslate nohighlight">
+\[\left(\delta \varphi_{-2}, \, \delta \varphi_{0}, \delta \varphi_{1}, \delta \varphi_{2},
+\delta \varphi_{3}, \delta \varphi_{4}, \delta \varphi_{5l}, \delta \varphi_{6}, \delta \varphi_{6l}, \delta \varphi_{7} \right)\]</div>
+<p>lower numbers will always correspond to lower dimensions. The syntax for all
+<code class="docutils literal notranslate"><span class="pre">TIGER</span></code> parameters is the same of <code class="docutils literal notranslate"><span class="pre">Options[hphcIMRPhenomD]</span></code>.</p>
 </section>
 </section>
 

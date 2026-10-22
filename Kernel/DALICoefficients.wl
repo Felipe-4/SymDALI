@@ -822,11 +822,11 @@ GradientsList[{gradients__Association}, {varnumbers__Integer}, n_Integer] :=Modu
 GradientsList[x___] := Throw[$Failed, failTag[GradientsList]]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Make DALI Tensors*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*GenDaliTerm*)
 
 
@@ -1092,7 +1092,7 @@ Map[TensorRank, test, {2}]
 Clear[HEADTEST, points, \[Sigma], test]*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*GWDALICoefficients*)
 
 
@@ -1441,7 +1441,7 @@ iFpFc[
 Protect[ihphcIMRPhenomD, ihphcIMRPhenomHM, iFpFc];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Utils for Fisher Matrix*)
 
 
@@ -1457,9 +1457,9 @@ MapThread[
 
 
 vars["Aligned"] = {
-	"\[ScriptCapitalM]c", "q", "s1z", "s2z",
-	"\[Iota]", "dec", "\[Phi]", "\[Psi]", "1/dL", 
-	"tc", "\[Phi]ref",
+	"Mc", "q", "s1z", "s2z",
+	"iota", "dec", "phi", "psi", "invdL", 
+	"tc", "phiRef",
 	"\[Delta]\[CurlyPhi]-2","\[Delta]\[CurlyPhi]0","\[Delta]\[CurlyPhi]1","\[Delta]\[CurlyPhi]2","\[Delta]\[CurlyPhi]3","\[Delta]\[CurlyPhi]4","\[Delta]\[CurlyPhi]5l","\[Delta]\[CurlyPhi]6","\[Delta]\[CurlyPhi]6l","\[Delta]\[CurlyPhi]7","\[Delta]\[Beta]2","\[Delta]\[Beta]3","\[Delta]\[Alpha]2","\[Delta]\[Alpha]3","\[Delta]\[Alpha]4"
 };
 
@@ -1469,8 +1469,8 @@ GenErrorMessage["Aligned", True] := Null;
 GenErrorMessage["Aligned", False] := Throw[
 "\n
 PhenomD variables should satisfy the following conditions: \n
-1\[LessEqual]M\[LessEqual]\[Infinity] && 0 < q < 1. && -1\[LessEqual]s1z\[LessEqual]1 && -1\[LessEqual]s2z\[LessEqual]1 && 0\[LessEqual]\[Iota]\[LessEqual]\[Pi] && -\[Pi]/2\[LessEqual]dec\[LessEqual]\[Pi]/2 && \n
-0\[LessEqual]\[Phi]\[LessEqual]2\[Pi] && 0\[LessEqual]\[Psi]\[LessEqual]\[Pi] && \!\(\*SuperscriptBox[\(10\), \(-11\)]\)\[LessEqual]dL\[LessEqual]\[Infinity] && -\[Infinity]\[LessEqual]tc\[LessEqual]\[Infinity] && 0\[LessEqual]\[Phi]ref\[LessEqual]2 \[Pi]
+1\[LessEqual]Mc\[LessEqual]\[Infinity] && 0 < q < 1. && -1\[LessEqual]s1z\[LessEqual]1 && -1\[LessEqual]s2z\[LessEqual]1 && 0\[LessEqual]iota\[LessEqual]\[Pi] && -\[Pi]/2\[LessEqual]dec\[LessEqual]\[Pi]/2 && \n
+0\[LessEqual]phi\[LessEqual]2\[Pi] && 0\[LessEqual]psi\[LessEqual]\[Pi] && \!\(\*SuperscriptBox[\(10\), \(-11\)]\)\[LessEqual]invdL\[LessEqual]\[Infinity] && -\[Infinity]\[LessEqual]tc\[LessEqual]\[Infinity] && 0\[LessEqual]phiRef\[LessEqual]2 \[Pi]
 \n"
 ];
 
@@ -1498,9 +1498,9 @@ RetrieveFiducial[aligned_String, fp_Association]/;(
 	{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref, \[Delta]p, test, res},
 	
 	{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref} = fp/@{
-		"\[ScriptCapitalM]c", "q", "s1z", "s2z",
-		"\[Iota]", "dec", "\[Phi]", "\[Psi]", "1/dL",
-		"tc", "\[Phi]ref"
+		"Mc", "q", "s1z", "s2z",
+		"iota", "dec", "phi", "psi", "invdL",
+		"tc", "phiRef"
 	};
 	
 	
@@ -1535,15 +1535,15 @@ RetrieveFiducial[aligned_String, fp_Association]/;(
 	(*there should not be more than 11 variables*)
 	Length@Keys[fp] <= 11 && 
 	(*the keys must be contained in vars["Aligned"]*)
-	ContainsAll[{"\[ScriptCapitalM]c", "q", "s1z", "s2z", "\[Iota]", "dec", "\[Phi]", "\[Psi]", "1/dL", "tc", "\[Phi]ref"}, Keys[fp]] &&
+	ContainsAll[{"Mc", "q", "s1z", "s2z", "iota", "dec", "phi", "psi", "invdL", "tc", "phiRef"}, Keys[fp]] &&
 	aligned == "IMRPhenomHM"
 ) := Module[
 	{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref, \[Delta]p, test, res},
 	
 	{\[ScriptCapitalM]c, q, \[Chi]1, \[Chi]2, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref} = fp/@{
-		"\[ScriptCapitalM]c", "q", "s1z", "s2z",
-		"\[Iota]", "dec", "\[Phi]", "\[Psi]", "1/dL",
-		"tc", "\[Phi]ref"
+		"Mc", "q", "s1z", "s2z",
+		"iota", "dec", "phi", "psi", "invdL",
+		"tc", "phiRef"
 	};
 	
 	
@@ -1842,7 +1842,7 @@ DALITensors[x__, OptionsPattern[]] := Module[
 Protect[DALITensors]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Package Footer*)
 
 

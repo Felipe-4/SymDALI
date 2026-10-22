@@ -90,7 +90,7 @@ a coordinate change inside the function. Also, it is necessary to pass the vecto
 same order of the variable derivatives calculated in :ref:`dali_tensors` that is: 
 
 .. math::
-   p = \left(\text{dec}, \phi, \psi, \mathcal{M}_c, q, \chi_1, \chi_2, \iota, d_L, t_c, \phi_{\text{ref}} \right)
+   p = \left(\text{dec}, \text{phi}, \text{psi}, \text{Mc}, \text{q}, \text{s1z}, \text{s2z}, \text{iota}, \text{dL}, \text{tc}, \text{phiRef} \right)
 
 
 The function ``DALI_L(p)`` already implements the ``DALI`` likelihood and can be used to

@@ -64,25 +64,25 @@ available \"names\":
 \"V1-O5\": Virgo target sensitivity O5 low noise (https://dcc.ligo.org/LIGO-T2000012/public).";
 
 
-ArmDirection::usage="```ArmDirection[{\[CurlyPhi], \[Lambda]}, {{\[Omega]1, \[Psi]1}, {\[Omega]2, \[Psi]2}}]``` returns ```{n1,n2}``` where ```ni = {nix,niy,niz}```, the unit vector in the direction of the arm i.
+ArmDirection::usage="```ArmDirection[{lat, lon}, {{altitude_x, azimuth_x}, {altitude_y, azimuth_y}}]``` returns ```{n_x,n_y}``` where ```n_i``` is the unit vector in the direction of the arm i.
 
-\[CurlyPhi]: vertex latitude [radians]
-\[Lambda]: vertex longitude [radians]
-\[Omega]i: Altitude of the arm i [radians] 
-\[Psi]i: Azimuth of arm i [radians] 
+lat: vertex latitude [radians]
+lon: vertex longitude [radians]
+altitude_i: Altitude of the arm i [radians] 
+azimuth_i: Azimuth of arm i [radians] 
 
 
-\[Omega]i is the angle the direction vector makes with the local horizontal plane, \[Omega]i>0 means above the horizontal.
-\[Psi]i is the angle measured clockwise from north of the direction vector.
+altitude_i is the angle the direction vector makes with the local horizontal plane, altitude_i>0 means above the horizontal.
+azimuth_i is the angle measured clockwise from north of the direction vector.
 
 coordinates follow WGS-84 model used in \!\(\*TemplateBox[{\"\\\"LALDetectors.h\\\"\", \"https://lscsoft.docs.ligo.org/lalsuite/lal/_l_a_l_detectors_8h_source.html\"},\n\"HyperlinkURL\"]\)";
 
 
-FromGeocentricCoordinates::usage="```FromGeocentricCoordinates[{h, \[CurlyPhi], \[Lambda]}]``` returns the {x,y,z} position of the detector.
+FromGeocentricCoordinates::usage="```FromGeocentricCoordinates[{h, lat, lon}]``` returns the {x,y,z} position of the detector.
 
 h: displacement along the local vertical [meters]
-\[CurlyPhi]: latitude [radians]
-\[Lambda]: longitude [radians]
+lat: latitude [radians]
+lon: longitude [radians]
 
 coordinates follow WGS-84 model used in \!\(\*TemplateBox[{\"\\\"LALDetectors.h\\\"\", \"https://lscsoft.docs.ligo.org/lalsuite/lal/_l_a_l_detectors_8h_source.html\"},\n\"HyperlinkURL\"]\)
 For simpler estimates just use h=0.";
@@ -356,7 +356,7 @@ Module[
 Protect[DetectorVertex];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*ASDs*)
 
 

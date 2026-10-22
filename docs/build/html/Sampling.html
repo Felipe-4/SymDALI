@@ -161,7 +161,7 @@ in <span class="math notranslate nohighlight">\(1/d_L\)</span>, whereas we want 
 a coordinate change inside the function. Also, it is necessary to pass the vector <cite>p</cite> in the
 same order of the variable derivatives calculated in <a class="reference internal" href="DALI_Tensors.html#dali-tensors"><span class="std std-ref">DALI tensors tutorial</span></a> that is:</p>
 <div class="math notranslate nohighlight">
-\[p = \left(\text{dec}, \phi, \psi, \mathcal{M}_c, q, \chi_1, \chi_2, \iota, d_L, t_c, \phi_{\text{ref}} \right)\]</div>
+\[p = \left(\text{dec}, \text{phi}, \text{psi}, \text{Mc}, \text{q}, \text{s1z}, \text{s2z}, \text{iota}, \text{dL}, \text{tc}, \text{phiRef} \right)\]</div>
 <p>The function <code class="docutils literal notranslate"><span class="pre">DALI_L(p)</span></code> already implements the <code class="docutils literal notranslate"><span class="pre">DALI</span></code> likelihood and can be used to
 perform the sampling, which can be done with any algorithm. In practice we advise the use
 of <code class="docutils literal notranslate"><span class="pre">emcee</span></code> because it is lightweight. In the following we describe our way of using it.</p>
@@ -305,11 +305,11 @@ and to take the variable <span class="math notranslate nohighlight">\(y\)</span>
 <a class="reference internal image-reference" href="_images/example.svg"><img alt="Taylor expansion illustration" class="align-center" src="_images/example.svg" style="width: 80%;" />
 </a>
 <p>As shown in Figure 5 in <a class="reference external" href="https://arxiv.org/abs/2609.38399">2609.38399</a> this example
-as good agreement with the result of the exact likelihood, which takes around 69 hours
+has good agreement with the result of the exact likelihood, which takes around 69 hours
 to run.</p>
 <p><a class="reference external" href="https://github.com/Felipe-4/SymDALI/tree/main/Demo/Terminal_workflow">Here</a>,
 we have a Wolfram Language, Python and Bash scripts that
-demonstrate the complete workflow, from the <cite>DALI</cite> tensors to the final plot with a
+demonstrate the complete workflow, from the <code class="docutils literal notranslate"><span class="pre">DALI</span></code> tensors to the final plot with a
 single terminal command. On a Macbook Air M1 with 8 Gb of RAM this example takes 12.3 minutes to run.</p>
 </section>
 </section>

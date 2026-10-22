@@ -16,42 +16,49 @@ ClearAll[
 ];
 
 
-PatternFunctions::usage="PatternFunctions[f, \[Delta], \[Phi], \[Psi], pi, Dij] returns the pattern functions 
+PatternFunctions::usage="PatternFunctions[f, dec, phi, psi, pi, Dij] returns the pattern functions 
 {\!\(\*SubscriptBox[\(F\), \(+\)]\), \!\(\*SubscriptBox[\(F\), \(x\)]\)}.
 
 f: frequency vector, f[[i]] is in [Hz];
-\[Delta]: declination \[Element] [-\[Pi]/2, \[Pi]/2];
-\[Phi]: azimuthal angle \[Element] [0, 2 \[Pi]];
-\[Psi]: polarization angle \[Element] [0, \[Pi]];
+dec: declination \[Element] [-\[Pi]/2, \[Pi]/2];
+phi: azimuthal angle \[Element] [0, 2 \[Pi]];
+psi: polarization angle \[Element] [0, \[Pi]];
 pi: position vector of the detector, see ```DetectorVertex```;
 Dij: 3x3 detector tensor, see ```DetectorTensor```.";
 
 
-hphcIMRPhenomD::usage="hphcIMRPhenomD[f, \[ScriptCapitalM]c, q, s1z, s2z, \[Iota], tc, \[Phi]ref, invdL] returns the polarizations
+hphcIMRPhenomD::usage="hphcIMRPhenomD[f, Mc, q, s1z, s2z, iota, tc, phiRef, invdL] returns the polarizations
 {\!\(\*SubscriptBox[\(h\), \(+\)]\), \!\(\*SubscriptBox[\(h\), \(x\)]\)} of the \"IMRPhenomD\" approximant.
 
 f: frequency vector, f[[i]] is in [Hz];
-\[ScriptCapitalM]c: chirp mass, [solar mass];
+Mc: chirp mass, [solar mass];
 q: mass ratio, (0,1];
 s1z: aligned spin \[Element] (-1,1);
 s2z: aligned spin \[Element] (-1,1);
-\[Iota]: inclination angle \[Element] [0, \[Pi]];
+iota: inclination angle \[Element] [0, \[Pi]];
 tc: coalescence time [s];
-\[Phi]ref: reference phase \[Element] [0, 2 \[Pi]];
-invdL: inverse of luminosity distance [1/Gpc].";
+phiRef: reference phase \[Element] [0, 2 \[Pi]];
+invdL: inverse of luminosity distance [1/Gpc].
+
+Options:
+
+PhenomD has support for the following TIGER parameters passed as options
+
+\"\[Delta]\[CurlyPhi]-2\",\"\[Delta]\[CurlyPhi]0\",\"\[Delta]\[CurlyPhi]1\",\"\[Delta]\[CurlyPhi]2\",\"\[Delta]\[CurlyPhi]3\",\"\[Delta]\[CurlyPhi]4\",\"\[Delta]\[CurlyPhi]5l\",\"\[Delta]\[CurlyPhi]6\",\"\[Delta]\[CurlyPhi]6l\",\"\[Delta]\[CurlyPhi]7\"
+";
 
 
-hphcIMRPhenomHM::usage="hphcIMRPhenomHM[f, \[ScriptCapitalM]c, q, s1z, s2z, \[Iota], tc, \[Phi]ref, invdL] returns the polarizations
+hphcIMRPhenomHM::usage="hphcIMRPhenomHM[f, Mc, q, s1z, s2z, iota, tc, phiRef, invdL] returns the polarizations
 {\!\(\*SubscriptBox[\(h\), \(+\)]\), \!\(\*SubscriptBox[\(h\), \(x\)]\)} of the \"IMRPhenomHM\" approximant.
 
 f: frequency vector, f[[i]] is in [Hz];
-\[ScriptCapitalM]c: chirp mass, [solar mass];
+Mc: chirp mass, [solar mass];
 q: mass ratio, (0,1];
 s1z: aligned spin \[Element] (-1,1);
 s2z: aligned spin \[Element] (-1,1);
-\[Iota]: inclination angle \[Element] [0, \[Pi]];
+iota: inclination angle \[Element] [0, \[Pi]];
 tc: coalescence time [s];
-\[Phi]ref: reference phase \[Element] [0, 2 \[Pi]];
+phiRef: reference phase \[Element] [0, 2 \[Pi]];
 invdL: inverse of luminosity distance [1/Gpc].";
 
 
@@ -83,7 +90,7 @@ Begin["Private`"];
 (*Definitions*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*SymRules, NRules and iFunctions for Fisher calculation*)
 
 
@@ -133,12 +140,17 @@ PatternFunctions[$f_, $\[Delta]_, $\[Phi]_, $\[Psi]_, $pi_, $Dij_]/;(
 Protect[PatternFunctions];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*(Public) hphc's*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*PhenomD*)
+
+
+{
+	"\[Delta]\[CurlyPhi]-2"->0, "\[Delta]\[CurlyPhi]0"->0, "\[Delta]\[CurlyPhi]1"->0,"\[Delta]\[CurlyPhi]2"->0,"\[Delta]\[CurlyPhi]3"->0,"\[Delta]\[CurlyPhi]4"->0,"\[Delta]\[CurlyPhi]5l"->0,"\[Delta]\[CurlyPhi]6"->0,"\[Delta]\[CurlyPhi]6l"->0,"\[Delta]\[CurlyPhi]7"->0
+}[[All,1]]
 
 
 Options[hphcIMRPhenomD] = {
@@ -221,7 +233,7 @@ Protect[hphcIMRPhenomHM];
 
 
 EmptyAssociation["Aligned"] = <|
-	"dec"->1,"\[Phi]"->2,"\[Psi]"->3,"\[ScriptCapitalM]c"->4,"q"->5,"s1z"->6,"s2z"->7,"\[Iota]"->8,"1/dL"->9,"tc"->10,"\[Phi]ref"->11
+	"dec"->1,"phi"->2,"psi"->3,"Mc"->4,"q"->5,"s1z"->6,"s2z"->7,"iota"->8,"invdL"->9,"tc"->10,"phiRef"->11
 |>;
 
 (*EmptyAssociation["Precessing"] = <|
@@ -238,7 +250,7 @@ EmptyAssociation["Detector"] = <|
 Protect[EmptyAssociation]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*SNR*)
 
 
@@ -247,9 +259,9 @@ Protect[EmptyAssociation]
 
 
 vars["Aligned"] = {
-	"\[ScriptCapitalM]c", "q", "s1z", "s2z",
-	"\[Iota]", "dec", "\[Phi]", "\[Psi]", "1/dL", 
-	"tc", "\[Phi]ref"
+	"Mc", "q", "s1z", "s2z",
+	"iota", "dec", "phi", "psi", "invdL", 
+	"tc", "phiRef"
 };
 
 
@@ -258,8 +270,8 @@ GenErrorMessage["Aligned", True] := Null;
 GenErrorMessage["Aligned", False] := Throw[
 "\n
 PhenomD variables should satisfy the following conditions: \n
-0 < \[ScriptCapitalM]c < \[Infinity] && 0 q <= 1 && -1 \[LessEqual] s1z\[LessEqual]1 && -1\[LessEqual]s2z\[LessEqual]1 && 0\[LessEqual]\[Iota]\[LessEqual]\[Pi] && -\[Pi]/2\[LessEqual]dec\[LessEqual]\[Pi]/2 && \n
-0\[LessEqual]\[Phi]\[LessEqual]2\[Pi] && 0\[LessEqual]\[Psi]\[LessEqual]\[Pi] && 0 < 1/dL < \[Infinity] && -\[Infinity]\[LessEqual]tc\[LessEqual]\[Infinity] && 0\[LessEqual]\[Phi]ref\[LessEqual]2 \[Pi]
+0 < Mc < \[Infinity] && 0 q <= 1 && -1 \[LessEqual] s1z\[LessEqual]1 && -1\[LessEqual]s2z\[LessEqual]1 && 0\[LessEqual]iota\[LessEqual]\[Pi] && -\[Pi]/2\[LessEqual]dec\[LessEqual]\[Pi]/2 && \n
+0\[LessEqual]phi\[LessEqual]2\[Pi] && 0\[LessEqual]psi\[LessEqual]\[Pi] && 0 < invdL < \[Infinity] && -\[Infinity]\[LessEqual]tc\[LessEqual]\[Infinity] && 0 \[LessEqual] phiRef \[LessEqual] 2 \[Pi]
 \n"
 ];
 
@@ -273,9 +285,9 @@ RetrieveFiducial["Aligned", fp_Association]/;(
 	{\[ScriptCapitalM]c, q, s1z, s2z, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref, \[Delta]p, test, res},
 	
 	{\[ScriptCapitalM]c, q, s1z, s2z, \[Iota], dec, \[Phi], \[Psi], invdL, tc, \[Phi]ref} = fp/@{
-		"\[ScriptCapitalM]c", "q", "s1z", "s2z",
-		"\[Iota]", "dec", "\[Phi]", "\[Psi]", "1/dL", 
-		"tc", "\[Phi]ref"
+		"Mc", "q", "s1z", "s2z",
+		"iota", "dec", "phi", "psi", "invdL", 
+		"tc", "phiRef"
 	};
 	
 	

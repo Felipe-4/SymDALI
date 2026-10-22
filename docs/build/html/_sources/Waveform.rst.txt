@@ -43,6 +43,12 @@ Calculates the polarizations :math:`\{h_+, h_\times\}` of the ``IMRPhenomD`` app
    Polarizations :math:`\{h_+, h_\times\}` of the ``IMRPhenomD`` approximant. 
    The output has dimensions ``{2, N}``, where ``N = Length[f]``. 
 
+**Options**:
+
+``IMRPhenomD`` has support for ``TIGER`` parameters. The default value for the
+:math:`\delta \varphi_i` parameters is zero. These values can be altered by passing
+non-zero values of :math:`\delta \varphi_i` to ``hphcIMRPhenomD`` in the form
+of options. The syntax is available through ``Options[hphcIMRPhenomD]``.
 
 
 ``hphcIMRPhenomHM``

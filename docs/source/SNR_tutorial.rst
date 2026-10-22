@@ -37,10 +37,10 @@ waveform model:
 .. code-block:: mathematica
 
    fp = <|
-       "dec" -> 3.14/2, "\[Phi]" -> 3.4, "\[Psi]" -> 0.1,
-       "\[ScriptCapitalM]c" -> 0.0116, "q" -> 0.2,
-       "s1z" -> 0.1, "s2z" -> 0.1, "\[Iota]" -> 2.5,
-       "1/dL" -> 1, "tc" -> 10, "\[Phi]ref" -> 0.
+       "dec" -> 3.14/2, "phi" -> 3.4, "psi" -> 0.1,
+       "Mc" -> 0.0116, "q" -> 0.2,
+       "s1z" -> 0.1, "s2z" -> 0.1, "iota" -> 2.5,
+       "invdL" -> 1, "tc" -> 10, "phiRef" -> 0.
    |>;
 
    H1 = <|

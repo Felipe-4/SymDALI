@@ -38,10 +38,10 @@ waveform model:
 .. code-block:: mathematica
 
    fp = <|
-       "dec" -> 3.14/2, "\[Phi]" -> 3.4, "\[Psi]" -> 0.1,
-       "\[ScriptCapitalM]c" -> 0.0116, "q" -> 0.2,
-       "s1z" -> 0.1, "s2z" -> 0.1, "\[Iota]" -> 2.5,
-       "1/dL" -> 1, "tc" -> 10, "\[Phi]ref" -> 0.
+       "dec" -> 3.14/2, "phi" -> 3.4, "psi" -> 0.1,
+       "Mc" -> 0.0116, "q" -> 0.2,
+       "s1z" -> 0.1, "s2z" -> 0.1, 
+       "iota" -> 2.5, "invdL" -> 1, "tc" -> 10, "phiRef" -> 0.
    |>;
 
    H1 = <|
@@ -99,9 +99,9 @@ matrix dimensions:
 
     EmptyAssociation["Aligned"]
     <|
-        "dec" -> 1, "\[Phi]" -> 2, "\[Psi]" -> 3, "\[ScriptCapitalM]c" -> 4,
-        "q" -> 5, "s1z" -> 6, "s2z" -> 7, "\[Iota]" -> 8, "1/dL" -> 9, 
-        "tc" -> 10, "\[Phi]ref" -> 11
+        "dec" -> 1, "phi" -> 2, "psi" -> 3, "Mc" -> 4,
+        "q" -> 5, "s1z" -> 6, "s2z" -> 7, "iota" -> 8, "invdL" -> 9, 
+        "tc" -> 10, "phiRef" -> 11
     |>
 
 
@@ -136,3 +136,48 @@ list of the previous output form:
     {2, 1, 1, 121}
 
 The order of Fisher matrices is the same of the detector network, in this case ``{H1, L1}``. 
+
+For the ``IMRPhenomD`` model is possible to calculate the Fisher matrix with derivatives
+of the waveform on ``TIGER`` parameters:
+
+.. math::
+    \left(\delta \varphi_{-2}, \, \delta \varphi_{0}, \delta \varphi_{1}, \delta \varphi_{2},
+    \delta \varphi_{3}, \delta \varphi_{4}, \delta \varphi_{5l}, \delta \varphi_{6}, \delta \varphi_{6l}, \delta \varphi_{7} \right)
+
+The way of including these extra parameters is passing them as additional keys for the 
+fiducial point association. For instance
+
+.. code-block:: mathematica
+
+    fp = <|
+       "dec" -> 3.14/2, "phi" -> 3.4, "psi" -> 0.1,
+       "Mc" -> 0.0116, "q" -> 0.2,
+       "s1z" -> 0.1, "s2z" -> 0.1, 
+       "iota" -> 2.5, "invdL" -> 1, "tc" -> 10, "phiRef" -> 0.,
+       "\[Delta]\[CurlyPhi]0" -> 0
+   |>;
+
+when passed to ``DALITensors`` will include derivatives of :math:`\delta \varphi_0`. The
+variable :math:`\delta \varphi_0` will correspond to the dimension 12 of the Fisher matrix,
+keeping the relation of GR variables and dimension intact. You can pass more than one 
+parameter:
+
+.. code-block:: mathematica
+
+    fp = <|
+       "dec" -> 3.14/2, "phi" -> 3.4, "psi" -> 0.1,
+       "Mc" -> 0.0116, "q" -> 0.2,
+       "s1z" -> 0.1, "s2z" -> 0.1, 
+       "iota" -> 2.5, "invdL" -> 1, "tc" -> 10, "phiRef" -> 0.,
+        "\[Delta]\[CurlyPhi]2" -> 0, "\[Delta]\[CurlyPhi]0" -> 0
+   |>;
+
+In which case :math:`\delta \varphi_0` will correspond to the dimension 12 and :math:`\delta \varphi_2`
+to the dimension 13. The ordering is defined by the sequence 
+
+.. math::
+    \left(\delta \varphi_{-2}, \, \delta \varphi_{0}, \delta \varphi_{1}, \delta \varphi_{2},
+    \delta \varphi_{3}, \delta \varphi_{4}, \delta \varphi_{5l}, \delta \varphi_{6}, \delta \varphi_{6l}, \delta \varphi_{7} \right)
+
+lower numbers will always correspond to lower dimensions. The syntax for all 
+``TIGER`` parameters is the same of ``Options[hphcIMRPhenomD]``.

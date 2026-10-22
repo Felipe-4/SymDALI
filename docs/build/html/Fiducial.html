@@ -53,8 +53,8 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Fiducial point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SNR_tutorial.html">SNR tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Fisher.html">Fisher tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="DALI_Tensors.html">DALI Tensors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Sampling.html">Likelihood sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DALI_Tensors.html">DALI tensors tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sampling.html">Likelihood sampling tutorial</a></li>
 </ul>
 
         </div>
@@ -88,9 +88,9 @@ higher order <code class="docutils literal notranslate"><span class="pre">DALI</
 described the convention adopted by the functions <code class="docutils literal notranslate"><span class="pre">SNR</span></code> and <code class="docutils literal notranslate"><span class="pre">DALITensors</span></code>.</p>
 <p>An injection is specified by an association in the following form:</p>
 <div class="highlight-mathematica notranslate"><div class="highlight"><pre><span></span><span class="n">fp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;|</span>
-<span class="w">     </span><span class="s">"dec"</span><span class="o">-&gt;</span><span class="mf">3.14</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="s">"\[Phi]"</span><span class="o">-&gt;</span><span class="mf">3.4</span><span class="p">,</span><span class="s">"\[Psi]"</span><span class="o">-&gt;</span><span class="mf">0.1</span><span class="p">,</span>
-<span class="w">     </span><span class="s">"\[ScriptCapitalM]c"</span><span class="o">-&gt;</span><span class="mf">0.0116</span><span class="p">,</span><span class="s">"q"</span><span class="o">-&gt;</span><span class="mf">0.2</span><span class="p">,</span><span class="w"> </span><span class="s">"s1z"</span><span class="o">-&gt;</span><span class="mf">0.1</span><span class="p">,</span><span class="s">"s2z"</span><span class="o">-&gt;</span><span class="mf">0.1</span><span class="p">,</span>
-<span class="w">     </span><span class="s">"\[Iota]"</span><span class="o">-&gt;</span><span class="mf">2.5</span><span class="p">,</span><span class="s">"1/dL"</span><span class="o">-&gt;</span><span class="mi">1</span><span class="p">,</span><span class="s">"tc"</span><span class="o">-&gt;</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">"\[Phi]ref"</span><span class="o">-&gt;</span><span class="mf">0.</span>
+<span class="w">     </span><span class="s">"dec"</span><span class="o">-&gt;</span><span class="mf">3.14</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="s">"phi"</span><span class="o">-&gt;</span><span class="mf">3.4</span><span class="p">,</span><span class="s">"psi"</span><span class="o">-&gt;</span><span class="mf">0.1</span><span class="p">,</span>
+<span class="w">     </span><span class="s">"Mc"</span><span class="o">-&gt;</span><span class="mf">0.0116</span><span class="p">,</span><span class="s">"q"</span><span class="o">-&gt;</span><span class="mf">0.2</span><span class="p">,</span><span class="w"> </span><span class="s">"s1z"</span><span class="o">-&gt;</span><span class="mf">0.1</span><span class="p">,</span><span class="s">"s2z"</span><span class="o">-&gt;</span><span class="mf">0.1</span><span class="p">,</span>
+<span class="w">     </span><span class="s">"iota"</span><span class="o">-&gt;</span><span class="mf">2.5</span><span class="p">,</span><span class="s">"invdL"</span><span class="o">-&gt;</span><span class="mi">1</span><span class="p">,</span><span class="s">"tc"</span><span class="o">-&gt;</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="s">"phiRef"</span><span class="o">-&gt;</span><span class="mf">0.</span>
 <span class="w"> </span><span class="o">|&gt;</span><span class="p">;</span>
 </pre></div>
 </div>
@@ -98,24 +98,24 @@ described the convention adopted by the functions <code class="docutils literal 
 <p><strong>Parameters</strong>:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">&quot;dec&quot;</span></code>: declination, in [<span class="math notranslate nohighlight">\(-\pi/2\)</span>,  <span class="math notranslate nohighlight">\(\pi/2\)</span>].</p>
-<p><code class="docutils literal notranslate"><span class="pre">&quot;\[Phi]&quot;</span></code>: azimuthal angle, in [0,  2 <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
-<p><code class="docutils literal notranslate"><span class="pre">&quot;\[Psi]&quot;</span></code>: polarization angle, in [0,  <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
-<p><code class="docutils literal notranslate"><span class="pre">&quot;\[ScriptCapitalM]c&quot;</span></code>: Chirp mass [<span class="math notranslate nohighlight">\(M_\odot\)</span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;phi&quot;</span></code>: azimuthal angle, in [0,  2 <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;psi&quot;</span></code>: polarization angle, in [0,  <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;Mc&quot;</span></code>: Chirp mass [<span class="math notranslate nohighlight">\(M_\odot\)</span>].</p>
 <p><code class="docutils literal notranslate"><span class="pre">&quot;q&quot;</span></code>: Mass ratio, in (0,1].</p>
 <p><code class="docutils literal notranslate"><span class="pre">&quot;s1z&quot;</span></code>: Aligned spin of the heaviest BH, in (-1,1).</p>
 <p><code class="docutils literal notranslate"><span class="pre">&quot;s2z&quot;</span></code>: Aligned spin of the lightest BH, in (-1,1).</p>
 <p><code class="docutils literal notranslate"><span class="pre">&quot;iota&quot;</span></code>: Inclination angle, in [0, <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
 <p><code class="docutils literal notranslate"><span class="pre">&quot;tc&quot;</span></code>: Coalescence time [s].</p>
 <p><code class="docutils literal notranslate"><span class="pre">&quot;phiRef&quot;</span></code>: Reference phase, in [0, 2 <span class="math notranslate nohighlight">\(\pi\)</span>].</p>
-<p><code class="docutils literal notranslate"><span class="pre">&quot;1/dL&quot;</span></code>: Inverse luminosity distance [1/Gpc].</p>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;invdL&quot;</span></code>: Inverse luminosity distance [1/Gpc].</p>
 </div></blockquote>
 <p>For practical reasons, an empty association with this convention is available through
 the function <code class="docutils literal notranslate"><span class="pre">EmptyAssociation</span></code>. For example:</p>
 <div class="highlight-mathematica: notranslate"><div class="highlight"><pre><span></span>EmptyAssociation["Aligned"]
 &lt;|
-    "dec" -&gt; 1, "\[Phi]" -&gt; 2, "\[Psi]" -&gt; 3, "\[ScriptCapitalM]c" -&gt; 4,
-    "q" -&gt; 5, "s1z" -&gt; 6, "s2z" -&gt; 7, "\[Iota]" -&gt; 8, "1/dL" -&gt; 9,
-    "tc" -&gt; 10, "\[Phi]ref" -&gt; 11
+    "dec" -&gt; 1, "phi" -&gt; 2, "psi" -&gt; 3, "Mc" -&gt; 4,
+    "q" -&gt; 5, "s1z" -&gt; 6, "s2z" -&gt; 7, "iota" -&gt; 8, "invdL" -&gt; 9,
+    "tc" -&gt; 10, "phiRef" -&gt; 11
 |&gt;
 </pre></div>
 </div>

@@ -90,7 +90,7 @@ a coordinate change inside the function. Also, it is necessary to pass the vecto
 same order of the variable derivatives calculated in :ref:`dali_tensors` that is: 
 
 .. math::
-   p = \left(\text{dec}, \phi, \psi, \mathcal{M}_c, q, \chi_1, \chi_2, \iota, d_L, t_c, \phi_{\text{ref}} \right)
+   p = \left(\text{dec}, \text{phi}, \text{psi}, \text{Mc}, \text{q}, \text{s1z}, \text{s2z}, \text{iota}, \text{dL}, \text{tc}, \text{phiRef} \right)
 
 
 The function ``DALI_L(p)`` already implements the ``DALI`` likelihood and can be used to
@@ -255,12 +255,12 @@ Finally, we look at the corner plot of the result:
    :align: center
 
 As shown in Figure 5 in `2609.38399 <https://arxiv.org/abs/2609.38399>`_ this example
-as good agreement with the result of the exact likelihood, which takes around 69 hours
+has good agreement with the result of the exact likelihood, which takes around 69 hours
 to run.
 
 `Here <https://github.com/Felipe-4/SymDALI/tree/main/Demo/Terminal_workflow>`_, 
 we have a Wolfram Language, Python and Bash scripts that 
-demonstrate the complete workflow, from the `DALI` tensors to the final plot with a 
+demonstrate the complete workflow, from the ``DALI`` tensors to the final plot with a 
 single terminal command. On a Macbook Air M1 with 8 Gb of RAM this example takes 12.3 minutes to run.
 
 
